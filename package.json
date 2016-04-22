@@ -1,12 +1,7 @@
 {
-  "name": "eslint-plugin-graphql",
-  "version": "0.0.0",
-  "description": "GraphQL",
-  "keywords": [
-    "eslint",
-    "eslintplugin",
-    "eslint-plugin"
-  ],
+  "name": "eslint-graphql-rule",
+  "version": "0.0.1",
+  "description": "Utility to make an ESLint rule for your GraphQL schema.",
   "author": "Sashko Stubailo",
   "main": "lib/index.js",
   "scripts": {
@@ -24,5 +19,5 @@
   "babel": {
     "presets": ["es2015", "stage-0"]
   },
-  "license": "ISC"
+  "license": "MIT"
 }
