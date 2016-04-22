@@ -1,14 +1,14 @@
-const rule = require("../graphql-template-string");
-const RuleTester = require("eslint").RuleTester;
+const rule = require('../graphql-template-string');
+const RuleTester = require('eslint').RuleTester;
 
 const ruleTester = new RuleTester();
 
 const parserOptions = {
-  "ecmaVersion": 6,
-  "sourceType": "module",
+  'ecmaVersion': 6,
+  'sourceType': 'module',
 };
 
-ruleTester.run("graphql-template-string", rule, {
+ruleTester.run('graphql-template-string', rule, {
   valid: [
     // give me some code that won't trigger a warning
   ],
@@ -16,18 +16,26 @@ ruleTester.run("graphql-template-string", rule, {
   invalid: [
     {
       parserOptions,
-      code: "const x = gql`{ ${x} }`",
+      code: 'const x = gql`{ ${x} }`',
       errors: [{
-        message: "Unexpected interpolation in GraphQL template string.",
-        type: "TaggedTemplateExpression"
+        message: 'Unexpected interpolation in GraphQL template string.',
+        type: 'TaggedTemplateExpression'
       }]
     },
     {
       parserOptions,
-      code: "const x = gql``",
+      code: 'const x = gql``',
       errors: [{
-        message: "Syntax Error GraphQL (1:1) Unexpected EOF",
-        type: "TaggedTemplateExpression"
+        message: 'Syntax Error GraphQL (1:1) Unexpected EOF',
+        type: 'TaggedTemplateExpression'
+      }]
+    },
+    {
+      parserOptions,
+      code: 'const x = gql`{ nonExistentQuery }`',
+      errors: [{
+        message: 'Cannot query field "nonExistentQuery" on type "RootQuery".',
+        type: 'TaggedTemplateExpression'
       }]
     }
   ]

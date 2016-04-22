@@ -10,8 +10,8 @@ const typeDefinition = `
   }
 
   type RootQuery {
-    aNumber: Int
-}
+    number: Int
+  }
 `;
 
 const schema = buildASTSchema(parse(typeDefinition));
@@ -55,32 +55,23 @@ module.exports = function(context) {
       try {
         ast = parse(text);
       } catch (error) {
-        const location = error.locations[0];
-
-        let line;
-        let col;
-        if (location.line === 1) {
-          line = node.loc.start.line;
-          col = node.loc.start.col + location.col + 1;
-        } else {
-          line = node.loc.start.line + location.line - 1;
-          col = location.col;
-        }
-
         context.report({
           node,
           message: error.message.split('\n')[0],
-          loc: {
-            line,
-            col,
-          },
+          loc: locFrom(node, error),
         });
         return;
       }
 
-      const validationError = schema ? validate(schema, ast) : [];
+      const validationErrors = schema ? validate(schema, ast) : [];
 
-      console.log(validationError);
+      if (validationErrors && validationErrors.length > 0) {
+        context.report({
+          node,
+          message: validationErrors[0].message,
+          loc: locFrom(node, validationErrors[0]),
+        });
+      }
     }
   };
 };
@@ -88,3 +79,22 @@ module.exports = function(context) {
 module.exports.schema = [
     // fill in your schema
 ];
+
+function locFrom(node, error) {
+  const location = error.locations[0];
+
+  let line;
+  let col;
+  if (location.line === 1) {
+    line = node.loc.start.line;
+    col = node.loc.start.col + location.col + 1;
+  } else {
+    line = node.loc.start.line + location.line - 1;
+    col = location.col;
+  }
+
+  return {
+    line,
+    col,
+  };
+}
