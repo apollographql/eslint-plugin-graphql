@@ -1,7 +1,7 @@
 {
-  "name": "eslint-graphql-rule",
+  "name": "eslint-plugin-graphql",
   "version": "0.0.1",
-  "description": "Utility to make an ESLint rule for your GraphQL schema.",
+  "description": "GraphQL ESLint plugin.",
   "author": "Sashko Stubailo",
   "main": "lib/index.js",
   "scripts": {
