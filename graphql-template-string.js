@@ -20,7 +20,7 @@ const schema = buildASTSchema(parse(typeDefinition));
 // Rule Definition
 //------------------------------------------------------------------------------
 
-module.exports = function(context) {
+module.exports = function (context) {
   // variables should be defined here
 
   //--------------------------------------------------------------------------
