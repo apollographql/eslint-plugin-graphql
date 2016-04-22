@@ -15,6 +15,10 @@ const rules = {
 
     const unpackedSchemaJson = schemaJson.data ? schemaJson.data : schemaJson;
 
+    if (! unpackedSchemaJson.__schema) {
+      throw new Error('Please pass a valid GraphQL introspection query result.');
+    }
+
     const schema = buildClientSchema(unpackedSchemaJson);
 
     return {
@@ -55,6 +59,7 @@ const rules = {
             message: validationErrors[0].message,
             loc: locFrom(node, validationErrors[0]),
           });
+          return;
         }
       }
     };
@@ -65,18 +70,18 @@ function locFrom(node, error) {
   const location = error.locations[0];
 
   let line;
-  let col;
+  let column;
   if (location.line === 1) {
     line = node.loc.start.line;
-    col = node.loc.start.col + location.col + 1;
+    column = node.loc.start.col + location.col;
   } else {
     line = node.loc.start.line + location.line - 1;
-    col = location.col;
+    column = location.column - 1;
   }
 
   return {
     line,
-    col,
+    column,
   };
 }
 
