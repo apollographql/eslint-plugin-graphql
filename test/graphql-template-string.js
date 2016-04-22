@@ -1,45 +1,34 @@
-/**
- * @fileoverview rule
- * @author Sashko Stubailo
- * @copyright 2016 Sashko Stubailo. All rights reserved.
- * See LICENSE file in root directory for full license.
- */
-"use strict";
+const rule = require("../graphql-template-string");
+const RuleTester = require("eslint").RuleTester;
 
-console.log('waht');
+const ruleTester = new RuleTester();
 
-//------------------------------------------------------------------------------
-// Requirements
-//------------------------------------------------------------------------------
+const parserOptions = {
+  "ecmaVersion": 6,
+  "sourceType": "module",
+};
 
-var rule = require("../graphql-template-string"),
-
-    RuleTester = require("eslint").RuleTester;
-
-
-//------------------------------------------------------------------------------
-// Tests
-//------------------------------------------------------------------------------
-
-var ruleTester = new RuleTester();
 ruleTester.run("graphql-template-string", rule, {
+  valid: [
+    // give me some code that won't trigger a warning
+  ],
 
-    valid: [
-
-        // give me some code that won't trigger a warning
-    ],
-
-    invalid: [
-        {
-            parserOptions: {
-              "ecmaVersion": 6,
-              "sourceType": "module"
-            },
-            code: "const x = `{ nonExistentQuery }`",
-            errors: [{
-                message: "Fill me in.",
-                type: "Me too"
-            }]
-        }
-    ]
+  invalid: [
+    {
+      parserOptions,
+      code: "const x = gql`{ ${x} }`",
+      errors: [{
+        message: "Unexpected interpolation in GraphQL template string.",
+        type: "TaggedTemplateExpression"
+      }]
+    },
+    {
+      parserOptions,
+      code: "const x = gql``",
+      errors: [{
+        message: "Syntax Error GraphQL (1:1) Unexpected EOF",
+        type: "TaggedTemplateExpression"
+      }]
+    }
+  ]
 });
