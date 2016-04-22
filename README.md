@@ -1,6 +1,6 @@
 # eslint-plugin-graphql
 
-GraphQL
+GraphQL Test
 
 ## Installation
 
