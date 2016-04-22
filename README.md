@@ -6,9 +6,9 @@ An ESLint plugin that checks tagged template strings against a GraphQL schema.
 npm install eslint-plugin-graphql
 ```
 
-**Coming soon:** Easier tooling so you can just pass a GraphQL server URL.
-
 ![Screenshot from Atom](screenshot.png)
+
+**Coming soon:** You can use it now with the manual approach described below, but we are working on easier tooling so you can just pass a GraphQL server URL.
 
 ### Configuring ESLint
 
