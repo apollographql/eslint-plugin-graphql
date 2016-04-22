@@ -8,6 +8,8 @@ npm install eslint-plugin-graphql
 
 **Coming soon:** Easier tooling so you can just pass a GraphQL server URL.
 
+![Screenshot from Atom](screenshot.png)
+
 ### Configuring ESLint
 
 You'll need to import your [introspection query result](https://github.com/graphql/graphql-js/blob/master/src/utilities/introspectionQuery.js). This can be done if you define your ESLint config in a JS file:
