@@ -1,13 +1,22 @@
 import {
   parse,
   validate,
+  buildClientSchema,
 } from 'graphql';
 
-export function makeRule({
-  schema,
-  tagName = 'gql',
-}) {
-  return function (context) {
+
+const rules = {
+  'graphql-template-strings'(context) {
+    const { schemaJson, tagName = 'gql' } = context.options[0];
+
+    if (! schemaJson) {
+      throw new Error('Must pass in schemaJson option.');
+    }
+
+    const unpackedSchemaJson = schemaJson.data ? schemaJson.data : schemaJson;
+
+    const schema = buildClientSchema(unpackedSchemaJson);
+
     return {
       TaggedTemplateExpression(node) {
         if (node.tag.name !== tagName) {
@@ -70,3 +79,6 @@ function locFrom(node, error) {
     col,
   };
 }
+
+
+export { rules };

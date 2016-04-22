@@ -1,10 +1,13 @@
 import {
   parse,
   buildASTSchema,
+  introspectionQuery,
+  graphql,
 } from 'graphql';
 
-import { makeRule } from '../src';
+import { rules } from '../src';
 import { RuleTester } from 'eslint';
+import schemaJson from './schema.json';
 
 // Set up a fake schema for tests
 
@@ -22,9 +25,7 @@ const schema = buildASTSchema(parse(typeDefinition));
 
 // Init rule
 
-const rule = makeRule({
-  schema,
-});
+const rule = rules['graphql-template-strings'];
 
 // Set up tests
 
@@ -35,79 +36,94 @@ const parserOptions = {
   'sourceType': 'module',
 };
 
-ruleTester.run('default options', rule, {
-  valid: [
-    {
-      parserOptions,
-      code: 'const x = gql`{ number }`',
-    },
-  ],
+{
+  const options = [
+    { schemaJson },
+  ];
 
-  invalid: [
-    {
-      parserOptions,
-      code: 'const x = gql`{ ${x} }`',
-      errors: [{
-        message: 'Unexpected interpolation in GraphQL template string.',
-        type: 'TaggedTemplateExpression'
-      }]
-    },
-    {
-      parserOptions,
-      code: 'const x = gql``',
-      errors: [{
-        message: 'Syntax Error GraphQL (1:1) Unexpected EOF',
-        type: 'TaggedTemplateExpression'
-      }]
-    },
-    {
-      parserOptions,
-      code: 'const x = gql`{ nonExistentQuery }`',
-      errors: [{
-        message: 'Cannot query field "nonExistentQuery" on type "RootQuery".',
-        type: 'TaggedTemplateExpression'
-      }]
-    }
-  ]
-});
+  ruleTester.run('default options', rule, {
+    valid: [
+      {
+        options,
+        parserOptions,
+        code: 'const x = gql`{ number }`',
+      },
+    ],
 
-const customRule = makeRule({
-  schema,
-  tagName: 'myGraphQLTag',
-});
+    invalid: [
+      {
+        options,
+        parserOptions,
+        code: 'const x = gql`{ ${x} }`',
+        errors: [{
+          message: 'Unexpected interpolation in GraphQL template string.',
+          type: 'TaggedTemplateExpression'
+        }]
+      },
+      {
+        options,
+        parserOptions,
+        code: 'const x = gql``',
+        errors: [{
+          message: 'Syntax Error GraphQL (1:1) Unexpected EOF',
+          type: 'TaggedTemplateExpression'
+        }]
+      },
+      {
+        options,
+        parserOptions,
+        code: 'const x = gql`{ nonExistentQuery }`',
+        errors: [{
+          message: 'Cannot query field "nonExistentQuery" on type "RootQuery".',
+          type: 'TaggedTemplateExpression'
+        }]
+      }
+    ]
+  });
+}
 
-ruleTester.run('custom tag name', customRule, {
-  valid: [
-    {
-      parserOptions,
-      code: 'const x = myGraphQLTag`{ number }`',
-    },
-  ],
+{
+  const options = [
+    { schemaJson, tagName: 'myGraphQLTag' },
+  ];
 
-  invalid: [
-    {
-      parserOptions,
-      code: 'const x = myGraphQLTag`{ ${x} }`',
-      errors: [{
-        message: 'Unexpected interpolation in GraphQL template string.',
-        type: 'TaggedTemplateExpression'
-      }]
-    },
-    {
-      parserOptions,
-      code: 'const x = myGraphQLTag``',
-      errors: [{
-        message: 'Syntax Error GraphQL (1:1) Unexpected EOF',
-        type: 'TaggedTemplateExpression'
-      }]
-    },
-    {
-      parserOptions,
-      code: 'const x = myGraphQLTag`{ nonExistentQuery }`',
-      errors: [{
-        message: 'Cannot query field "nonExistentQuery" on type "RootQuery".',
-        type: 'TaggedTemplateExpression'
-      }]
-    }
-  ]
-});
+  ruleTester.run('custom tag name', rule, {
+    valid: [
+      {
+        options,
+        parserOptions,
+        code: 'const x = myGraphQLTag`{ number }`',
+      },
+    ],
+
+    invalid: [
+      {
+        options,
+        parserOptions,
+        code: 'const x = myGraphQLTag`{ ${x} }`',
+        errors: [{
+          message: 'Unexpected interpolation in GraphQL template string.',
+          type: 'TaggedTemplateExpression'
+        }]
+      },
+      {
+        options,
+        parserOptions,
+        code: 'const x = myGraphQLTag``',
+        errors: [{
+          message: 'Syntax Error GraphQL (1:1) Unexpected EOF',
+          type: 'TaggedTemplateExpression'
+        }]
+      },
+      {
+        options,
+        parserOptions,
+        code: 'const x = myGraphQLTag`{ nonExistentQuery }`',
+        errors: [{
+          message: 'Cannot query field "nonExistentQuery" on type "RootQuery".',
+          type: 'TaggedTemplateExpression'
+        }]
+      }
+    ]
+  });
+}
