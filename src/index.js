@@ -6,7 +6,7 @@ import {
 
 
 const rules = {
-  'graphql-template-strings'(context) {
+  'template-strings'(context) {
     const { schemaJson, tagName = 'gql' } = context.options[0];
 
     if (! schemaJson) {

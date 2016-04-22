@@ -25,7 +25,7 @@ const schema = buildASTSchema(parse(typeDefinition));
 
 // Init rule
 
-const rule = rules['graphql-template-strings'];
+const rule = rules['template-strings'];
 
 // Set up tests
 
