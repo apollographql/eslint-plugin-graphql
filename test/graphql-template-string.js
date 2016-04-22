@@ -10,7 +10,10 @@ const parserOptions = {
 
 ruleTester.run('graphql-template-string', rule, {
   valid: [
-    // give me some code that won't trigger a warning
+    {
+      parserOptions,
+      code: 'const x = gql`{ number }`',
+    },
   ],
 
   invalid: [
