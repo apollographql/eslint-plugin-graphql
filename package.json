@@ -10,7 +10,8 @@
   "author": "Sashko Stubailo",
   "main": "lib/index.js",
   "scripts": {
-    "test": "mocha test/index.js"
+    "test": "mocha test/index.js",
+    "prepublish": "babel ./src --ignore test --out-dir ./lib"
   },
   "devDependencies": {
     "babel": "^6.5.2",

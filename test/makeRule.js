@@ -3,7 +3,7 @@ import {
   buildASTSchema,
 } from 'graphql';
 
-import { makeRule } from '../graphql-template-string';
+import { makeRule } from '../src';
 import { RuleTester } from 'eslint';
 
 // Set up a fake schema for tests
