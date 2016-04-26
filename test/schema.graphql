@@ -5,6 +5,7 @@ schema {
 type RootQuery {
   number: Int
   allFilms: AllFilmsObj
+  sum(a: Int, b: Int): Int
 }
 
 type AllFilmsObj {
@@ -13,4 +14,6 @@ type AllFilmsObj {
 
 type Film {
   title: String
+  director: String
+  releaseDate: String
 }

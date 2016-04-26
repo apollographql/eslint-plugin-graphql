@@ -13,8 +13,8 @@ const graphQLValidationRuleNames = [
   'ScalarLeafs',
   'FieldsOnCorrectType',
   'UniqueFragmentNames',
-  //'KnownFragmentNames',
-  'NoUnusedFragments',
+  //'KnownFragmentNames', -> any interpolation
+  //'NoUnusedFragments', -> any standalone fragment
   'PossibleFragmentSpreads',
   'NoFragmentCycles',
   'UniqueVariableNames',
@@ -57,7 +57,14 @@ const rules = {
           return;
         }
 
-        const text = replaceExpressions(node.quasi);
+        let text = replaceExpressions(node.quasi);
+
+        // XXX special case for Lokka automatic fragment naming
+        let fragmentNum = 1;
+        if (/fragment\s+on/.test(text)) {
+          text = text.replace('fragment', `fragment ${'a' + fragmentNum}`);
+          fragmentNum++;
+        }
 
         let ast;
 
@@ -96,7 +103,7 @@ function locFrom(node, error) {
     line = node.loc.start.line;
     column = node.loc.start.col + location.col;
   } else {
-    line = node.loc.start.line + location.line - 1;
+    line = node.loc.start.line + location.line;
     column = location.column - 1;
   }
 
@@ -130,12 +137,17 @@ function replaceExpressions(node) {
       } else {
         // Otherwise this interpolation is a fragment
 
-        // Ellipsis cancels out extra characters
-        const placeholder = strWithLen(nameLength)
-        chunks.push('...' + placeholder);
+        if (/...\s*$/.test(chunk)) {
+          // This is Lokka-style fragment interpolation where you actually type the '...' yourself
+          const placeholder = strWithLen(nameLength + 3);
+          chunks.push(placeholder);
+        } else {
+          // This is Relay-style fragment interpolation where you don't type '...'
+          // Ellipsis cancels out extra characters
+          const placeholder = strWithLen(nameLength);
+          chunks.push('...' + placeholder);
+        }
       }
-
-      // XXX support Lokka interpolation
     }
   });
 
