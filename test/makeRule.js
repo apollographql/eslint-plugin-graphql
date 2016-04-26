@@ -27,11 +27,6 @@ const parserOptions = {
         parserOptions,
         code: 'const x = gql`{ number }`',
       },
-      {
-        options,
-        parserOptions,
-        code: 'const x = gql`{ ${x} }`',
-      },
     ],
 
     invalid: [
@@ -53,7 +48,16 @@ const parserOptions = {
           message: 'Cannot query field "nonExistentQuery" on type "RootQuery".',
           type: 'TaggedTemplateExpression'
         }]
-      }
+      },
+      {
+        options,
+        parserOptions,
+        code: 'const x = gql`{ ${x} }`',
+        errors: [{
+          message: 'Invalid interpolation - not a valid fragment or variable.',
+          type: 'Identifier'
+        }]
+      },
     ]
   });
 }
@@ -69,11 +73,6 @@ const parserOptions = {
         options,
         parserOptions,
         code: 'const x = myGraphQLTag`{ number }`',
-      },
-      {
-        options,
-        parserOptions,
-        code: 'const x = myGraphQLTag`{ ${x} }`',
       },
     ],
 
@@ -95,14 +94,23 @@ const parserOptions = {
           message: 'Cannot query field "nonExistentQuery" on type "RootQuery".',
           type: 'TaggedTemplateExpression'
         }]
-      }
+      },
+      {
+        options,
+        parserOptions,
+        code: 'const x = myGraphQLTag`{ ${x} }`',
+        errors: [{
+          type: 'Identifier',
+          message: 'Invalid interpolation - not a valid fragment or variable.'
+        }]
+      },
     ]
   });
 }
 
 {
   const options = [
-    { schemaJson },
+    { schemaJson, env: 'lokka' },
   ];
 
   ruleTester.run('lokka', rule, {
@@ -244,7 +252,7 @@ const parserOptions = {
   const options = [
     {
       schemaJson,
-      tagName: 'Relay.QL'
+      env: 'relay',
     },
   ];
 

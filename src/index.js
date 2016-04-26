@@ -37,7 +37,13 @@ const graphQLValidationRules = graphQLValidationRuleNames.map((ruleName) => {
 
 const rules = {
   'template-strings'(context) {
-    const { schemaJson, tagName = 'gql' } = context.options[0];
+    const {
+      schemaJson,
+      env,
+      tagName: tagNameOption,
+    } = context.options[0];
+
+    // Validate and unpack schema
 
     if (! schemaJson) {
       throw new Error('Must pass in schemaJson option.');
@@ -47,6 +53,21 @@ const rules = {
 
     if (! unpackedSchemaJson.__schema) {
       throw new Error('Please pass a valid GraphQL introspection query result.');
+    }
+
+    // Validate env
+    if (env && env !== 'lokka' && env !== 'relay' && env !== 'apollo') {
+      throw new Error('Invalid option for env, only `apollo`, `lokka`, and `relay` supported.')
+    }
+
+    // Validate tagName and set default
+    let tagName;
+    if (tagNameOption) {
+      tagName = tagNameOption;
+    } else if (env === 'relay') {
+      tagName = 'Relay.QL';
+    } else {
+      tagName = 'gql';
     }
 
     const schema = buildClientSchema(unpackedSchemaJson);
@@ -67,13 +88,21 @@ const rules = {
           }
         }
 
-        let text = replaceExpressions(node.quasi);
+        let text;
+        try {
+          text = replaceExpressions(node.quasi, context, env);
+        } catch (e) {
+          if (e.message !== 'Invalid interpolation') {
+            console.log(e);
+          }
 
-        // XXX special case for Lokka automatic fragment naming
-        let fragmentNum = 1;
-        if (/fragment\s+on/.test(text)) {
-          text = text.replace('fragment', `fragment ${'a' + fragmentNum}`);
-          fragmentNum++;
+          return;
+        }
+
+        // Re-implement syntax sugar for fragment names, which is technically not valid
+        // graphql
+        if ((env === 'lokka' || env === 'relay') && /fragment\s+on/.test(text)) {
+          text = text.replace('fragment', `fragment _`);
         }
 
         let ast;
@@ -123,7 +152,7 @@ function locFrom(node, error) {
   };
 }
 
-function replaceExpressions(node) {
+function replaceExpressions(node, context, env) {
   const chunks = [];
 
   node.quasis.forEach((element, i) => {
@@ -137,26 +166,29 @@ function replaceExpressions(node) {
       // Preserve location of errors by replacing with exactly the same length
       const nameLength = value.end - value.start;
 
-      if (/:\s*$/.test(chunk)) {
+      if (env === 'relay' && /:\s*$/.test(chunk)) {
         // The chunk before this one had a colon at the end, so this
         // is a variable
 
         // Add 2 for brackets in the interpolation
         const placeholder = strWithLen(nameLength + 2)
         chunks.push('$' + placeholder);
+      } else if (env === 'lokka' && /\.\.\.\s*$/.test(chunk)) {
+        // This is Lokka-style fragment interpolation where you actually type the '...' yourself
+        const placeholder = strWithLen(nameLength + 3);
+        chunks.push(placeholder);
+      } else if (env === 'relay') {
+        // This is Relay-style fragment interpolation where you don't type '...'
+        // Ellipsis cancels out extra characters
+        const placeholder = strWithLen(nameLength);
+        chunks.push('...' + placeholder);
       } else {
-        // Otherwise this interpolation is a fragment
-
-        if (/\.\.\.\s*$/.test(chunk)) {
-          // This is Lokka-style fragment interpolation where you actually type the '...' yourself
-          const placeholder = strWithLen(nameLength + 3);
-          chunks.push(placeholder);
-        } else {
-          // This is Relay-style fragment interpolation where you don't type '...'
-          // Ellipsis cancels out extra characters
-          const placeholder = strWithLen(nameLength);
-          chunks.push('...' + placeholder);
-        }
+        // Invalid interpolation
+        context.report({
+          node: value,
+          message: 'Invalid interpolation - not a valid fragment or variable.',
+        });
+        throw new Error('Invalid interpolation');
       }
     }
   });
