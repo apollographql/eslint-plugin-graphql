@@ -1,27 +1,6 @@
-import {
-  parse,
-  buildASTSchema,
-  introspectionQuery,
-  graphql,
-} from 'graphql';
-
 import { rules } from '../src';
 import { RuleTester } from 'eslint';
 import schemaJson from './schema.json';
-
-// Set up a fake schema for tests
-
-const typeDefinition = `
-  schema {
-    query: RootQuery
-  }
-
-  type RootQuery {
-    number: Int
-  }
-`;
-
-const schema = buildASTSchema(parse(typeDefinition));
 
 // Init rule
 
@@ -48,18 +27,15 @@ const parserOptions = {
         parserOptions,
         code: 'const x = gql`{ number }`',
       },
-    ],
-
-    invalid: [
       {
         options,
         parserOptions,
         code: 'const x = gql`{ ${x} }`',
-        errors: [{
-          message: 'Unexpected interpolation in GraphQL template string.',
-          type: 'TaggedTemplateExpression'
-        }]
       },
+    ],
+
+    invalid: [
+
       {
         options,
         parserOptions,
@@ -94,18 +70,14 @@ const parserOptions = {
         parserOptions,
         code: 'const x = myGraphQLTag`{ number }`',
       },
-    ],
-
-    invalid: [
       {
         options,
         parserOptions,
         code: 'const x = myGraphQLTag`{ ${x} }`',
-        errors: [{
-          message: 'Unexpected interpolation in GraphQL template string.',
-          type: 'TaggedTemplateExpression'
-        }]
       },
+    ],
+
+    invalid: [
       {
         options,
         parserOptions,

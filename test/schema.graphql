@@ -1,0 +1,7 @@
+schema {
+  query: RootQuery
+}
+
+type RootQuery {
+  number: Int
+}
