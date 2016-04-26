@@ -248,6 +248,9 @@ const parserOptions = {
     },
   ];
 
+  // Need this to support statics
+  const parser = 'babel-eslint';
+
   ruleTester.run('relay', rule, {
     valid: [
       `
@@ -260,8 +263,22 @@ const parserOptions = {
             \`,
           }
         });
+      `,
       `
-    ].map((code) => ({ options, parserOptions, code })),
+        class HelloRoute extends Relay.Route {
+          static routeName = 'Hello';  // A unique name
+          static queries = {
+            greetings: (Component) => Relay.QL\`
+              query GreetingsQuery {
+                greetings {
+                  \${Component.getFragment('greetings')},
+                },
+              }
+            \`,
+          };
+        }
+      `
+    ].map((code) => ({ options, parser, code })),
 
     invalid: []
   });

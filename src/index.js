@@ -147,7 +147,7 @@ function replaceExpressions(node) {
       } else {
         // Otherwise this interpolation is a fragment
 
-        if (/...\s*$/.test(chunk)) {
+        if (/\.\.\.\s*$/.test(chunk)) {
           // This is Lokka-style fragment interpolation where you actually type the '...' yourself
           const placeholder = strWithLen(nameLength + 3);
           chunks.push(placeholder);
