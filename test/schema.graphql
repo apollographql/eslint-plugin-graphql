@@ -4,4 +4,13 @@ schema {
 
 type RootQuery {
   number: Int
+  allFilms: AllFilmsObj
+}
+
+type AllFilmsObj {
+  films: [Film]
+}
+
+type Film {
+  title: String
 }

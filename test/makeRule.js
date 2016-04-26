@@ -99,3 +99,58 @@ const parserOptions = {
     ]
   });
 }
+
+{
+  const options = [
+    { schemaJson },
+  ];
+
+  ruleTester.run('lokka', rule, {
+    valid: [
+      {
+        options,
+        parserOptions,
+        code: `
+          client.query(gql\`
+              {
+                allFilms {
+                  films {
+                    title
+                  }
+                }
+              }
+          \`).then(result => {
+              console.log(result.allFilms);
+          });
+        `,
+      },
+      {
+        options,
+        parserOptions,
+        code: 'const x = gql`{ ${x} }`',
+      },
+    ],
+
+    invalid: [
+
+      {
+        options,
+        parserOptions,
+        code: 'const x = gql``',
+        errors: [{
+          message: 'Syntax Error GraphQL (1:1) Unexpected EOF',
+          type: 'TaggedTemplateExpression'
+        }]
+      },
+      {
+        options,
+        parserOptions,
+        code: 'const x = gql`{ nonExistentQuery }`',
+        errors: [{
+          message: 'Cannot query field "nonExistentQuery" on type "RootQuery".',
+          type: 'TaggedTemplateExpression'
+        }]
+      }
+    ]
+  });
+}
