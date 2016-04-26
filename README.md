@@ -83,7 +83,7 @@ module.exports = {
       // Import your schema JSON here
       schemaJson: require('./schema.json'),
 
-      // Optional, the name of the template tag, defaults to 'gql' for
+      // Optional, the name of the template tag, defaults to 'gql'
       tagName: 'gql'
     }]
   },
