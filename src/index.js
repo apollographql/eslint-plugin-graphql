@@ -24,7 +24,7 @@ const graphQLValidationRuleNames = [
   'KnownArgumentNames',
   'UniqueArgumentNames',
   'ArgumentsOfCorrectType',
-  'ProvidedNonNullArguments',
+  //'ProvidedNonNullArguments', -> arguments aren't provided in Relay apparently
   'DefaultValuesOfCorrectType',
   'VariablesInAllowedPosition',
   'OverlappingFieldsCanBeMerged',
