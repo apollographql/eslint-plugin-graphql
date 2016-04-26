@@ -20,6 +20,31 @@ Supports three GraphQL clients out of the box:
 
 You'll need to import your [introspection query result](https://github.com/graphql/graphql-js/blob/master/src/utilities/introspectionQuery.js). This can be done if you define your ESLint config in a JS file.
 
+### Identity template literal tag
+
+This plugin relies on GraphQL queries being prefixed with a special tag. In Relay, this is always done, but other clients like just take normal template literals without a tag. In this case, define an identity tag that doesn't do anything except for tell the linter this is a GraphQL query:
+
+```js
+global.gql = (literals, ...substitutions) => {
+    let result = "";
+
+    // run the loop only for the substitution count
+    for (let i = 0; i < substitutions.length; i++) {
+        result += literals[i];
+        result += substitutions[i];
+    }
+
+    // add the last literal
+    result += literals[literals.length - 1];
+
+    return result;
+}
+```
+
+Code snippet taken from:  <https://leanpub.com/understandinges6/read#leanpub-auto-multiline-strings>
+
+Note: the linter rule could be extended to identify calls to various specific APIs to eliminate the need for a template literal tag, but this might just make the implementation a lot more complex for little benefit.
+
 ### Example config for Apollo
 
 ```js
@@ -92,26 +117,3 @@ module.exports = {
   ]
 }
 ```
-
-### Identity template literal tag
-
-This plugin relies on GraphQL queries being prefixed with a special tag. In Relay, this is always done, but other clients like just take normal template literals without a tag. In this case, define an identity tag that doesn't do anything except for tell the linter this is a GraphQL query:
-
-```js
-global.gql = (literals, ...substitutions) => {
-    let result = "";
-
-    // run the loop only for the substitution count
-    for (let i = 0; i < substitutions.length; i++) {
-        result += literals[i];
-        result += substitutions[i];
-    }
-
-    // add the last literal
-    result += literals[literals.length - 1];
-
-    return result;
-}
-```
-
-Code snippet taken from:  <https://leanpub.com/understandinges6/read#leanpub-auto-multiline-strings>
