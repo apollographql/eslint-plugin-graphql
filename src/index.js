@@ -10,7 +10,7 @@ const graphQLValidationRuleNames = [
   'KnownTypeNames',
   'FragmentsOnCompositeTypes',
   'VariablesAreInputTypes',
-  'ScalarLeafs',
+  //'ScalarLeafs', XXX only for Relay!
   'FieldsOnCorrectType',
   'UniqueFragmentNames',
   //'KnownFragmentNames', -> any interpolation

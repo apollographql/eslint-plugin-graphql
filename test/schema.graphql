@@ -1,5 +1,14 @@
 schema {
   query: RootQuery
+  mutation: RootMutation
+}
+
+type RootMutation {
+  createComment: CreateCommentPayload
+}
+
+type CreateCommentPayload {
+  story: Story
 }
 
 type RootQuery {
@@ -21,4 +30,13 @@ type Film {
 
 type Greetings {
   hello: String
+}
+
+type Story {
+  id: ID
+  comments: [Comment]
+}
+
+type Comment {
+  text: String
 }
