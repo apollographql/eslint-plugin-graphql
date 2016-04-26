@@ -6,7 +6,8 @@
   "main": "lib/index.js",
   "scripts": {
     "test": "mocha test/index.js",
-    "prepublish": "babel ./src --ignore test --out-dir ./lib"
+    "prepublish": "babel ./src --ignore test --out-dir ./lib",
+    "pretest": "node test/updateSchemaJson.js"
   },
   "devDependencies": {
     "babel": "^6.5.2",

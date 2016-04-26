@@ -4,6 +4,36 @@ import {
   buildClientSchema,
 } from 'graphql';
 
+const graphQLValidationRuleNames = [
+  'UniqueOperationNames',
+  'LoneAnonymousOperation',
+  'KnownTypeNames',
+  'FragmentsOnCompositeTypes',
+  'VariablesAreInputTypes',
+  'ScalarLeafs',
+  'FieldsOnCorrectType',
+  'UniqueFragmentNames',
+  //'KnownFragmentNames',
+  'NoUnusedFragments',
+  'PossibleFragmentSpreads',
+  'NoFragmentCycles',
+  'UniqueVariableNames',
+  'NoUndefinedVariables',
+  'NoUnusedVariables',
+  'KnownDirectives',
+  'KnownArgumentNames',
+  'UniqueArgumentNames',
+  'ArgumentsOfCorrectType',
+  'ProvidedNonNullArguments',
+  'DefaultValuesOfCorrectType',
+  'VariablesInAllowedPosition',
+  'OverlappingFieldsCanBeMerged',
+  'UniqueInputFieldNames',
+];
+
+const graphQLValidationRules = graphQLValidationRuleNames.map((ruleName) => {
+  return require(`graphql/validation/rules/${ruleName}`)[ruleName];
+});
 
 const rules = {
   'template-strings'(context) {
@@ -27,16 +57,7 @@ const rules = {
           return;
         }
 
-        if (node.quasi.quasis.length > 1) {
-          context.report({
-            node,
-            message: 'Unexpected interpolation in GraphQL template string.',
-          });
-
-          return;
-        }
-
-        const text = node.quasi.quasis[0].value.cooked;
+        const text = replaceExpressions(node.quasi);
 
         let ast;
 
@@ -51,7 +72,7 @@ const rules = {
           return;
         }
 
-        const validationErrors = schema ? validate(schema, ast) : [];
+        const validationErrors = schema ? validate(schema, ast, graphQLValidationRules) : [];
 
         if (validationErrors && validationErrors.length > 0) {
           context.report({
@@ -85,5 +106,45 @@ function locFrom(node, error) {
   };
 }
 
+function replaceExpressions(node) {
+  const chunks = [];
+
+  node.quasis.forEach((element, i) => {
+    const chunk = element.value.cooked;
+
+    chunks.push(chunk);
+
+    if (!element.tail) {
+      const value = node.expressions[i];
+
+      // Preserve location of errors by replacing with exactly the same length
+      const nameLength = value.end - value.start;
+
+      if (/:\s*$/.test(chunk)) {
+        // The chunk before this one had a colon at the end, so this
+        // is a variable
+
+        // Add 2 for brackets in the interpolation
+        const placeholder = strWithLen(nameLength + 2)
+        chunks.push('$' + placeholder);
+      } else {
+        // Otherwise this interpolation is a fragment
+
+        // Ellipsis cancels out extra characters
+        const placeholder = strWithLen(nameLength)
+        chunks.push('...' + placeholder);
+      }
+
+      // XXX support Lokka interpolation
+    }
+  });
+
+  return chunks.join('').trim();
+}
+
+function strWithLen(len) {
+  // from http://stackoverflow.com/questions/14343844/create-a-string-of-variable-length-filled-with-a-repeated-character
+  return new Array(len + 1).join( 'x' );
+}
 
 export { rules };
