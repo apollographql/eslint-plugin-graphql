@@ -92,3 +92,26 @@ module.exports = {
   ]
 }
 ```
+
+### Identity template literal tag
+
+This plugin relies on GraphQL queries being prefixed with a special tag. In Relay, this is always done, but other clients like just take normal template literals without a tag. In this case, define an identity tag that doesn't do anything except for tell the linter this is a GraphQL query:
+
+```js
+global.gql = (literals, ...substitutions) => {
+    let result = "";
+
+    // run the loop only for the substitution count
+    for (let i = 0; i < substitutions.length; i++) {
+        result += literals[i];
+        result += substitutions[i];
+    }
+
+    // add the last literal
+    result += literals[literals.length - 1];
+
+    return result;
+}
+```
+
+Code snippet taken from:  <https://leanpub.com/understandinges6/read#leanpub-auto-multiline-strings>
