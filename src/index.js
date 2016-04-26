@@ -4,13 +4,17 @@ import {
   buildClientSchema,
 } from 'graphql';
 
+import {
+  without,
+} from 'lodash';
+
 const graphQLValidationRuleNames = [
   'UniqueOperationNames',
   'LoneAnonymousOperation',
   'KnownTypeNames',
   'FragmentsOnCompositeTypes',
   'VariablesAreInputTypes',
-  //'ScalarLeafs', XXX only for Relay!
+  'ScalarLeafs',
   'FieldsOnCorrectType',
   'UniqueFragmentNames',
   //'KnownFragmentNames', -> any interpolation
@@ -24,14 +28,24 @@ const graphQLValidationRuleNames = [
   'KnownArgumentNames',
   'UniqueArgumentNames',
   'ArgumentsOfCorrectType',
-  //'ProvidedNonNullArguments', -> arguments aren't provided in Relay apparently
+  'ProvidedNonNullArguments',
   'DefaultValuesOfCorrectType',
   'VariablesInAllowedPosition',
   'OverlappingFieldsCanBeMerged',
   'UniqueInputFieldNames',
 ];
 
+// Omit these rules when in Relay env
+const relayRuleNames = without(graphQLValidationRuleNames,
+  'ScalarLeafs',
+  'ProvidedNonNullArguments',
+);
+
 const graphQLValidationRules = graphQLValidationRuleNames.map((ruleName) => {
+  return require(`graphql/validation/rules/${ruleName}`)[ruleName];
+});
+
+const relayGraphQLValidationRules = relayRuleNames.map((ruleName) => {
   return require(`graphql/validation/rules/${ruleName}`)[ruleName];
 });
 
@@ -118,7 +132,9 @@ const rules = {
           return;
         }
 
-        const validationErrors = schema ? validate(schema, ast, graphQLValidationRules) : [];
+        const rules = (env === 'relay' ? relayGraphQLValidationRules : graphQLValidationRules);
+
+        const validationErrors = schema ? validate(schema, ast, rules) : [];
 
         if (validationErrors && validationErrors.length > 0) {
           context.report({

@@ -4,7 +4,11 @@ schema {
 }
 
 type RootMutation {
-  createComment: CreateCommentPayload
+  createComment(input: CreateCommentInput): CreateCommentPayload
+}
+
+input CreateCommentInput {
+  stuff: String
 }
 
 type CreateCommentPayload {
