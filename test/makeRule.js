@@ -239,3 +239,30 @@ const parserOptions = {
     ]
   });
 }
+
+{
+  const options = [
+    {
+      schemaJson,
+      tagName: 'Relay.QL'
+    },
+  ];
+
+  ruleTester.run('relay', rule, {
+    valid: [
+      `
+        HelloApp = Relay.createContainer(HelloApp, {
+          fragments: {
+            greetings: () => Relay.QL\`
+              fragment on Greetings {
+                hello,
+              }
+            \`,
+          }
+        });
+      `
+    ].map((code) => ({ options, parserOptions, code })),
+
+    invalid: []
+  });
+}

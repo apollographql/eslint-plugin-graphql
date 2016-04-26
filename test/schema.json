@@ -945,6 +945,29 @@
             }
           ],
           "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "Greetings",
+          "description": null,
+          "fields": [
+            {
+              "name": "hello",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "enumValues": null,
+          "possibleTypes": null
         }
       ],
       "directives": []

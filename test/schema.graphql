@@ -17,3 +17,7 @@ type Film {
   director: String
   releaseDate: String
 }
+
+type Greetings {
+  hello: String
+}
