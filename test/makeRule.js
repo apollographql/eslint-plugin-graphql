@@ -262,6 +262,18 @@ const parserOptions = {
   ruleTester.run('relay', rule, {
     valid: [
       `
+        @relay({
+          fragments: {
+            greetings: () => Relay.QL\`
+              fragment on Greetings {
+                hello,
+              }
+            \`,
+          }
+        })
+        class HelloApp extends React.Component {}
+      `,
+      `
         HelloApp = Relay.createContainer(HelloApp, {
           fragments: {
             greetings: () => Relay.QL\`
@@ -328,6 +340,29 @@ const parserOptions = {
       `
     ].map((code) => ({ options, parser, code })),
 
-    invalid: []
+    invalid: [
+      {
+        options,
+        parser,
+        code: `
+          @relay({
+            fragments: {
+              greetings: () => Relay.QL\`
+                fragment on Greetings {
+                  hellox,
+                }
+              \`,
+            }
+          })
+          class HelloApp extends React.Component {}
+        `,
+        errors: [{
+          message: 'Cannot query field "hellox" on type "Greetings".',
+          type: 'TaggedTemplateExpression',
+          line: 6,
+          column: 19
+        }]
+      },
+    ]
   });
 }
