@@ -39,6 +39,7 @@ const graphQLValidationRuleNames = [
 const relayRuleNames = without(graphQLValidationRuleNames,
   'ScalarLeafs',
   'ProvidedNonNullArguments',
+  'KnownDirectives',
 );
 
 const graphQLValidationRules = graphQLValidationRuleNames.map((ruleName) => {

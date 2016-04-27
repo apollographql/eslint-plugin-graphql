@@ -315,6 +315,16 @@ const parserOptions = {
             return { text: this.props.text };
           }
         }
+      `,
+      `
+        Relay.QL\`fragment on CreateEventPayload @relay(pattern: true) {
+          viewer {
+            events
+          }
+          user {
+            events
+          }
+        }\`
       `
     ].map((code) => ({ options, parser, code })),
 

@@ -15,6 +15,15 @@ type CreateCommentPayload {
   story: Story
 }
 
+type CreateEventPayload {
+  viewer: User
+  user: User
+}
+
+type User {
+  events: [String]
+}
+
 type RootQuery {
   number: Int
   allFilms: AllFilmsObj
