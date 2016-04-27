@@ -1,5 +1,11 @@
 # eslint-plugin-graphql
 
+[![npm version](https://badge.fury.io/js/eslint-plugin-graphql.svg)](https://badge.fury.io/js/eslint-plugin-graphql)
+
+[![Build Status](https://travis-ci.org/apollostack/eslint-plugin-graphql.svg?branch=master)](https://travis-ci.org/apollostack/eslint-plugin-graphql)
+
+[![Get on Slack](http://slack.apollostack.com/badge.svg)](http://slack.apollostack.com/)
+
 An ESLint plugin that checks tagged template strings against a GraphQL schema.
 
 ```
