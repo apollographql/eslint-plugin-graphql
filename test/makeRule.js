@@ -363,6 +363,65 @@ const parserOptions = {
           column: 19
         }]
       },
-    ]
+
+      // Example from issue report:
+      // https://github.com/apollostack/eslint-plugin-graphql/issues/12#issuecomment-215445880
+      {
+        options,
+        parser,
+        code: `
+          import React, { Component, View } from 'react-native';
+          import Relay from 'react-relay';
+
+          @relay({
+            fragments: {
+              user: () => Relay.QL\`
+                fragment on PublicUser {
+                  fullName
+                  nonExistentField
+                }
+              \`
+            }
+          })
+          class Example extends Component {
+            render() {
+              return <View/>;
+            }
+          }
+
+          class AnotherExample extends Component {
+            render() {
+              return <View/>;
+            }
+          }
+
+          Relay.createContainer(
+            AnotherExample,
+            {
+              fragments: {
+                user: () => Relay.QL\`
+                  fragment on PublicUser {
+                    fullName
+                    nonExistentField
+                  }
+                \`
+              }
+            }
+          );
+        `,
+        errors: [
+          {
+            message: 'Cannot query field "nonExistentField" on type "PublicUser".',
+            line: 10,
+            column: 19,
+          },
+          {
+            message: 'Cannot query field "nonExistentField" on type "PublicUser".',
+            line: 34,
+            column: 21,
+          },
+        ],
+      },
+    ],
   });
 }

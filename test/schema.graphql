@@ -53,3 +53,7 @@ type Story {
 type Comment {
   text: String
 }
+
+type PublicUser {
+  fullName: String
+}
