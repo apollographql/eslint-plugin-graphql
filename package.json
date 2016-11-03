@@ -1,6 +1,6 @@
 {
   "name": "eslint-plugin-graphql",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "GraphQL ESLint plugin.",
   "author": "Sashko Stubailo",
   "main": "lib/index.js",
@@ -12,7 +12,7 @@
   "homepage": "https://github.com/apollostack/eslint-plugin-graphql",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/apollostack/eslint-plugin-graphql.git" 
+    "url": "git+https://github.com/apollostack/eslint-plugin-graphql.git"
   },
   "devDependencies": {
     "babel": "^6.5.2",
