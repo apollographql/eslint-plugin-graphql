@@ -64,6 +64,9 @@ module.exports = {
       // Import your schema JSON here
       schemaJson: require('./schema.json'),
 
+      // OR provide absolute path to your schema JSON
+      // schemaJsonFilepath: path.resolve(__dirname, './schema.json'),
+
       // tagName is gql by default
     }]
   },
@@ -88,6 +91,9 @@ module.exports = {
       // Import your schema JSON here
       schemaJson: require('./schema.json'),
 
+      // OR provide absolute path to your schema JSON
+      // schemaJsonFilepath: path.resolve(__dirname, './schema.json'),
+
       // tagName is set for you to Relay.QL
     }]
   },
@@ -111,6 +117,9 @@ module.exports = {
 
       // Import your schema JSON here
       schemaJson: require('./schema.json'),
+
+      // OR provide absolute path to your schema JSON
+      // schemaJsonFilepath: path.resolve(__dirname, './schema.json'),
 
       // Optional, the name of the template tag, defaults to 'gql'
       tagName: 'gql'
