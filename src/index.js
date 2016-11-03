@@ -54,21 +54,33 @@ const relayGraphQLValidationRules = relayRuleNames.map((ruleName) => {
 const rules = {
   'template-strings'(context) {
     const {
-      schemaJson,
+      schemaJson, // Schema via JSON object
+      schemaJsonFilepath, // Or Schema via absolute filepath
       env,
       tagName: tagNameOption,
     } = context.options[0];
 
     // Validate and unpack schema
-
-    if (! schemaJson) {
-      throw new Error('Must pass in schemaJson option.');
+    function initSchema(json) {
+      const unpackedSchemaJson = json.data ? json.data : json;
+      if (! unpackedSchemaJson.__schema) {
+        throw new Error('Please pass a valid GraphQL introspection query result.');
+      }
+      return buildClientSchema(unpackedSchemaJson);
     }
 
-    const unpackedSchemaJson = schemaJson.data ? schemaJson.data : schemaJson;
+    function initSchemaFromFile(jsonFile) {
+      return initSchema(JSON.parse(fs.readFileSync(jsonFile, 'utf8')));
+    }
 
-    if (! unpackedSchemaJson.__schema) {
-      throw new Error('Please pass a valid GraphQL introspection query result.');
+    let schema;
+    if (schemaJson) {
+      schema = initSchema(schemaJson);
+    } else if(schemaJsonFilepath) {
+      schema = initSchemaFromFile(schemaJsonFilepath);
+    } else {
+      throw new Error('Must pass in `schemaJson` option with schema object '
+                    + 'or `schemaJsonFilepath` with absolute path to the json file.');
     }
 
     // Validate env
@@ -85,8 +97,6 @@ const rules = {
     } else {
       tagName = 'gql';
     }
-
-    const schema = buildClientSchema(unpackedSchemaJson);
 
     return {
       TaggedTemplateExpression(node) {
