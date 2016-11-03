@@ -9,6 +9,11 @@
     "prepublish": "babel ./src --ignore test --out-dir ./lib",
     "pretest": "node test/updateSchemaJson.js"
   },
+  "homepage": "https://github.com/apollostack/eslint-plugin-graphql",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/apollostack/eslint-plugin-graphql.git" 
+  },
   "devDependencies": {
     "babel": "^6.5.2",
     "babel-cli": "^6.7.7",
