@@ -1,6 +1,9 @@
 import { rules } from '../src';
 import { RuleTester } from 'eslint';
 import schemaJson from './schema.json';
+import path from 'path';
+
+const schemaJsonFilepath = path.resolve(__dirname, './schema.json');
 
 // Init rule
 
@@ -423,5 +426,33 @@ const parserOptions = {
         ],
       },
     ],
+  });
+}
+
+{
+  const options = [
+    { schemaJsonFilepath, tagName: 'absolute' },
+  ];
+
+  ruleTester.run('schema by absolute path', rule, {
+    valid: [
+      {
+        options,
+        parserOptions,
+        code: 'const x = absolute`{ number, sum(a: 1, b: 1) }`',
+      },
+    ],
+
+    invalid: [
+      {
+        options,
+        parserOptions,
+        code: 'const x = absolute`{ nonExistentQuery }`',
+        errors: [{
+          message: 'Cannot query field "nonExistentQuery" on type "RootQuery".',
+          type: 'TaggedTemplateExpression'
+        }]
+      }
+    ]
   });
 }
