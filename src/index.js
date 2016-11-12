@@ -103,11 +103,15 @@ const rules = {
       TaggedTemplateExpression(node) {
         const tagNameSegments = tagName.split('.').length;
         if (node.tag.type === 'Identifier') {
+          //if the developer uses a single identifier : gql`...`
           if (tagNameSegments === 1) {
+            //check if it's different than the one provided in the options
             if (node.tag.name !== tagName) {
+              //skip rule checking
               return;
             }
           }else if(tagNameSegments === 2){
+            //Identifier can't be equal to a MemberExpression
             return;
           }
         }else if( node.tag.type === 'MemberExpression'){
