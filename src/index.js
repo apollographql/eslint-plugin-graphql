@@ -6,6 +6,8 @@ import {
 } from 'graphql';
 
 import {
+  flatten,
+  keys,
   without,
 } from 'lodash';
 
@@ -230,4 +232,26 @@ function strWithLen(len) {
   return new Array(len + 1).join( 'x' );
 }
 
-export { rules };
+const gqlProcessor = {
+    preprocess: function(text, filename) {
+        // we can not check for settings here
+        // so sadly we have to stick with a fixed tag
+        return [
+            `gql\`${text}\``,
+        ];
+    },
+    postprocess: function(messages, filename) {
+        // filter all messages against graphql/${Oject.keys(rules)}
+        return flatten(messages).filter((message) => {
+            return keys(rules).map((key) => `graphql/${key}`).includes(message.ruleId);
+        })
+    }
+}
+
+module.exports = {
+    rules,
+    processors: {
+        ".gql": gqlProcessor,
+        ".graphql": gqlProcessor
+    }
+};
