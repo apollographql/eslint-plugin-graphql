@@ -30,6 +30,11 @@ const parserOptions = {
         parserOptions,
         code: 'const x = gql`{ number }`',
       },
+      {
+        options,
+        parserOptions,
+        code: 'const x = segmented.TagName`height: 12px;`'
+      }
     ],
 
     invalid: [
@@ -275,6 +280,9 @@ const parserOptions = {
           }
         })
         class HelloApp extends React.Component {}
+      `,
+      `
+        const StyledComponent = css\`height: 12px;\`
       `,
       `
         HelloApp = Relay.createContainer(HelloApp, {
