@@ -104,12 +104,12 @@ const rules = {
         const tagNameSegments = tagName.split('.').length;
         if (tagNameSegments === 1) {
           // Check for single identifier, like 'gql'
-          if (node.tag.type === 'Identifier' && node.tag.name !== tagName) {
+          if (node.tag.type !== 'Identifier' || node.tag.name !== tagName) {
             return;
           }
         } else if (tagNameSegments === 2){
           // Check for dotted identifier, like 'Relay.QL'
-          if (node.tag.type === 'MemberExpression' &&
+          if (node.tag.type !== 'MemberExpression' ||
               node.tag.object.name + '.' + node.tag.property.name !== tagName) {
             return;
           }
