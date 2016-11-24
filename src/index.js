@@ -61,9 +61,25 @@ const gqlFiles = ['gql', 'graphql'];
 
 const rules = {
   'template-strings'(context) {
-    const optionGroup = context.options[0];
-    const {schema, env, tagName} = parseOptions(optionGroup);
-    return createRule(context, schema, env, tagName);
+    const tagNames = new Set();
+    const tagRules = [];
+    for (const optionGroup of context.options) {
+      const {schema, env, tagName} = parseOptions(optionGroup);
+      if (tagNames.has(tagName)) {
+        throw new Error('Multiple options for GraphQL tag ' + tagName);
+      }
+      tagNames.add(tagName);
+      tagRules.push({schema, env, tagName});
+    }
+    return {
+      TaggedTemplateExpression(node) {
+        for (const {schema, env, tagName} of tagRules) {
+          if (templateExpressionMatchesTag(tagName, node)) {
+            return handleTemplateTag(node, context, schema, env);
+          }
+        }
+      },
+    };
   },
 };
 
@@ -135,56 +151,48 @@ function templateExpressionMatchesTag(tagName, node) {
   return true;
 }
 
-function createRule(context, schema, env, tagName) {
-  return {
-    TaggedTemplateExpression(node) {
-      if (!templateExpressionMatchesTag(tagName, node)) {
-        return;
-      }
+function handleTemplateTag(node, context, schema, env) {
+  let text;
+  try {
+    text = replaceExpressions(node.quasi, context, env);
+  } catch (e) {
+    if (e.message !== 'Invalid interpolation') {
+      console.log(e);
+    }
+    return;
+  }
 
-      let text;
-      try {
-        text = replaceExpressions(node.quasi, context, env);
-      } catch (e) {
-        if (e.message !== 'Invalid interpolation') {
-          console.log(e);
-        }
-        return;
-      }
+  // Re-implement syntax sugar for fragment names, which is technically not valid
+  // graphql
+  if ((env === 'lokka' || env === 'relay') && /fragment\s+on/.test(text)) {
+    text = text.replace('fragment', `fragment _`);
+  }
 
-      // Re-implement syntax sugar for fragment names, which is technically not valid
-      // graphql
-      if ((env === 'lokka' || env === 'relay') && /fragment\s+on/.test(text)) {
-        text = text.replace('fragment', `fragment _`);
-      }
+  let ast;
 
-      let ast;
+  try {
+    ast = parse(text);
+  } catch (error) {
+    context.report({
+      node,
+      message: error.message.split('\n')[0],
+      loc: locFrom(node, error),
+    });
+    return;
+  }
 
-      try {
-        ast = parse(text);
-      } catch (error) {
-        context.report({
-          node,
-          message: error.message.split('\n')[0],
-          loc: locFrom(node, error),
-        });
-        return;
-      }
+  const rules = (env === 'relay' ? relayGraphQLValidationRules : graphQLValidationRules);
 
-      const rules = (env === 'relay' ? relayGraphQLValidationRules : graphQLValidationRules);
+  const validationErrors = schema ? validate(schema, ast, rules) : [];
 
-      const validationErrors = schema ? validate(schema, ast, rules) : [];
-
-      if (validationErrors && validationErrors.length > 0) {
-        context.report({
-          node,
-          message: validationErrors[0].message,
-          loc: locFrom(node, validationErrors[0]),
-        });
-        return;
-      }
-    },
-  };
+  if (validationErrors && validationErrors.length > 0) {
+    context.report({
+      node,
+      message: validationErrors[0].message,
+      loc: locFrom(node, validationErrors[0]),
+    });
+    return;
+  }
 }
 
 function locFrom(node, error) {
