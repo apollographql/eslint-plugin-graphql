@@ -139,3 +139,27 @@ module.exports = {
   ]
 }
 ```
+
+### Additional Schemas or Tags
+
+This plugin can be used to validate against multiple schemas by identifying them with different tags. This is useful for applications interacting with multiple GraphQL systems. Additional schemas can simply be appended to the options list:
+
+```js
+module.exports = {
+  parser: "babel-eslint",
+  rules: {
+    "graphql/template-strings": ['error', {
+      env: 'apollo',
+      tagName: 'FirstGQL',
+      schemaJson: require('./schema-first.json')
+    }, {
+      env: 'relay',
+      tagName: 'SecondGQL',
+      schemaJson: require('./schema-second.json')
+    }]
+  },
+  plugins: [
+    'graphql'
+  ]
+}
+```
