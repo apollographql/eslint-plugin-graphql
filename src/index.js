@@ -8,6 +8,8 @@ import {
 import {
   flatten,
   keys,
+  last,
+  reduce,
   without,
 } from 'lodash';
 
@@ -54,14 +56,19 @@ const relayGraphQLValidationRules = relayRuleNames.map((ruleName) => {
   return require(`graphql/validation/rules/${ruleName}`)[ruleName];
 });
 
-let globalContext = null;
+const internalTag = 'ESLintPluginGraphQLFile';
+const gqlFiles = ['gql', 'graphql'];
 
 const rules = {
   'template-strings'(context) {
-    // Make context accessible in processors
-    globalContext = context;
-
-    const { schemaJson, schemaJsonFilepath, env, tagNameOption } = getConfig(context);
+    const {
+      schemaJson, // Schema via JSON object
+      schemaJsonFilepath, // Or Schema via absolute filepath
+      env,
+      tagName: tagNameOption,
+    } = context.options[0];
+    const filename = context.eslint.getFilename()
+    const ext = last(filename.split('.'));
 
     // Validate and unpack schema
     function initSchema(json) {
@@ -92,7 +99,16 @@ const rules = {
     }
 
     // Validate tagName and set default
-    const tagName = getTagName({ env, tagNameOption })
+    let tagName = null
+    if (gqlFiles.includes(ext)){
+      tagName = internalTag;
+    } else if (tagNameOption) {
+      tagName = tagNameOption;
+    } else if (env === 'relay') {
+      tagName = 'Relay.QL';
+    } else {
+      tagName = 'gql';
+    }
 
     return {
       TaggedTemplateExpression(node) {
@@ -225,40 +241,13 @@ function strWithLen(len) {
   return new Array(len + 1).join( 'x' );
 }
 
-function getTagName({ env, tagNameOption}) {
-  if (tagNameOption) {
-    return tagNameOption;
-  } else if (env === 'relay') {
-    return 'Relay.QL';
-  }
-
-  return 'gql';
-}
-
-function getConfig(context) {
-  const {
-    schemaJson, // Schema via JSON object
-    schemaJsonFilepath, // Or Schema via absolute filepath
-    env,
-    tagName: tagNameOption,
-  } = context.options[0];
-
-  return {
-    schemaJson,
-    schemaJsonFilepath,
-    env,
-    tagNameOption
-  }
-}
-
 const gqlProcessor = {
-  preprocess: function(text, filename) {
-    const { env, tagNameOption } = getConfig(globalContext);
-    const tagname = getTagName({ env, tagNameOption });
+  preprocess: function(text) {
+    const excaped = text.replace(/`/g, '\\`')
 
-    return [`${tagname}\`${text}\``];
+    return [`${internalTag}\`${excaped}\``];
   },
-  postprocess: function(messages, filename) {
+  postprocess: function(messages) {
     // Filter all messages against graphql/${Oject.keys(rules)}
     return flatten(messages).filter((message) => {
       return keys(rules).map((key) => `graphql/${key}`).includes(message.ruleId);
@@ -266,10 +255,11 @@ const gqlProcessor = {
   }
 }
 
+const processors = reduce(gqlFiles, (result, value) => {
+    return { ...result, [`.${value}`]: gqlProcessor };
+}, {})
+
 module.exports = {
   rules,
-  processors: {
-    ".gql": gqlProcessor,
-    ".graphql": gqlProcessor
-  }
+  processors
 };
