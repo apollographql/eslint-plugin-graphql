@@ -243,7 +243,7 @@ function strWithLen(len) {
 
 const gqlProcessor = {
   preprocess: function(text) {
-    const excaped = text.replace(/`/g, '\\`')
+    const excaped = text.replace(/`/g, '\\`');
 
     return [`${internalTag}\`${excaped}\``];
   },
