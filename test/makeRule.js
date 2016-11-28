@@ -4,6 +4,7 @@ import schemaJson from './schema.json';
 import path from 'path';
 
 const schemaJsonFilepath = path.resolve(__dirname, './schema.json');
+const secondSchemaJsonFilepath = path.resolve(__dirname, './second-schema.json');
 
 // Init rule
 
@@ -472,5 +473,43 @@ const parserOptions = {
         }]
       }
     ]
+  });
+}
+
+{
+  const options = [
+    { schemaJsonFilepath, tagName: 'gql' },
+    { schemaJsonFilepath: secondSchemaJsonFilepath, tagName: 'swapi' },
+  ];
+
+  ruleTester.run('validates multiple schemas correctly', rule, {
+    valid: [
+      {
+        options,
+        parserOptions,
+        code: [
+          'const x = gql`{ number, sum(a: 1, b: 1) }`;',
+          'const y = swapi`{ hero(episode: NEWHOPE) { id, name } }`;',
+        ].join('\n'),
+      },
+    ],
+
+    invalid: [
+      {
+        options,
+        parserOptions,
+        code: [
+          'const x = swapi`{ number, sum(a: 1, b: 1) }`;',
+          'const y = gql`{ hero(episode: NEWHOPE) { id, name } }`;',
+        ].join('\n'),
+        errors: [{
+          message: 'Cannot query field "number" on type "Query".',
+          type: 'TaggedTemplateExpression',
+        }, {
+          message: 'Cannot query field "hero" on type "RootQuery".',
+          type: 'TaggedTemplateExpression',
+        }],
+      },
+    ],
   });
 }
