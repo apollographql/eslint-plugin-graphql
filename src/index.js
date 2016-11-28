@@ -67,7 +67,7 @@ const rules = {
       env,
       tagName: tagNameOption,
     } = context.options[0];
-    const filename = context.eslint.getFilename()
+    const filename = context.eslint.getFilename();
     const ext = last(filename.split('.'));
 
     // Validate and unpack schema
@@ -243,9 +243,9 @@ function strWithLen(len) {
 
 const gqlProcessor = {
   preprocess: function(text) {
-    const excaped = text.replace(/`/g, '\\`');
+    const escaped = text.replace(/`/g, '\\`');
 
-    return [`${internalTag}\`${excaped}\``];
+    return [`${internalTag}\`${escaped}\``];
   },
   postprocess: function(messages) {
     // only report graphql-errors
