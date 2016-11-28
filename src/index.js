@@ -248,7 +248,7 @@ const gqlProcessor = {
     return [`${internalTag}\`${excaped}\``];
   },
   postprocess: function(messages) {
-    // Filter all messages against graphql/${Oject.keys(rules)}
+    // only report graphql-errors
     return flatten(messages).filter((message) => {
       return keys(rules).map((key) => `graphql/${key}`).includes(message.ruleId);
     })
