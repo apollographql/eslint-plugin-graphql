@@ -60,26 +60,64 @@ const internalTag = 'ESLintPluginGraphQLFile';
 const gqlFiles = ['gql', 'graphql'];
 
 const rules = {
-  'template-strings'(context) {
-    const tagNames = new Set();
-    const tagRules = [];
-    for (const optionGroup of context.options) {
-      const {schema, env, tagName} = parseOptions(optionGroup);
-      if (tagNames.has(tagName)) {
-        throw new Error('Multiple options for GraphQL tag ' + tagName);
-      }
-      tagNames.add(tagName);
-      tagRules.push({schema, env, tagName});
-    }
-    return {
-      TaggedTemplateExpression(node) {
-        for (const {schema, env, tagName} of tagRules) {
-          if (templateExpressionMatchesTag(tagName, node)) {
-            return handleTemplateTag(node, context, schema, env);
-          }
+  'template-strings': {
+    meta: {
+      schema: {
+        type: 'array',
+        minLength: 1,
+        items: {
+          additionalProperties: false,
+          properties: {
+            schemaJson: {
+              type: 'object',
+            },
+            schemaJsonFilepath: {
+              type: 'string',
+            },
+            env: {
+              enum: [
+                'lokka',
+                'relay',
+                'apollo',
+              ],
+            },
+            tagName: {
+              type: 'string',
+              pattern: '^[$_a-zA-Z$_][a-zA-Z0-9$_]+(\\.[a-zA-Z0-9$_]+)?$',
+            },
+          },
+          // schemaJson and schemaJsonFilepath are mutually exclusive:
+          oneOf: [{
+            required: ['schemaJson'],
+            not: { required: ['schemaJsonFilepath'], },
+          }, {
+            required: ['schemaJsonFilepath'],
+            not: { required: ['schemaJson'], },
+          }],
         }
       },
-    };
+    },
+    create(context) {
+      const tagNames = new Set();
+      const tagRules = [];
+      for (const optionGroup of context.options) {
+        const {schema, env, tagName} = parseOptions(optionGroup);
+        if (tagNames.has(tagName)) {
+          throw new Error('Multiple options for GraphQL tag ' + tagName);
+        }
+        tagNames.add(tagName);
+        tagRules.push({schema, env, tagName});
+      }
+      return {
+        TaggedTemplateExpression(node) {
+          for (const {schema, env, tagName} of tagRules) {
+            if (templateExpressionMatchesTag(tagName, node)) {
+              return handleTemplateTag(node, context, schema, env);
+            }
+          }
+        },
+      };
+    },
   },
 };
 
