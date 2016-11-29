@@ -14,7 +14,7 @@ describe('processors', () => {
     assert(includes(extensions, '.graphql'));
   });
 
-  it('should escape backticks and append internalTag', () => {
+  it('should escape backticks and prepend internalTag', () => {
     const query = 'query { someValueWith` }'
     const expected = 'ESLintPluginGraphQLFile`query { someValueWith\\` }`'
     const preprocess = processors['.gql'].preprocess;
