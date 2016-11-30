@@ -14,38 +14,38 @@ import {
 } from 'lodash';
 
 const graphQLValidationRuleNames = [
-  'UniqueOperationNames',
-  'LoneAnonymousOperation',
-  'KnownTypeNames',
-  'FragmentsOnCompositeTypes',
-  'VariablesAreInputTypes',
-  'ScalarLeafs',
-  'FieldsOnCorrectType',
-  'UniqueFragmentNames',
-  //'KnownFragmentNames', -> any interpolation
-  //'NoUnusedFragments', -> any standalone fragment
-  'PossibleFragmentSpreads',
-  'NoFragmentCycles',
-  'UniqueVariableNames',
-  'NoUndefinedVariables',
-  'NoUnusedVariables',
-  'KnownDirectives',
-  'KnownArgumentNames',
-  'UniqueArgumentNames',
   'ArgumentsOfCorrectType',
-  'ProvidedNonNullArguments',
   'DefaultValuesOfCorrectType',
-  'VariablesInAllowedPosition',
+  'FieldsOnCorrectType',
+  'FragmentsOnCompositeTypes',
+  'KnownArgumentNames',
+  'KnownDirectives',
+  // 'KnownFragmentNames', -> any interpolation
+  'KnownTypeNames',
+  'LoneAnonymousOperation',
+  'NoFragmentCycles',
+  'NoUndefinedVariables',
+  // 'NoUnusedFragments', -> any standalone fragment
+  'NoUnusedVariables',
   'OverlappingFieldsCanBeMerged',
+  'PossibleFragmentSpreads',
+  'ProvidedNonNullArguments',
+  'ScalarLeafs',
+  'UniqueArgumentNames',
+  'UniqueFragmentNames',
   'UniqueInputFieldNames',
+  'UniqueOperationNames',
+  'UniqueVariableNames',
+  'VariablesAreInputTypes',
+  'VariablesInAllowedPosition',
 ];
 
 // Omit these rules when in Relay env
 const relayRuleNames = without(graphQLValidationRuleNames,
-  'ScalarLeafs',
-  'ProvidedNonNullArguments',
   'KnownDirectives',
   'NoUndefinedVariables',
+  'ProvidedNonNullArguments',
+  'ScalarLeafs',
 );
 
 const graphQLValidationRules = graphQLValidationRuleNames.map((ruleName) => {
