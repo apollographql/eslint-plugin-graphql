@@ -13,19 +13,19 @@ import {
   without,
 } from 'lodash';
 
-const graphQLValidationRuleNames = [
+const allGraphQLValidatorNames = [
   'ArgumentsOfCorrectType',
   'DefaultValuesOfCorrectType',
   'FieldsOnCorrectType',
   'FragmentsOnCompositeTypes',
   'KnownArgumentNames',
   'KnownDirectives',
-  // 'KnownFragmentNames', -> any interpolation
+  'KnownFragmentNames',
   'KnownTypeNames',
   'LoneAnonymousOperation',
   'NoFragmentCycles',
   'NoUndefinedVariables',
-  // 'NoUnusedFragments', -> any standalone fragment
+  'NoUnusedFragments',
   'NoUnusedVariables',
   'OverlappingFieldsCanBeMerged',
   'PossibleFragmentSpreads',
@@ -40,21 +40,25 @@ const graphQLValidationRuleNames = [
   'VariablesInAllowedPosition',
 ];
 
-// Omit these rules when in Relay env
-const relayRuleNames = without(graphQLValidationRuleNames,
-  'KnownDirectives',
-  'NoUndefinedVariables',
-  'ProvidedNonNullArguments',
-  'ScalarLeafs',
-);
-
-const graphQLValidationRules = graphQLValidationRuleNames.map((ruleName) => {
-  return require(`graphql/validation/rules/${ruleName}`)[ruleName];
-});
-
-const relayGraphQLValidationRules = relayRuleNames.map((ruleName) => {
-  return require(`graphql/validation/rules/${ruleName}`)[ruleName];
-});
+// Map of env name to list of rule names.
+const envGraphQLValidatorNames = {
+  apollo: without(allGraphQLValidatorNames,
+    'KnownFragmentNames',
+    'NoUnusedFragments',
+  ),
+  lokka: without(allGraphQLValidatorNames,
+    'KnownFragmentNames',
+    'NoUnusedFragments',
+  ),
+  relay: without(allGraphQLValidatorNames,
+    'KnownDirectives',
+    'KnownFragmentNames',
+    'NoUndefinedVariables',
+    'NoUnusedFragments',
+    'ProvidedNonNullArguments',
+    'ScalarLeafs',
+  ),
+};
 
 const internalTag = 'ESLintPluginGraphQLFile';
 const gqlFiles = ['gql', 'graphql'];
@@ -81,6 +85,13 @@ const rules = {
                 'apollo',
               ],
             },
+            validators: {
+              type: 'array',
+              uniqueItems: true,
+              items: {
+                enum: allGraphQLValidatorNames,
+              },
+            },
             tagName: {
               type: 'string',
               pattern: '^[$_a-zA-Z$_][a-zA-Z0-9$_]+(\\.[a-zA-Z0-9$_]+)?$',
@@ -101,18 +112,18 @@ const rules = {
       const tagNames = new Set();
       const tagRules = [];
       for (const optionGroup of context.options) {
-        const {schema, env, tagName} = parseOptions(optionGroup);
+        const {schema, env, tagName, validators} = parseOptions(optionGroup);
         if (tagNames.has(tagName)) {
           throw new Error('Multiple options for GraphQL tag ' + tagName);
         }
         tagNames.add(tagName);
-        tagRules.push({schema, env, tagName});
+        tagRules.push({schema, env, tagName, validators});
       }
       return {
         TaggedTemplateExpression(node) {
-          for (const {schema, env, tagName} of tagRules) {
+          for (const {schema, env, tagName, validators} of tagRules) {
             if (templateExpressionMatchesTag(tagName, node)) {
-              return handleTemplateTag(node, context, schema, env);
+              return handleTemplateTag(node, context, schema, env, validators);
             }
           }
         },
@@ -127,6 +138,7 @@ function parseOptions(optionGroup) {
     schemaJsonFilepath, // Or Schema via absolute filepath
     env,
     tagName: tagNameOption,
+    validators: validatorNamesOption,
   } = optionGroup;
 
   // Validate and unpack schema
@@ -154,7 +166,16 @@ function parseOptions(optionGroup) {
   } else {
     tagName = 'gql';
   }
-  return {schema, env, tagName};
+
+  let validatorNames;
+  if (validatorNamesOption) {
+    validatorNames = validatorNamesOption;
+  } else {
+    validatorNames = envGraphQLValidatorNames[env] || allGraphQLValidatorNames;
+  }
+
+  const validators = validatorNames.map(name => require(`graphql/validation/rules/${name}`)[name]);
+  return {schema, env, tagName, validators};
 }
 
 function initSchema(json) {
@@ -189,7 +210,7 @@ function templateExpressionMatchesTag(tagName, node) {
   return true;
 }
 
-function handleTemplateTag(node, context, schema, env) {
+function handleTemplateTag(node, context, schema, env, validators) {
   let text;
   try {
     text = replaceExpressions(node.quasi, context, env);
@@ -219,10 +240,7 @@ function handleTemplateTag(node, context, schema, env) {
     return;
   }
 
-  const rules = (env === 'relay' ? relayGraphQLValidationRules : graphQLValidationRules);
-
-  const validationErrors = schema ? validate(schema, ast, rules) : [];
-
+  const validationErrors = schema ? validate(schema, ast, validators) : [];
   if (validationErrors && validationErrors.length > 0) {
     context.report({
       node,
