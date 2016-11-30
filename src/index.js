@@ -62,11 +62,17 @@ const rules = {
               ],
             },
             validators: {
-              type: 'array',
-              uniqueItems: true,
-              items: {
-                enum: allGraphQLValidatorNames,
-              },
+              oneOf: [{
+                type: 'array',
+                uniqueItems: true,
+                items: {
+                  enum: allGraphQLValidatorNames,
+                },
+              }, {
+                enum: [
+                  'all',
+                ],
+              }],
             },
             tagName: {
               type: 'string',
@@ -143,8 +149,14 @@ function parseOptions(optionGroup) {
     tagName = 'gql';
   }
 
+  // The validator list may be:
+  //    The string 'all' to use all rules.
+  //    An array of rule names.
+  //    null/undefined to use the default rule set of the environment, or all rules.
   let validatorNames;
-  if (validatorNamesOption) {
+  if (validatorNamesOption === 'all') {
+    validatorNames = allGraphQLValidatorNames;
+  } else if (validatorNamesOption) {
     validatorNames = validatorNamesOption;
   } else {
     validatorNames = envGraphQLValidatorNames[env] || allGraphQLValidatorNames;
