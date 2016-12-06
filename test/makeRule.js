@@ -76,6 +76,15 @@ const parserOptions = {
           type: 'Identifier'
         }]
       },
+      {
+        options,
+        parserOptions,
+        code: 'const x = gql`{ deprecatedQuery }`',
+        errors: [{
+          message: 'Invalid interpolation - not a valid fragment or variable.',
+          type: 'Identifier'
+        }]
+      },
     ]
   });
 }
@@ -111,6 +120,15 @@ const parserOptions = {
         errors: [{
           message: 'Cannot query field "nonExistentQuery" on type "RootQuery".',
           type: 'TaggedTemplateExpression'
+        }]
+      },
+      {
+        options,
+        parserOptions,
+        code: 'const x = myGraphQLTag`{ ${x} }`',
+        errors: [{
+          type: 'Identifier',
+          message: 'Invalid interpolation - not a valid fragment or variable.'
         }]
       },
       {
