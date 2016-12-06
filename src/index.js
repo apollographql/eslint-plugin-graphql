@@ -113,19 +113,27 @@ const rules = {
     return {
       TaggedTemplateExpression(node) {
         const tagNameSegments = tagName.split('.').length;
-        if (tagNameSegments === 1) {
-          // Check for single identifier, like 'gql'
-          if (node.tag.type === 'Identifier' && node.tag.name !== tagName) {
+        if (node.tag.type === 'Identifier') {
+          //if the developer uses a single identifier : gql`...`
+          if (tagNameSegments === 1) {
+            //check if it's different than the one provided in the options
+            if (node.tag.name !== tagName) {
+              //skip rule checking
+              return;
+            }
+          }else if(tagNameSegments === 2){
+            //Identifier can't be equal to a MemberExpression
             return;
           }
-        } else if (tagNameSegments === 2){
-          // Check for dotted identifier, like 'Relay.QL'
-          if (node.tag.type === 'MemberExpression' &&
-              node.tag.object.name + '.' + node.tag.property.name !== tagName) {
+        }else if( node.tag.type === 'MemberExpression'){
+          if (tagNameSegments === 1) {
             return;
+          }else if(tagNameSegments === 2){
+            if (node.tag.object.name + '.' + node.tag.property.name !== tagName) {
+              return;
+            }
           }
         }
-
         let text;
         try {
           text = replaceExpressions(node.quasi, context, env);

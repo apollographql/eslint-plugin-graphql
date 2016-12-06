@@ -456,3 +456,34 @@ const parserOptions = {
     ]
   });
 }
+{
+  const options = [
+    { schemaJsonFilepath, tagName: 'gql' },
+  ];
+
+  ruleTester.run('different tag name', rule, {
+    valid: [
+      {
+        options,
+        parserOptions,
+        code: 'const x = test.gamma`{ nonExistentQuery }`',
+      },
+      {
+        options,
+        parserOptions,
+        code: 'const x = test.gql`{ nonExistentQuery }`',
+      },
+    ],
+    invalid: [
+      {
+        options,
+        parserOptions,
+        code: 'const x = gql`{ nonExistentQuery }`',
+        errors: [{
+          message: 'Cannot query field "nonExistentQuery" on type "RootQuery".',
+          type: 'TaggedTemplateExpression'
+        }]
+      },
+    ],
+  });
+}
