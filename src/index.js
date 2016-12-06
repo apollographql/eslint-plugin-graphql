@@ -6,6 +6,10 @@ import {
 } from 'graphql';
 
 import {
+  flatten,
+  keys,
+  last,
+  reduce,
   without,
 } from 'lodash';
 
@@ -52,6 +56,9 @@ const relayGraphQLValidationRules = relayRuleNames.map((ruleName) => {
   return require(`graphql/validation/rules/${ruleName}`)[ruleName];
 });
 
+const internalTag = 'ESLintPluginGraphQLFile';
+const gqlFiles = ['gql', 'graphql'];
+
 const rules = {
   'template-strings'(context) {
     const {
@@ -60,6 +67,8 @@ const rules = {
       env,
       tagName: tagNameOption,
     } = context.options[0];
+    const filename = context.eslint.getFilename();
+    const ext = last(filename.split('.'));
 
     // Validate and unpack schema
     function initSchema(json) {
@@ -90,8 +99,10 @@ const rules = {
     }
 
     // Validate tagName and set default
-    let tagName;
-    if (tagNameOption) {
+    let tagName = null
+    if (gqlFiles.includes(ext)){
+      tagName = internalTag;
+    } else if (tagNameOption) {
       tagName = tagNameOption;
     } else if (env === 'relay') {
       tagName = 'Relay.QL';
@@ -230,4 +241,25 @@ function strWithLen(len) {
   return new Array(len + 1).join( 'x' );
 }
 
-export { rules };
+const gqlProcessor = {
+  preprocess: function(text) {
+    const escaped = text.replace(/`/g, '\\`');
+
+    return [`${internalTag}\`${escaped}\``];
+  },
+  postprocess: function(messages) {
+    // only report graphql-errors
+    return flatten(messages).filter((message) => {
+      return keys(rules).map((key) => `graphql/${key}`).includes(message.ruleId);
+    })
+  }
+}
+
+const processors = reduce(gqlFiles, (result, value) => {
+    return { ...result, [`.${value}`]: gqlProcessor };
+}, {})
+
+module.exports = {
+  rules,
+  processors
+};

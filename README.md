@@ -49,6 +49,15 @@ Code snippet taken from:  <https://leanpub.com/understandinges6/read#leanpub-aut
 
 Note: the linter rule could be extended to identify calls to various specific APIs to eliminate the need for a template literal tag, but this might just make the implementation a lot more complex for little benefit.
 
+### GraphQL literal files
+
+This plugin also lints GraphQL literal files ending on `.gql` or `.graphql`.
+In order to do so just tell eslint to check these files as well.
+
+```BASH
+eslint . --ext js,gql,graphql
+```
+
 ### Example config for Apollo
 
 ```js
