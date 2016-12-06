@@ -124,6 +124,9 @@ const rules = {
               node.tag.object.name + '.' + node.tag.property.name !== tagName) {
             return;
           }
+        } else {
+          // We don't currently support 3 segments so ignore
+          return;
         }
 
         let text;

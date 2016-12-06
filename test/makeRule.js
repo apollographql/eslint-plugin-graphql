@@ -34,6 +34,16 @@ const parserOptions = {
         options,
         parserOptions,
         code: 'const x = segmented.TagName`height: 12px;`'
+      },
+      {
+        options,
+        parserOptions,
+        code: 'const x = segmented.gql`height: 12px;`'
+      },
+      {
+        options,
+        parserOptions,
+        code: 'const x = gql.segmented`height: 12px;`'
       }
     ],
 
