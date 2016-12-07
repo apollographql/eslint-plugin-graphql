@@ -49,7 +49,6 @@ const parserOptions = {
     ],
 
     invalid: [
-
       {
         options,
         parserOptions,
@@ -66,15 +65,6 @@ const parserOptions = {
         errors: [{
           message: 'Cannot query field "nonExistentQuery" on type "RootQuery".',
           type: 'TaggedTemplateExpression'
-        }]
-      },
-      {
-        options,
-        parserOptions,
-        code: 'const x = gql`{ ${x} }`',
-        errors: [{
-          message: 'Invalid interpolation - not a valid fragment or variable.',
-          type: 'Identifier'
         }]
       },
     ]
@@ -125,6 +115,43 @@ const parserOptions = {
       },
     ]
   });
+}
+
+{
+  const options = [
+    { schemaJson, env: 'apollo' },
+  ];
+
+  ruleTester.run('apollo', rule, {
+    valid: [
+      {
+        options,
+        parserOptions,
+        code: 'const x = gql`{ number } ${SomeFragment}`',
+      },
+    ],
+
+    invalid: [
+      {
+        options,
+        parserOptions,
+        code: 'const x = gql`query { ${x} }`',
+        errors: [{
+          message: 'Invalid interpolation - fragment interpolation must occur outside of the brackets.',
+          type: 'Identifier'
+        }]
+      },
+      {
+        options,
+        parserOptions,
+        code: 'const x = gql`query }{ ${x}`',
+        errors: [{
+          message: 'Syntax Error GraphQL (1:7) Expected {, found }',
+          type: 'TaggedTemplateExpression'
+        }]
+      }
+    ],
+  })
 }
 
 {
