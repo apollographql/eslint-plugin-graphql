@@ -1,11 +1,18 @@
-var fs = require('fs');
-var path = require('path');
-var graphql = require('graphql');
+const fs = require('fs');
+const path = require('path');
+const graphql = require('graphql');
+const process = require('process');
 
-var typeDefinition = fs.readFileSync(path.join(__dirname, 'schema.graphql'), 'utf8');
-var schema = graphql.buildASTSchema(graphql.parse(typeDefinition));
+Promise.all(['schema', 'second-schema'].map(schemaName => {
+  const typeDefinition = fs.readFileSync(path.join(__dirname, schemaName + '.graphql'), 'utf8');
+  const schema = graphql.buildASTSchema(graphql.parse(typeDefinition));
+  const outputPath = path.join(__dirname, schemaName + '.json');
 
-graphql.graphql(schema, graphql.introspectionQuery).then(function (result) {
-  fs.writeFileSync(path.join(__dirname, 'schema.json'),
-    JSON.stringify(result, null, 2));
+  return graphql.graphql(schema, graphql.introspectionQuery)
+    .then(result => fs.writeFileSync(outputPath, JSON.stringify(result, null, 2)));
+}))
+.then(() => process.exit(0))
+.catch(e => {
+  console.error(e);
+  process.exit(127);
 });

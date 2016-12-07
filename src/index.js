@@ -60,119 +60,176 @@ const internalTag = 'ESLintPluginGraphQLFile';
 const gqlFiles = ['gql', 'graphql'];
 
 const rules = {
-  'template-strings'(context) {
-    const {
-      schemaJson, // Schema via JSON object
-      schemaJsonFilepath, // Or Schema via absolute filepath
-      env,
-      tagName: tagNameOption,
-    } = context.options[0];
-    const filename = context.eslint.getFilename();
-    const ext = last(filename.split('.'));
-
-    // Validate and unpack schema
-    function initSchema(json) {
-      const unpackedSchemaJson = json.data ? json.data : json;
-      if (! unpackedSchemaJson.__schema) {
-        throw new Error('Please pass a valid GraphQL introspection query result.');
+  'template-strings': {
+    meta: {
+      schema: {
+        type: 'array',
+        minLength: 1,
+        items: {
+          additionalProperties: false,
+          properties: {
+            schemaJson: {
+              type: 'object',
+            },
+            schemaJsonFilepath: {
+              type: 'string',
+            },
+            env: {
+              enum: [
+                'lokka',
+                'relay',
+                'apollo',
+              ],
+            },
+            tagName: {
+              type: 'string',
+              pattern: '^[$_a-zA-Z$_][a-zA-Z0-9$_]+(\\.[a-zA-Z0-9$_]+)?$',
+            },
+          },
+          // schemaJson and schemaJsonFilepath are mutually exclusive:
+          oneOf: [{
+            required: ['schemaJson'],
+            not: { required: ['schemaJsonFilepath'], },
+          }, {
+            required: ['schemaJsonFilepath'],
+            not: { required: ['schemaJson'], },
+          }],
+        }
+      },
+    },
+    create(context) {
+      const tagNames = new Set();
+      const tagRules = [];
+      for (const optionGroup of context.options) {
+        const {schema, env, tagName} = parseOptions(optionGroup);
+        if (tagNames.has(tagName)) {
+          throw new Error('Multiple options for GraphQL tag ' + tagName);
+        }
+        tagNames.add(tagName);
+        tagRules.push({schema, env, tagName});
       }
-      return buildClientSchema(unpackedSchemaJson);
-    }
-
-    function initSchemaFromFile(jsonFile) {
-      return initSchema(JSON.parse(fs.readFileSync(jsonFile, 'utf8')));
-    }
-
-    let schema;
-    if (schemaJson) {
-      schema = initSchema(schemaJson);
-    } else if(schemaJsonFilepath) {
-      schema = initSchemaFromFile(schemaJsonFilepath);
-    } else {
-      throw new Error('Must pass in `schemaJson` option with schema object '
-                    + 'or `schemaJsonFilepath` with absolute path to the json file.');
-    }
-
-    // Validate env
-    if (env && env !== 'lokka' && env !== 'relay' && env !== 'apollo') {
-      throw new Error('Invalid option for env, only `apollo`, `lokka`, and `relay` supported.')
-    }
-
-    // Validate tagName and set default
-    let tagName = null
-    if (gqlFiles.includes(ext)){
-      tagName = internalTag;
-    } else if (tagNameOption) {
-      tagName = tagNameOption;
-    } else if (env === 'relay') {
-      tagName = 'Relay.QL';
-    } else {
-      tagName = 'gql';
-    }
-
-    return {
-      TaggedTemplateExpression(node) {
-        const tagNameSegments = tagName.split('.').length;
-        if (tagNameSegments === 1) {
-          // Check for single identifier, like 'gql'
-          if (node.tag.type !== 'Identifier' || node.tag.name !== tagName) {
-            return;
+      return {
+        TaggedTemplateExpression(node) {
+          for (const {schema, env, tagName} of tagRules) {
+            if (templateExpressionMatchesTag(tagName, node)) {
+              return handleTemplateTag(node, context, schema, env);
+            }
           }
-        } else if (tagNameSegments === 2){
-          // Check for dotted identifier, like 'Relay.QL'
-          if (node.tag.type !== 'MemberExpression' ||
-              node.tag.object.name + '.' + node.tag.property.name !== tagName) {
-            return;
-          }
-        } else {
-          // We don't currently support 3 segments so ignore
-          return;
-        }
+        },
+      };
+    },
+  },
+};
 
-        let text;
-        try {
-          text = replaceExpressions(node.quasi, context, env);
-        } catch (e) {
-          if (e.message !== 'Invalid interpolation') {
-            console.log(e);
-          }
+function parseOptions(optionGroup) {
+  const {
+    schemaJson, // Schema via JSON object
+    schemaJsonFilepath, // Or Schema via absolute filepath
+    env,
+    tagName: tagNameOption,
+  } = optionGroup;
 
-          return;
-        }
+  // Validate and unpack schema
+  let schema;
+  if (schemaJson) {
+    schema = initSchema(schemaJson);
+  } else if (schemaJsonFilepath) {
+    schema = initSchemaFromFile(schemaJsonFilepath);
+  } else {
+    throw new Error('Must pass in `schemaJson` option with schema object '
+                  + 'or `schemaJsonFilepath` with absolute path to the json file.');
+  }
 
-        // Re-implement syntax sugar for fragment names, which is technically not valid
-        // graphql
-        if ((env === 'lokka' || env === 'relay') && /fragment\s+on/.test(text)) {
-          text = text.replace('fragment', `fragment _`);
-        }
+  // Validate env
+  if (env && env !== 'lokka' && env !== 'relay' && env !== 'apollo') {
+    throw new Error('Invalid option for env, only `apollo`, `lokka`, and `relay` supported.')
+  }
 
-        let ast;
+  // Validate tagName and set default
+  let tagName;
+  if (tagNameOption) {
+    tagName = tagNameOption;
+  } else if (env === 'relay') {
+    tagName = 'Relay.QL';
+  } else {
+    tagName = 'gql';
+  }
+  return {schema, env, tagName};
+}
 
-        try {
-          ast = parse(text);
-        } catch (error) {
-          context.report({
-            node,
-            message: error.message.split('\n')[0],
-            loc: locFrom(node, error),
-          });
-          return;
-        }
+function initSchema(json) {
+  const unpackedSchemaJson = json.data ? json.data : json;
+  if (!unpackedSchemaJson.__schema) {
+    throw new Error('Please pass a valid GraphQL introspection query result.');
+  }
+  return buildClientSchema(unpackedSchemaJson);
+}
 
-        const rules = (env === 'relay' ? relayGraphQLValidationRules : graphQLValidationRules);
+function initSchemaFromFile(jsonFile) {
+  return initSchema(JSON.parse(fs.readFileSync(jsonFile, 'utf8')));
+}
 
-        const validationErrors = schema ? validate(schema, ast, rules) : [];
+function templateExpressionMatchesTag(tagName, node) {
+  const tagNameSegments = tagName.split('.').length;
+  if (tagNameSegments === 1) {
+    // Check for single identifier, like 'gql'
+    if (node.tag.type !== 'Identifier' || node.tag.name !== tagName) {
+      return false;
+    }
+  } else if (tagNameSegments === 2) {
+    // Check for dotted identifier, like 'Relay.QL'
+    if (node.tag.type !== 'MemberExpression' ||
+        node.tag.object.name + '.' + node.tag.property.name !== tagName) {
+      return false;
+    }
+  } else {
+    // We don't currently support 3 segments so ignore
+    return false;
+  }
+  return true;
+}
 
-        if (validationErrors && validationErrors.length > 0) {
-          context.report({
-            node,
-            message: validationErrors[0].message,
-            loc: locFrom(node, validationErrors[0]),
-          });
-          return;
-        }
-      }
-    };
+function handleTemplateTag(node, context, schema, env) {
+  let text;
+  try {
+    text = replaceExpressions(node.quasi, context, env);
+  } catch (e) {
+    if (e.message !== 'Invalid interpolation') {
+      console.log(e);
+    }
+    return;
+  }
+
+  // Re-implement syntax sugar for fragment names, which is technically not valid
+  // graphql
+  if ((env === 'lokka' || env === 'relay') && /fragment\s+on/.test(text)) {
+    text = text.replace('fragment', `fragment _`);
+  }
+
+  let ast;
+
+  try {
+    ast = parse(text);
+  } catch (error) {
+    context.report({
+      node,
+      message: error.message.split('\n')[0],
+      loc: locFrom(node, error),
+    });
+    return;
+  }
+
+  const rules = (env === 'relay' ? relayGraphQLValidationRules : graphQLValidationRules);
+
+  const validationErrors = schema ? validate(schema, ast, rules) : [];
+
+  if (validationErrors && validationErrors.length > 0) {
+    context.report({
+      node,
+      message: validationErrors[0].message,
+      loc: locFrom(node, validationErrors[0]),
+    });
+    return;
   }
 }
 
