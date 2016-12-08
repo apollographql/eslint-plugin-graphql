@@ -45,7 +45,12 @@ const parserOptions = {
         options,
         parserOptions,
         code: 'const x = gql.segmented`height: 12px;`'
-      }
+      },
+      {
+        options,
+        parserOptions,
+        code: 'const x = gql`{ number } ${x}`',
+      },
     ],
 
     invalid: [
@@ -65,6 +70,17 @@ const parserOptions = {
         errors: [{
           message: 'Cannot query field "nonExistentQuery" on type "RootQuery".',
           type: 'TaggedTemplateExpression'
+        }]
+      },
+      {
+        options,
+        parserOptions,
+        code: 'const x = gql`{ ${x} }`',
+        errors: [{
+          message: 'Invalid interpolation - fragment interpolation must occur outside of the brackets.',
+          type: 'Identifier',
+          line: 1,
+          column: 19
         }]
       },
     ]
@@ -110,7 +126,7 @@ const parserOptions = {
         code: 'const x = myGraphQLTag`{ ${x} }`',
         errors: [{
           type: 'Identifier',
-          message: 'Invalid interpolation - not a valid fragment or variable.'
+          message: 'Invalid interpolation - fragment interpolation must occur outside of the brackets.'
         }]
       },
     ]
@@ -127,7 +143,7 @@ const parserOptions = {
       {
         options,
         parserOptions,
-        code: 'const x = gql`{ number } ${SomeFragment}`',
+        code: 'const x = gql`{ number } ${x}`',
       },
     ],
 
@@ -288,6 +304,29 @@ const parserOptions = {
           type: 'TaggedTemplateExpression',
           line: 7,
           column: 19
+        }]
+      },
+      {
+        options,
+        parserOptions,
+        code: `
+          client.query(gql\`
+            {
+              allFilms {
+                films {
+                  \${filmInfo}
+                }
+              }
+            }
+          \`).then(result => {
+            console.log(result.allFilms.films);
+          });
+        `,
+        errors: [{
+          message: 'Invalid interpolation - not a valid fragment or variable.',
+          type: 'Identifier',
+          line: 6,
+          column: 21
         }]
       },
     ]

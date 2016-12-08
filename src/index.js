@@ -261,7 +261,7 @@ function replaceExpressions(node, context, env) {
 
     chunks.push(chunk);
 
-    if (env === 'apollo') {
+    if (!env || env === 'apollo') {
       // In Apollo, interpolation is only valid outside top-level structures like `query` or `mutation`.
       // We'll check to make sure there's an equivalent set of opening and closing brackets, otherwise
       // we're attempting to do an invalid interpolation.
@@ -294,7 +294,7 @@ function replaceExpressions(node, context, env) {
         // Ellipsis cancels out extra characters
         const placeholder = strWithLen(nameLength);
         chunks.push('...' + placeholder);
-      } else if (env === 'apollo') {
+      } else if (!env || env === 'apollo') {
         // In Apollo, fragment interpolation is only valid outside of brackets
         // Since we don't know what we'd interpolate here (that occurs at runtime),
         // we're not going to do anything with this interpolation.
