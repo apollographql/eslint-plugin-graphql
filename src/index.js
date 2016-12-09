@@ -3,6 +3,7 @@ import {
   parse,
   validate,
   buildClientSchema,
+  specifiedRules as allGraphQLValidators,
 } from 'graphql';
 
 import {
@@ -13,32 +14,7 @@ import {
   without,
 } from 'lodash';
 
-const allGraphQLValidatorNames = [
-  'ArgumentsOfCorrectType',
-  'DefaultValuesOfCorrectType',
-  'FieldsOnCorrectType',
-  'FragmentsOnCompositeTypes',
-  'KnownArgumentNames',
-  'KnownDirectives',
-  'KnownFragmentNames',
-  'KnownTypeNames',
-  'LoneAnonymousOperation',
-  'NoFragmentCycles',
-  'NoUndefinedVariables',
-  'NoUnusedFragments',
-  'NoUnusedVariables',
-  'OverlappingFieldsCanBeMerged',
-  'PossibleFragmentSpreads',
-  'ProvidedNonNullArguments',
-  'ScalarLeafs',
-  'UniqueArgumentNames',
-  'UniqueFragmentNames',
-  'UniqueInputFieldNames',
-  'UniqueOperationNames',
-  'UniqueVariableNames',
-  'VariablesAreInputTypes',
-  'VariablesInAllowedPosition',
-];
+const allGraphQLValidatorNames = allGraphQLValidators.map(rule => rule.name);
 
 // Map of env name to list of rule names.
 const envGraphQLValidatorNames = {
