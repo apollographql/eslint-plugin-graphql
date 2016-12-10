@@ -189,7 +189,7 @@ const parserOptions = {
       // `,
       `
         const query = gql\`
-          query sumNow($a: Int, $b: Int) {
+          query sumNow($a: Int!, $b: Int!) {
             sum(a: $a, b: $b)
           }
         \`;

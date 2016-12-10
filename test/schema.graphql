@@ -27,7 +27,7 @@ type User {
 type RootQuery {
   number: Int
   allFilms: AllFilmsObj
-  sum(a: Int, b: Int): Int
+  sum(a: Int!, b: Int!): Int!
   greetings: Greetings
 }
 
