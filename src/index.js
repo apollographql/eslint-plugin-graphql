@@ -234,6 +234,9 @@ function handleTemplateTag(node, context, schema, env) {
 }
 
 function locFrom(node, error) {
+  if (!error.locations || !error.locations.length) {
+    return;
+  }
   const location = error.locations[0];
 
   let line;
