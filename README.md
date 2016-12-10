@@ -163,3 +163,56 @@ module.exports = {
   ]
 }
 ```
+
+### Selecting Validation Rules
+
+GraphQL validation rules can be configured in the eslint rule's configuration using the `validators` setting. The default selection depends on the `env` setting. If no `env` is specified, all rules are enabled by default.
+
+The `validators` setting can be set either to a list of specific validator names or to the special value `"all"`.
+
+```js
+module.exports = {
+  parser: "babel-eslint",
+  rules: {
+    "graphql/template-strings": ['error', {
+      env: 'apollo',
+      validators: 'all',
+      tagName: 'FirstGQL',
+      schemaJson: require('./schema-first.json')
+    }, {
+      validators: ['FieldsOnCorrectType'],
+      tagName: 'SecondGQL',
+      schemaJson: require('./schema-second.json')
+    }]
+  },
+  plugins: [
+    'graphql'
+  ]
+}
+```
+
+The full list of available validators is:
+  - `ArgumentsOfCorrectType`
+  - `DefaultValuesOfCorrectType`
+  - `FieldsOnCorrectType`
+  - `FragmentsOnCompositeTypes`
+  - `KnownArgumentNames`
+  - `KnownDirectives` (*disabled by default in `relay`*)
+  - `KnownFragmentNames` (*disabled by default in `apollo`, `lokka`, and `relay`*)
+  - `KnownTypeNames`
+  - `LoneAnonymousOperation`
+  - `NoFragmentCycles`
+  - `NoUndefinedVariables` (*disabled by default in `relay`*)
+  - `NoUnusedFragments` (*disabled by default in `apollo`, `lokka`, and `relay`*)
+  - `NoUnusedVariables`
+  - `OverlappingFieldsCanBeMerged`
+  - `PossibleFragmentSpreads`
+  - `ProvidedNonNullArguments` (*disabled by default in `relay`*)
+  - `ScalarLeafs` (*disabled by default in `relay`*)
+  - `UniqueArgumentNames`
+  - `UniqueFragmentNames`
+  - `UniqueInputFieldNames`
+  - `UniqueOperationNames`
+  - `UniqueVariableNames`
+  - `VariablesAreInputTypes`
+  - `VariablesInAllowedPosition`
