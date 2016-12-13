@@ -1,3 +1,9 @@
+# Change log
+
+### vNEXT
+
+- ...
+
 ### v0.4.1
 
 - Support for selecting validation rules one by one, by [erydo in
