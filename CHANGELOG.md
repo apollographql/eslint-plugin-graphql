@@ -1,7 +1,13 @@
+# Change log
+
 ### vNEXT
 
 - Added `'literal'` option to `env` for when working with `.graphql` and `.gql` files, by [jtmthf in
-#36](https://github.com/apollostack/eslint-plugin-graphql/pull/36) 
+
+### v0.4.1
+
+- Support for selecting validation rules one by one, by [erydo in
+#34](https://github.com/apollostack/eslint-plugin-graphql/pull/34)
 
 ### v0.4.0
 
