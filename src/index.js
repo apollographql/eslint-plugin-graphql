@@ -141,7 +141,7 @@ function parseOptions(optionGroup) {
   }
 
   // Validate env
-  if (env && env !== 'lokka' && env !== 'relay' && env !== 'apollo' && env != 'literal') {
+  if (env && env !== 'lokka' && env !== 'relay' && env !== 'apollo' && env !== 'literal') {
     throw new Error('Invalid option for env, only `apollo`, `lokka`, `relay`, and `literal` supported.')
   }
 
