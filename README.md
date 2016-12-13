@@ -52,10 +52,10 @@ Note: the linter rule could be extended to identify calls to various specific AP
 ### GraphQL literal files
 
 This plugin also lints GraphQL literal files ending on `.gql` or `.graphql`.
-In order to do so just tell eslint to check these files as well.
+In order to do so set `env` to `'literal'` in your `.eslintrc.js` and tell eslint to check these files as well.
 
 ```BASH
-eslint . --ext js,gql,graphql
+eslint . --ext .js --ext .gql --ext .graphql
 ```
 
 ### Example config for Apollo
@@ -67,7 +67,7 @@ module.exports = {
   rules: {
     "graphql/template-strings": ['error', {
       // Import default settings for your GraphQL client. Supported values:
-      // 'apollo', 'relay', 'lokka'
+      // 'apollo', 'relay', 'lokka', 'literal'
       env: 'apollo',
 
       // Import your schema JSON here
@@ -94,7 +94,7 @@ module.exports = {
   rules: {
     "graphql/template-strings": ['error', {
       // Import default settings for your GraphQL client. Supported values:
-      // 'apollo', 'relay', 'lokka'
+      // 'apollo', 'relay', 'lokka', 'literal'
       env: 'relay',
 
       // Import your schema JSON here
@@ -121,7 +121,7 @@ module.exports = {
   rules: {
     "graphql/template-strings": ['error', {
       // Import default settings for your GraphQL client. Supported values:
-      // 'apollo', 'relay', 'lokka'
+      // 'apollo', 'relay', 'lokka', 'literal'
       env: 'lokka',
 
       // Import your schema JSON here
@@ -132,6 +132,33 @@ module.exports = {
 
       // Optional, the name of the template tag, defaults to 'gql'
       tagName: 'gql'
+    }]
+  },
+  plugins: [
+    'graphql'
+  ]
+}
+```
+
+### Example config for literal graphql files
+
+```js
+// In a file called .eslintrc.js
+module.exports = {
+  parser: "babel-eslint",
+  rules: {
+    "graphql/template-strings": ['error', {
+      // Import default settings for your GraphQL client. Supported values:
+      // 'apollo', 'relay', 'lokka', 'literal'
+      env: 'literal',
+
+      // Import your schema JSON here
+      schemaJson: require('./schema.json'),
+
+      // OR provide absolute path to your schema JSON
+      // schemaJsonFilepath: path.resolve(__dirname, './schema.json'),
+
+      // tagName is set automatically
     }]
   },
   plugins: [
