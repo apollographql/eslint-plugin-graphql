@@ -135,8 +135,8 @@ function parseOptions(optionGroup) {
   }
 
   // Validate env
-  if (env && env !== 'lokka' && env !== 'relay' && env !== 'apollo') {
-    throw new Error('Invalid option for env, only `apollo`, `lokka`, and `relay` supported.')
+  if (env && env !== 'lokka' && env !== 'relay' && env !== 'apollo' && env !== 'literal') {
+    throw new Error('Invalid option for env, only `apollo`, `lokka`, `relay`, and `literal` supported.')
   }
 
   // Validate tagName and set default
@@ -145,6 +145,8 @@ function parseOptions(optionGroup) {
     tagName = tagNameOption;
   } else if (env === 'relay') {
     tagName = 'Relay.QL';
+  } else if (env === 'literal') {
+    tagName = internalTag;
   } else {
     tagName = 'gql';
   }
