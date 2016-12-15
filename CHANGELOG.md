@@ -4,6 +4,10 @@
 
 - ...
 
+### v0.4.3
+
+- Add `'literal'` option to options schema, so that it can actually be used. [stefanorg](https://github.com/stefanorg) in [#39](https://github.com/apollostack/eslint-plugin-graphql/pull/39)
+
 ### v0.4.2
 
 - Added `'literal'` option to `env` for when working with `.graphql` and `.gql` files, by [jtmthf in #36](https://github.com/apollostack/eslint-plugin-graphql/pull/36)
