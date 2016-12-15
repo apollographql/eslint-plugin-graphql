@@ -59,6 +59,7 @@ const rules = {
                 'lokka',
                 'relay',
                 'apollo',
+                'literal',
               ],
             },
             validators: {
