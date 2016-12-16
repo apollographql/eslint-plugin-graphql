@@ -4,7 +4,7 @@
 [![Build Status](https://travis-ci.org/apollostack/eslint-plugin-graphql.svg?branch=master)](https://travis-ci.org/apollostack/eslint-plugin-graphql)
 [![Get on Slack](https://img.shields.io/badge/slack-join-orange.svg)](http://www.apollostack.com/#slack)
 
-An ESLint plugin that checks tagged template strings against a GraphQL schema.
+An ESLint plugin that checks tagged query strings inside JavaScript or queries inside `.graphql` files against a GraphQL schema.
 
 ```
 npm install eslint-plugin-graphql
@@ -12,21 +12,19 @@ npm install eslint-plugin-graphql
 
 ![Screenshot from Atom](https://github.com/apollostack/eslint-plugin-graphql/raw/master/screenshot.png)
 
-Supports three GraphQL clients out of the box:
+Has built-in settings for three GraphQL clients out of the box:
 
 1. [Apollo client](http://docs.apollostack.com/apollo-client/index.html)
 2. [Relay](https://facebook.github.io/relay/)
 3. [Lokka](https://github.com/kadirahq/lokka)
 
-**Coming soon:** You can use it now with the manual approach described below, but we are working on easier tooling so you can just pass a GraphQL server URL.
-
 ### Importing schema JSON
 
-You'll need to import your [introspection query result](https://github.com/graphql/graphql-js/blob/master/src/utilities/introspectionQuery.js). This can be done if you define your ESLint config in a JS file.
+You'll need to import your [introspection query result](https://github.com/graphql/graphql-js/blob/master/src/utilities/introspectionQuery.js). This can be done if you define your ESLint config in a JS file. Note: we're always looking for better ways to get the schema, so please open an issue with suggestions.
 
 ### Identity template literal tag
 
-This plugin relies on GraphQL queries being prefixed with a special tag. In Relay, this is always done, but other clients like just take normal template literals without a tag. In this case, define an identity tag that doesn't do anything except for tell the linter this is a GraphQL query:
+This plugin relies on GraphQL queries being prefixed with a special tag. In Relay and Apollo, this is always done, but other clients often take query strings without a tag. In this case, you can define an identity tag that doesn't do anything except for tell the linter this is a GraphQL query:
 
 ```js
 global.gql = (literals, ...substitutions) => {
@@ -47,14 +45,14 @@ global.gql = (literals, ...substitutions) => {
 
 Code snippet taken from:  <https://leanpub.com/understandinges6/read#leanpub-auto-multiline-strings>
 
-Note: the linter rule could be extended to identify calls to various specific APIs to eliminate the need for a template literal tag, but this might just make the implementation a lot more complex for little benefit.
+Note: The linter rule could be extended to identify calls to various specific APIs to eliminate the need for a template literal tag, but this might just make the implementation a lot more complex for little benefit.
 
 ### GraphQL literal files
 
 This plugin also lints GraphQL literal files ending on `.gql` or `.graphql`.
 In order to do so set `env` to `'literal'` in your `.eslintrc.js` and tell eslint to check these files as well.
 
-```BASH
+```bash
 eslint . --ext .js --ext .gql --ext .graphql
 ```
 
@@ -193,7 +191,7 @@ module.exports = {
 
 ### Selecting Validation Rules
 
-GraphQL validation rules can be configured in the eslint rule's configuration using the `validators` setting. The default selection depends on the `env` setting. If no `env` is specified, all rules are enabled by default.
+GraphQL validation rules can be configured in the eslint rule configuration using the `validators` option. The default selection depends on the `env` setting. If no `env` is specified, all rules are enabled by default.
 
 The `validators` setting can be set either to a list of specific validator names or to the special value `"all"`.
 
