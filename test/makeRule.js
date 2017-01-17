@@ -55,7 +55,7 @@ const parserOptions = {
         parserOptions,
         code: 'const x = gql``',
         errors: [{
-          message: 'Syntax Error GraphQL (1:1) Unexpected EOF',
+          message: 'Syntax Error GraphQL (1:1) Unexpected <EOF>',
           type: 'TaggedTemplateExpression'
         }]
       },
@@ -101,7 +101,7 @@ const parserOptions = {
         parserOptions,
         code: 'const x = myGraphQLTag``',
         errors: [{
-          message: 'Syntax Error GraphQL (1:1) Unexpected EOF',
+          message: 'Syntax Error GraphQL (1:1) Unexpected <EOF>',
           type: 'TaggedTemplateExpression'
         }]
       },
@@ -214,7 +214,7 @@ const parserOptions = {
           });
         `,
         errors: [{
-          message: 'Cannot query field "allFilmsx" on type "RootQuery".',
+          message: 'Cannot query field "allFilmsx" on type "RootQuery". Did you mean "allFilms"?',
           type: 'TaggedTemplateExpression',
           line: 4,
           column: 17
@@ -379,7 +379,7 @@ const parserOptions = {
           class HelloApp extends React.Component {}
         `,
         errors: [{
-          message: 'Cannot query field "hellox" on type "Greetings".',
+          message: 'Cannot query field "hellox" on type "Greetings". Did you mean "hello"?',
           type: 'TaggedTemplateExpression',
           line: 6,
           column: 19
@@ -527,7 +527,7 @@ const validatorCases = {
     pass: 'const x = gql`query($a: Int=1, $b: Int=2) { sum(a: $a, b: $b) }`',
     fail: 'const x = gql`query($a: Int="string", $b: Int=false) { sum(a: $a, b: $b) }`',
     errors: [{
-      message: 'Variable "$a" has invalid default value "string".\nExpected type "Int", found "string".',
+      message: 'Variable "$a" of type "Int" has invalid default value "string".\nExpected type "Int", found "string".',
       type: 'TaggedTemplateExpression',
     }],
   },
@@ -553,32 +553,18 @@ const validatorCases = {
     fail: 'const x = gql`{ sum(c: 1, d: 2) }`',
     alsoBreaks: ['ProvidedNonNullArguments'],
     errors: [{
-      message: 'Unknown argument "c" on field "sum" of type "RootQuery".',
+      message: 'Unknown argument "c" on field "sum" of type "RootQuery". Did you mean "a" or "b"?',
       type: 'TaggedTemplateExpression',
     }],
   },
-  //
-  // FIXME: These are causing an error on unrecognized directives for @include
-  // and @skip. This may be due to currently depending on graphql-0.5 which is
-  // quite old.
-  //
-  // 'KnownArgumentNames': {
-  //   pass: 'const x = gql`{ number, allFilms @include(if: false) { films { title } } }`',
-  //   fail: 'const x = gql`{ number, allFilms @include(blah: false) { films { title } } }`',
-  //   errors: [{
-  //     message: '!!!',
-  //     type: 'TaggedTemplateExpression',
-  //   }],
-  // },
-  // 'KnownDirectives': {
-  //   pass: 'const x = gql`{ number, allFilms @include(if: false) { films { title } } }`',
-  //   fail: 'const x = gql`{ number, allFilms @goofy(if: false) { films { title } } }`',
-  //   errors: [{
-  //     message: '…',
-  //     type: 'TaggedTemplateExpression',
-  //   }],
-  // },
-  //
+  'KnownDirectives': {
+    pass: 'const x = gql`{ number, allFilms @include(if: false) { films { title } } }`',
+    fail: 'const x = gql`{ number, allFilms @goofy(if: false) { films { title } } }`',
+    errors: [{
+      message: 'Unknown directive "goofy".',
+      type: 'TaggedTemplateExpression',
+    }],
+  },
   'KnownFragmentNames': {
     pass: 'const x = gql`fragment FilmFragment on Film { title } { allFilms { films { ...FilmFragment } } }`',
     fail: 'const x = gql`{ allFilms { films { ...FilmFragment } } }`',
@@ -603,14 +589,17 @@ const validatorCases = {
       type: 'TaggedTemplateExpression',
     }],
   },
-  'NoFragmentCycles': {
-    pass: 'const x = gql`fragment FilmFragment on Film { title } { allFilms { films { ...FilmFragment } } }`',
-    fail: 'const x = gql`fragment FilmFragment on Film { title, ...FilmFragment } { allFilms { films { ...FilmFragment } } }`',
-    errors: [{
-      message: 'Cannot spread fragment "FilmFragment" within itself.',
-      type: 'TaggedTemplateExpression',
-    }],
-  },
+
+  // This causes a `RangeError: Maximum call stack size exceeded` exception in graphql 0.8.x
+  // 'NoFragmentCycles': {
+  //   pass: 'const x = gql`fragment FilmFragment on Film { title } { allFilms { films { ...FilmFragment } } }`',
+  //   fail: 'const x = gql`fragment FilmFragment on Film { title, ...FilmFragment } { allFilms { films { ...FilmFragment } } }`',
+  //   errors: [{
+  //     message: 'Cannot spread fragment "FilmFragment" within itself.',
+  //     type: 'TaggedTemplateExpression',
+  //   }],
+  // },
+
   'NoUndefinedVariables': {
     pass: 'const x = gql`query($a: Int!) { sum(a: $a, b: 1) }`',
     fail: 'const x = gql`query($a: Int!) { sum(a: $a, b: $b) }`',
@@ -639,7 +628,7 @@ const validatorCases = {
     pass: 'const x = gql`fragment Sum on RootQuery { sum(a: 1, b: 2) } { ...Sum, sum(a: 1, b: 2) }`',
     fail: 'const x = gql`fragment Sum on RootQuery { sum(a: 1, b: 2) } { ...Sum, sum(a: 2, b: 3) }`',
     errors: [{
-      message: 'Fields "sum" conflict because they have differing arguments.',
+      message: 'Fields "sum" conflict because they have differing arguments. Use different aliases on the fields to fetch both if this was intentional.',
       type: 'TaggedTemplateExpression',
     }],
   },
@@ -663,7 +652,7 @@ const validatorCases = {
     pass: 'const x = gql`{ number }`',
     fail: 'const x = gql`{ allFilms }`',
     errors: [{
-      message: 'Field "allFilms" of type "AllFilmsObj" must have a sub selection.',
+      message: 'Field "allFilms" of type "AllFilmsObj" must have a selection of subfields. Did you mean "allFilms { ... }"?',
       type: 'TaggedTemplateExpression',
     }],
   },
