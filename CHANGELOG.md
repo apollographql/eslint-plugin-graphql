@@ -4,6 +4,11 @@
 
 - ...
 
+### v0.5.0
+- Take into account Apollo fragment interpolation rules [jonwong](https://github.com/jonwong) in [#33](https://github.com/apollostack/eslint-plugin-graphql/pull/33)
+- Update graphql-js dependency to 0.8.2 [jonbretman](https://github.com/jonbretman) in [#40](https://github.com/apollostack/eslint-plugin-graphql/pull/40)
+
+
 ### v0.4.3
 
 - Add `'literal'` option to options schema, so that it can actually be used. [stefanorg](https://github.com/stefanorg) in [#39](https://github.com/apollostack/eslint-plugin-graphql/pull/39)
