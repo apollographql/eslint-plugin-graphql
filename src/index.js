@@ -269,12 +269,24 @@ function replaceExpressions(node, context, env) {
 
   node.quasis.forEach((element, i) => {
     const chunk = element.value.cooked;
+    const value = node.expressions[i];
 
     chunks.push(chunk);
 
-    if (!element.tail) {
-      const value = node.expressions[i];
+    if (!env || env === 'apollo') {
+      // In Apollo, interpolation is only valid outside top-level structures like `query` or `mutation`.
+      // We'll check to make sure there's an equivalent set of opening and closing brackets, otherwise
+      // we're attempting to do an invalid interpolation.
+      if ((chunk.split('{').length - 1) !== (chunk.split('}').length - 1)) {
+        context.report({
+          node: value,
+          message: 'Invalid interpolation - fragment interpolation must occur outside of the brackets.',
+        });
+        throw new Error('Invalid interpolation');
+      }
+    }
 
+    if (!element.tail) {
       // Preserve location of errors by replacing with exactly the same length
       const nameLength = value.end - value.start;
 
@@ -294,6 +306,10 @@ function replaceExpressions(node, context, env) {
         // Ellipsis cancels out extra characters
         const placeholder = strWithLen(nameLength);
         chunks.push('...' + placeholder);
+      } else if (!env || env === 'apollo') {
+        // In Apollo, fragment interpolation is only valid outside of brackets
+        // Since we don't know what we'd interpolate here (that occurs at runtime),
+        // we're not going to do anything with this interpolation.
       } else {
         // Invalid interpolation
         context.report({
