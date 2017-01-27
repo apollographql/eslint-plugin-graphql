@@ -4,6 +4,9 @@
 
 - ...
 
+### v0.6.0
+- Update graphql-js dependency to 0.9.0 [jonbretman](https://github.com/jonbretman) in [#41](https://github.com/apollostack/eslint-plugin-graphql/pull/41)
+
 ### v0.5.0
 - Take into account Apollo fragment interpolation rules [jnwng](https://github.com/jnwng) in [#33](https://github.com/apollostack/eslint-plugin-graphql/pull/33)
 - Update graphql-js dependency to 0.8.2 [jonbretman](https://github.com/jonbretman) in [#40](https://github.com/apollostack/eslint-plugin-graphql/pull/40)
