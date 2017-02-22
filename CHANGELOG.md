@@ -4,6 +4,10 @@
 
 - ...
 
+### v0.6.1
+
+- Remove `babel-polyfill` from runtime dependencies, since it was only being used in test code. [joelgriffith](https://github.com/joelgriffith) in [#44](https://github.com/apollographql/eslint-plugin-graphql/pull/44)
+
 ### v0.6.0
 - Update graphql-js dependency to 0.9.0 [jonbretman](https://github.com/jonbretman) in [#41](https://github.com/apollostack/eslint-plugin-graphql/pull/41)
 
