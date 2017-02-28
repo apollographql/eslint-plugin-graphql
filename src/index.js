@@ -14,6 +14,8 @@ import {
   without,
 } from 'lodash';
 
+import * as customRules from './rules';
+
 const allGraphQLValidatorNames = allGraphQLValidators.map(rule => rule.name);
 
 // Map of env name to list of rule names.
@@ -39,6 +41,19 @@ const envGraphQLValidatorNames = {
 const internalTag = 'ESLintPluginGraphQLFile';
 const gqlFiles = ['gql', 'graphql'];
 
+const defaultRuleProperties = {
+  schemaJson: {
+    type: 'object',
+  },
+  schemaJsonFilepath: {
+    type: 'string',
+  },
+  tagName: {
+    type: 'string',
+    pattern: '^[$_a-zA-Z$_][a-zA-Z0-9$_]+(\\.[a-zA-Z0-9$_]+)?$',
+  },
+}
+
 const rules = {
   'template-strings': {
     meta: {
@@ -48,12 +63,7 @@ const rules = {
         items: {
           additionalProperties: false,
           properties: {
-            schemaJson: {
-              type: 'object',
-            },
-            schemaJsonFilepath: {
-              type: 'string',
-            },
+            ...defaultRuleProperties,
             env: {
               enum: [
                 'lokka',
@@ -74,10 +84,6 @@ const rules = {
                   'all',
                 ],
               }],
-            },
-            tagName: {
-              type: 'string',
-              pattern: '^[$_a-zA-Z$_][a-zA-Z0-9$_]+(\\.[a-zA-Z0-9$_]+)?$',
             },
           },
           // schemaJson and schemaJsonFilepath are mutually exclusive:
@@ -113,6 +119,49 @@ const rules = {
       };
     },
   },
+  'named-operations': {
+    meta: {
+      schema: {
+        type: 'array',
+        minLength: 1,
+        items: {
+          additionalProperties: false,
+          properties: { ...defaultRuleProperties },
+          oneOf: [{
+            required: ['schemaJson'],
+            not: { required: ['schemaJsonFilepath'], },
+          }, {
+            required: ['schemaJsonFilepath'],
+            not: { required: ['schemaJson'], },
+          }],
+        },
+      },
+    },
+    create(context) {
+      const tagNames = new Set();
+      const tagRules = [];
+      for (const optionGroup of context.options) {
+        const {schema, env, tagName, validators} = parseOptions({
+          validators: ['OperationsMustHaveNames'],
+          ...optionGroup,
+        });
+        if (tagNames.has(tagName)) {
+          throw new Error('Multiple options for GraphQL tag ' + tagName);
+        }
+        tagNames.add(tagName);
+        tagRules.push({schema, env, tagName, validators});
+      }
+      return {
+        TaggedTemplateExpression(node) {
+          for (const {schema, env, tagName, validators} of tagRules) {
+            if (templateExpressionMatchesTag(tagName, node)) {
+              return handleTemplateTag(node, context, schema, env, validators);
+            }
+          }
+        },
+      };
+    },
+  }
 };
 
 function parseOptions(optionGroup) {
@@ -165,7 +214,13 @@ function parseOptions(optionGroup) {
     validatorNames = envGraphQLValidatorNames[env] || allGraphQLValidatorNames;
   }
 
-  const validators = validatorNames.map(name => require(`graphql/validation/rules/${name}`)[name]);
+  const validators = validatorNames.map(name => {
+    if (name in customRules) {
+      return customRules[name];
+    } else {
+      return require(`graphql/validation/rules/${name}`)[name];
+    }
+  });
   return {schema, env, tagName, validators};
 }
 

@@ -782,6 +782,17 @@ const validatorCases = {
   },
 };
 
+const namedOperationsValidatorCases = {
+  'OperationsMustHaveNames': {
+    pass: 'const x = gql`query Test { sum(a: 1, b: 2) }`',
+    fail: 'const x = gql`query { sum(a: 1, b: 2) }`',
+    errors: [{
+      message: 'All operations must be named',
+      type: 'TaggedTemplateExpression',
+    }],
+  },
+};
+
 {
   let options = [{
     schemaJson, tagName: 'gql',
@@ -824,6 +835,17 @@ const validatorCases = {
         otherValidators.map(({fail: code}) => code),
       ).map(code => ({options, parserOptions, code})),
       invalid: [{options, parserOptions, errors, code: fail}],
+    });
+  }
+
+  // Validate the named-operations rule
+  for (const [validatorName, {pass, fail, errors}] of Object.entries(namedOperationsValidatorCases)) {
+    options = [{
+      schemaJson, tagName: 'gql',
+    }];
+    ruleTester.run(`enabled ${validatorName} validator`, rules['named-operations'], {
+      valid:  [namedOperationsValidatorCases[validatorName]].map(({pass: code}) => ({options, parserOptions, code})),
+      invalid:  [namedOperationsValidatorCases[validatorName]].map(({fail: code, errors}) => ({options, parserOptions, code, errors})),
     });
   }
 }
