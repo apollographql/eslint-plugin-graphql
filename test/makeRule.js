@@ -839,13 +839,11 @@ const namedOperationsValidatorCases = {
   }
 
   // Validate the named-operations rule
-  for (const [validatorName, {pass, fail, errors}] of Object.entries(namedOperationsValidatorCases)) {
-    options = [{
-      schemaJson, tagName: 'gql',
-    }];
-    ruleTester.run(`enabled ${validatorName} validator`, rules['named-operations'], {
-      valid:  [namedOperationsValidatorCases[validatorName]].map(({pass: code}) => ({options, parserOptions, code})),
-      invalid:  [namedOperationsValidatorCases[validatorName]].map(({fail: code, errors}) => ({options, parserOptions, code, errors})),
-    });
-  }
+  options = [{
+    schemaJson, tagName: 'gql',
+  }];
+  ruleTester.run('testing named-operations rule', rules['named-operations'], {
+    valid: Object.values(namedOperationsValidatorCases).map(({pass: code}) => ({options, parserOptions, code})),
+    invalid: Object.values(namedOperationsValidatorCases).map(({fail: code, errors}) => ({options, parserOptions, code, errors})),
+  });
 }
