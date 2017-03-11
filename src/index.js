@@ -54,6 +54,28 @@ const defaultRuleProperties = {
   },
 }
 
+function createRule(context, optionParser) {
+  const tagNames = new Set();
+  const tagRules = [];
+  for (const optionGroup of context.options) {
+    const {schema, env, tagName, validators} = optionParser(optionGroup);
+    if (tagNames.has(tagName)) {
+      throw new Error('Multiple options for GraphQL tag ' + tagName);
+    }
+    tagNames.add(tagName);
+    tagRules.push({schema, env, tagName, validators});
+  }
+  return {
+    TaggedTemplateExpression(node) {
+      for (const {schema, env, tagName, validators} of tagRules) {
+        if (templateExpressionMatchesTag(tagName, node)) {
+          return handleTemplateTag(node, context, schema, env, validators);
+        }
+      }
+    },
+  };
+}
+
 const rules = {
   'template-strings': {
     meta: {
@@ -97,27 +119,7 @@ const rules = {
         }
       },
     },
-    create(context) {
-      const tagNames = new Set();
-      const tagRules = [];
-      for (const optionGroup of context.options) {
-        const {schema, env, tagName, validators} = parseOptions(optionGroup);
-        if (tagNames.has(tagName)) {
-          throw new Error('Multiple options for GraphQL tag ' + tagName);
-        }
-        tagNames.add(tagName);
-        tagRules.push({schema, env, tagName, validators});
-      }
-      return {
-        TaggedTemplateExpression(node) {
-          for (const {schema, env, tagName, validators} of tagRules) {
-            if (templateExpressionMatchesTag(tagName, node)) {
-              return handleTemplateTag(node, context, schema, env, validators);
-            }
-          }
-        },
-      };
-    },
+    create: (context) => createRule(context, parseOptions)
   },
   'named-operations': {
     meta: {
@@ -137,29 +139,11 @@ const rules = {
         },
       },
     },
-    create(context) {
-      const tagNames = new Set();
-      const tagRules = [];
-      for (const optionGroup of context.options) {
-        const {schema, env, tagName, validators} = parseOptions({
-          validators: ['OperationsMustHaveNames'],
-          ...optionGroup,
-        });
-        if (tagNames.has(tagName)) {
-          throw new Error('Multiple options for GraphQL tag ' + tagName);
-        }
-        tagNames.add(tagName);
-        tagRules.push({schema, env, tagName, validators});
-      }
-      return {
-        TaggedTemplateExpression(node) {
-          for (const {schema, env, tagName, validators} of tagRules) {
-            if (templateExpressionMatchesTag(tagName, node)) {
-              return handleTemplateTag(node, context, schema, env, validators);
-            }
-          }
-        },
-      };
+    create: (context) => {
+      return createRule(context, (optionGroup) => parseOptions({
+        validators: ['OperationsMustHaveNames'],
+        ...optionGroup,
+      }));;
     },
   }
 };
