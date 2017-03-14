@@ -241,3 +241,46 @@ The full list of available validators is:
   - `UniqueVariableNames`
   - `VariablesAreInputTypes`
   - `VariablesInAllowedPosition`
+
+### Named Operations Validation Rule
+
+The Named Operation rule validates that all operations are named. Naming operations is valuable for including in server-side logs and debugging.
+
+**Pass**
+```
+query FetchUsername {
+  viewer {
+    name
+  }
+}
+```
+
+**Fail**
+```
+query {
+  viewer {
+    name
+  }
+}
+```
+
+The rule is defined as `graphql/named-operations` and requires a `schema` and optional `tagName`
+
+```js
+// In a file called .eslintrc.js
+module.exports = {
+  parser: "babel-eslint",
+  rules: {
+    "graphql/template-strings": ['error', {
+      env: 'apollo',
+      schemaJson: require('./schema.json'),
+    }],
+    "graphql/named-operations": ['warning' {
+      schemaJson: require('./schema.json'),
+    }],
+  },
+  plugins: [
+    'graphql'
+  ]
+}
+```
