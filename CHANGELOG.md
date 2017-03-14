@@ -4,6 +4,9 @@
 
 - ...
 
+### v0.7.0
+- Add lint rule to enforce that operations have names [gauravmk](https://github.com/gauravmk) in [#47](https://github.com/apollographql/eslint-plugin-graphql/pull/47)
+
 ### v0.6.1
 
 - Remove `babel-polyfill` from runtime dependencies, since it was only being used in test code. [joelgriffith](https://github.com/joelgriffith) in [#44](https://github.com/apollographql/eslint-plugin-graphql/pull/44)
