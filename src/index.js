@@ -145,7 +145,46 @@ const rules = {
         ...optionGroup,
       }));;
     },
-  }
+  },
+  'required-fields': {
+    meta: {
+      schema: {
+        type: 'array',
+        minLength: 1,
+        items: {
+          additionalProperties: false,
+          properties: {
+            ...defaultRuleProperties,
+            requiredFields: {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
+            },
+          },
+          oneOf: [
+            {
+              required: ['schemaJson'],
+              not: { required: ['schemaJsonFilepath'] },
+            },
+            {
+              required: ['schemaJsonFilepath'],
+              not: { required: ['schemaJson'] },
+            },
+          ],
+        },
+      },
+    },
+    create: context => {
+      return createRule(context, optionGroup =>
+        parseOptions({
+          validators: ['RequiredFields'],
+          options: { requiredFields: optionGroup.requiredFields },
+          ...optionGroup,
+        })
+      );
+    },
+  },
 };
 
 function parseOptions(optionGroup) {

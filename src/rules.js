@@ -12,3 +12,23 @@ export function OperationsMustHaveNames(context) {
   };
 }
 
+export function RequiredFields(context) {
+  return {
+    Field(node, _ctx, _schema, _env, _validators, options) {
+      const def = context.getFieldDef();
+      const { requiredFields } = options;
+      requiredFields.forEach(field => {
+        if (def.type && def.type._fields && def.type._fields[field]) {
+          const fieldWasRequested = !!node.selectionSet.selections.find(
+            n => n.name.value === field
+          );
+          if (!fieldWasRequested) {
+            context.reportError(
+              new GraphQLError(`'${field}' field required on '${node.name.value}'`, [node])
+            );
+          }
+        }
+      });
+    },
+  };
+}
