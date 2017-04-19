@@ -794,14 +794,19 @@ const namedOperationsValidatorCases = {
 };
 
 const requiredFieldsTestCases = {
-  'RequiredFields': {
-    pass: 'const x = gql`query Test { stories { id comments { text } } }`',
-    fail: 'const x = gql`query Test { stories { comments { text } } }`',
-    errors: [{
-      message: 'All operations must be named',
-      type: 'TaggedTemplateExpression',
-    }],
-  },
+  pass: [
+    'const x = gql`query { allFilms { films { title } } }`',
+    'const x = gql`query { stories { id comments { text } } }`'
+  ],
+  fail: [
+    {
+      code: 'const x = gql`query { stories { comments { text } } }`',
+      errors: [{
+        message: 'All operations must be named',
+        type: 'TaggedTemplateExpression',
+      }],
+    },
+  ],
 };
 
 {
@@ -865,7 +870,7 @@ const requiredFieldsTestCases = {
     requiredFields: ['id'],
   }];
   ruleTester.run('testing required-fields rule', rules['required-fields'], {
-    valid: Object.values(requiredFieldsTestCases).map(({pass: code}) => ({options, parserOptions, code})),
-    invalid: Object.values(requiredFieldsTestCases).map(({fail: code, errors}) => ({options, parserOptions, code, errors})),
+    valid: requiredFieldsTestCases.pass.map((code) => ({options, parserOptions, code})),
+    invalid: requiredFieldsTestCases.fail.map(({code, errors}) => ({options, parserOptions, code, errors})),
   });
 }

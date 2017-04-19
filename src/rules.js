@@ -18,7 +18,9 @@ export function RequiredFields(context, options) {
       const def = context.getFieldDef();
       const { requiredFields } = options;
       requiredFields.forEach(field => {
+        console.log('def', def);
         if (def.type && def.type._fields && def.type._fields[field]) {
+
           const fieldWasRequested = !!node.selectionSet.selections.find(
             n => (n.name.value === field || n.kind === 'FragmentSpread')
           );
