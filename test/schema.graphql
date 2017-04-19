@@ -29,6 +29,7 @@ type RootQuery {
   allFilms: AllFilmsObj
   sum(a: Int!, b: Int!): Int!
   greetings: Greetings
+  stories: [Story!]!
 }
 
 type AllFilmsObj {

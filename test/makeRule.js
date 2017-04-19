@@ -793,6 +793,17 @@ const namedOperationsValidatorCases = {
   },
 };
 
+const requiredFieldsTestCases = {
+  'RequiredFields': {
+    pass: 'const x = gql`query Test { stories { id comments { text } } }`',
+    fail: 'const x = gql`query Test { stories { comments { text } } }`',
+    errors: [{
+      message: 'All operations must be named',
+      type: 'TaggedTemplateExpression',
+    }],
+  },
+};
+
 {
   let options = [{
     schemaJson, tagName: 'gql',
@@ -845,5 +856,16 @@ const namedOperationsValidatorCases = {
   ruleTester.run('testing named-operations rule', rules['named-operations'], {
     valid: Object.values(namedOperationsValidatorCases).map(({pass: code}) => ({options, parserOptions, code})),
     invalid: Object.values(namedOperationsValidatorCases).map(({fail: code, errors}) => ({options, parserOptions, code, errors})),
+  });
+
+  // Validate the required-fields rule
+  options = [{
+    schemaJson,
+    tagName: 'gql',
+    requiredFields: ['id'],
+  }];
+  ruleTester.run('testing required-fields rule', rules['required-fields'], {
+    valid: Object.values(requiredFieldsTestCases).map(({pass: code}) => ({options, parserOptions, code})),
+    invalid: Object.values(requiredFieldsTestCases).map(({fail: code, errors}) => ({options, parserOptions, code, errors})),
   });
 }

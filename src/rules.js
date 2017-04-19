@@ -20,7 +20,7 @@ export function RequiredFields(context, options) {
       requiredFields.forEach(field => {
         if (def.type && def.type._fields && def.type._fields[field]) {
           const fieldWasRequested = !!node.selectionSet.selections.find(
-            n => n.name.value === field
+            n => (n.name.value === field || n.kind === 'FragmentSpread')
           );
           if (!fieldWasRequested) {
             context.reportError(
