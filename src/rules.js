@@ -12,9 +12,9 @@ export function OperationsMustHaveNames(context) {
   };
 }
 
-export function RequiredFields(context) {
+export function RequiredFields(context, options) {
   return {
-    Field(node, _ctx, _schema, _env, _validators, options) {
+    Field(node) {
       const def = context.getFieldDef();
       const { requiredFields } = options;
       requiredFields.forEach(field => {
