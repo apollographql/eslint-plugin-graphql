@@ -18,9 +18,17 @@ export function RequiredFields(context, options) {
       const def = context.getFieldDef();
       const { requiredFields } = options;
       requiredFields.forEach(field => {
-        console.log('def', def);
-        if (def.type && def.type._fields && def.type._fields[field]) {
+        const fieldAvaliableOnType = def.type && def.type._fields && def.type._fields[field];
 
+        function recursivelyCheckOnType(ofType, field) {
+          return (ofType._fields && ofType._fields[field]) || (ofType.ofType && recursivelyCheckOnType(ofType.ofType, field));
+        }
+
+        let fieldAvaliableOnOfType = false;
+        if (def.type && def.type.ofType) {
+          fieldAvaliableOnOfType = recursivelyCheckOnType(def.type.ofType, field);
+        }
+        if (fieldAvaliableOnType || fieldAvaliableOnOfType) {
           const fieldWasRequested = !!node.selectionSet.selections.find(
             n => (n.name.value === field || n.kind === 'FragmentSpread')
           );

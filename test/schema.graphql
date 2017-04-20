@@ -43,6 +43,7 @@ type Film {
 }
 
 type Greetings {
+  id: ID
   hello: String
 }
 

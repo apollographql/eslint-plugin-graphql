@@ -802,7 +802,14 @@ const requiredFieldsTestCases = {
     {
       code: 'const x = gql`query { stories { comments { text } } }`',
       errors: [{
-        message: 'All operations must be named',
+        message: `'id' field required on 'stories'`,
+        type: 'TaggedTemplateExpression',
+      }],
+    },
+    {
+      code: 'const x = gql`query { greetings { hello } }`',
+      errors: [{
+        message: `'id' field required on 'greetings'`,
         type: 'TaggedTemplateExpression',
       }],
     },
