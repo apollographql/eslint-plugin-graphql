@@ -2,7 +2,7 @@
 
 ### vNEXT
 
-- ...
+- Updated `graphql` dependency to resolve test failures (wording change, no API change) [jnwng](https://github.com/jnwng)
 
 ### v0.7.0
 - Add lint rule to enforce that operations have names [gauravmk](https://github.com/gauravmk) in [#47](https://github.com/apollographql/eslint-plugin-graphql/pull/47)
