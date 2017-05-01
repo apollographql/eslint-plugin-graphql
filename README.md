@@ -263,7 +263,7 @@ query {
 }
 ```
 
-The rule is defined as `graphql/named-operations` and requires a `schema` and optional `tagName`
+The rule is defined as `graphql/named-operations` and requires a `schema` and optional `tagName`.
 
 ```js
 // In a file called .eslintrc.js
@@ -277,6 +277,89 @@ module.exports = {
     "graphql/named-operations": ['warning' {
       schemaJson: require('./schema.json'),
     }],
+  },
+  plugins: [
+    'graphql'
+  ]
+}
+```
+### Required Fields Validation Rule
+
+The Required Fields rule validates that any specified required field is part of the query, but only if that field is available in schema. This is useful to ensure that query results are cached properly in the client.
+
+**Pass**
+```
+// 'uuid' required
+
+schema {
+  query {
+    viewer {
+      uuid
+      name
+    }
+  }
+}
+
+query ViewerName {
+  viewer {
+    name
+    uuid
+  }
+}
+```
+
+**Pass**
+```
+// 'uuid' required
+
+schema {
+  query {
+    viewer {
+      name
+    }
+  }
+}
+
+query ViewerName {
+  viewer {
+    name
+  }
+}
+```
+
+**Fail**
+```
+// 'uuid' required
+
+schema {
+  query {
+    viewer {
+      uuid
+      name
+    }
+  }
+}
+
+query ViewerName {
+  viewer {
+    name
+  }
+}
+```
+
+The rule is defined as `graphql/required-fields` and requires a `schema` and `requiredFields`, with an optional `tagName`.
+
+```js
+// In a file called .eslintrc.js
+module.exports = {
+  rules: {
+    'graphql/required-fields': [
+      'error',
+      {
+        schemaJsonFilepath: require('./schema.json'),
+        requiredFields: ['uuid'],
+      },
+    ],
   },
   plugins: [
     'graphql'

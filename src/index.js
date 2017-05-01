@@ -59,11 +59,12 @@ function createRule(context, optionParser) {
   const tagRules = [];
   for (const optionGroup of context.options) {
     const {schema, env, tagName, validators} = optionParser(optionGroup);
+    const boundValidators = validators.map(v => (ctx) => v(ctx, optionGroup));
     if (tagNames.has(tagName)) {
       throw new Error('Multiple options for GraphQL tag ' + tagName);
     }
     tagNames.add(tagName);
-    tagRules.push({schema, env, tagName, validators});
+    tagRules.push({schema, env, tagName, validators: boundValidators});
   }
   return {
     TaggedTemplateExpression(node) {
@@ -145,7 +146,46 @@ const rules = {
         ...optionGroup,
       }));;
     },
-  }
+  },
+  'required-fields': {
+    meta: {
+      schema: {
+        type: 'array',
+        minLength: 1,
+        items: {
+          additionalProperties: false,
+          properties: {
+            ...defaultRuleProperties,
+            requiredFields: {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
+            },
+          },
+          oneOf: [
+            {
+              required: ['schemaJson'],
+              not: { required: ['schemaJsonFilepath'] },
+            },
+            {
+              required: ['schemaJsonFilepath'],
+              not: { required: ['schemaJson'] },
+            },
+          ],
+        },
+      },
+    },
+    create: context => {
+      return createRule(context, optionGroup =>
+        parseOptions({
+          validators: ['RequiredFields'],
+          options: { requiredFields: optionGroup.requiredFields },
+          ...optionGroup,
+        })
+      );
+    },
+  },
 };
 
 function parseOptions(optionGroup) {

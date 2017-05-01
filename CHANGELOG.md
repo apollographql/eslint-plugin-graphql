@@ -3,6 +3,7 @@
 ### vNEXT
 
 - Updated `graphql` dependency to resolve test failures ([wording change](https://github.com/graphql/graphql-js/commit/ba401e154461bca5323ca9121c6dacaee10ebe88), no API change) [jnwng](https://github.com/jnwng)
+- Add lint rule to enforce that required fields are specified. [rgoldfinger](https://github.com/rgoldfinger) in [#47](https://github.com/apollographql/eslint-plugin-graphql/pull/50)
 
 ### v0.7.0
 - Add lint rule to enforce that operations have names [gauravmk](https://github.com/gauravmk) in [#47](https://github.com/apollographql/eslint-plugin-graphql/pull/47)
