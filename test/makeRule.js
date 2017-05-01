@@ -735,7 +735,7 @@ const validatorCases = {
     pass: 'const x = gql`fragment FF1 on Film { title } fragment FF2 on Film { director } { allFilms { films { ...FF1, ...FF2 } } }`',
     fail: 'const x = gql`fragment FF on Film { title } fragment FF on Film { director } { allFilms { films { ...FF } } }`',
     errors: [{
-      message: 'There can only be one fragment named "FF".',
+      message: 'There can be only one fragment named "FF".',
       type: 'TaggedTemplateExpression',
     }],
   },
@@ -751,7 +751,7 @@ const validatorCases = {
     pass: 'const x = gql`query Q1 { sum(a: 1, b: 2) } query Q2 { sum(a: 2, b: 3) }`',
     fail: 'const x = gql`query Q { sum(a: 1, b: 2) } query Q { sum(a: 2, b: 3) }`',
     errors: [{
-      message: 'There can only be one operation named "Q".',
+      message: 'There can be only one operation named "Q".',
       type: 'TaggedTemplateExpression',
     }],
   },
