@@ -16,6 +16,9 @@ export function RequiredFields(context, options) {
   return {
     Field(node) {
       const def = context.getFieldDef();
+      if (!def) {
+        return;
+      }
       const { requiredFields } = options;
       requiredFields.forEach(field => {
         const fieldAvaliableOnType = def.type && def.type._fields && def.type._fields[field];
