@@ -2,6 +2,7 @@
 
 ### vNEXT
 
+### v0.8.1
 - Fix `graphql/required-fields` throwing on non-existent field reference [Benjie](https://github.com/benjie) in [#65](https://github.com/apollographql/eslint-plugin-graphql/pull/65)
 
 ### v0.8.0
