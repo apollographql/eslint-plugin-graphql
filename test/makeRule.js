@@ -796,7 +796,8 @@ const namedOperationsValidatorCases = {
 const requiredFieldsTestCases = {
   pass: [
     'const x = gql`query { allFilms { films { title } } }`',
-    'const x = gql`query { stories { id comments { text } } }`'
+    'const x = gql`query { stories { id comments { text } } }`',
+    'const x = gql`query { greetings { id, hello, foo } }`'
   ],
   fail: [
     {
