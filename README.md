@@ -274,7 +274,7 @@ module.exports = {
       env: 'apollo',
       schemaJson: require('./schema.json'),
     }],
-    "graphql/named-operations": ['warning' {
+    "graphql/named-operations": ['warn', {
       schemaJson: require('./schema.json'),
     }],
   },
