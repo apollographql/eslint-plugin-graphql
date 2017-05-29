@@ -2,6 +2,9 @@
 
 ### vNEXT
 
+### v0.8.2
+- Remove `KnownFragmentNames` and `UnusedFragment` from default rules in `literal` env. [Justin Schulz](https://github.com/PepperTeasdale) in [#70](https://github.com/apollographql/eslint-plugin-graphql/pull/70)
+
 ### v0.8.1
 - Fix `graphql/required-fields` throwing on non-existent field reference [Benjie](https://github.com/benjie) in [#65](https://github.com/apollographql/eslint-plugin-graphql/pull/65)
 
