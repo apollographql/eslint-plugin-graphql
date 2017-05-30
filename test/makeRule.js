@@ -2,6 +2,11 @@ import { rules } from '../src';
 import { RuleTester } from 'eslint';
 import schemaJson from './schema.json';
 import path from 'path';
+import {
+  includes,
+  values,
+  entries,
+} from 'lodash';
 
 const schemaJsonFilepath = path.resolve(__dirname, './schema.json');
 const secondSchemaJsonFilepath = path.resolve(__dirname, './second-schema.json');
@@ -823,8 +828,8 @@ const requiredFieldsTestCases = {
     validators: 'all',
   }];
   ruleTester.run('enabled all validators', rule, {
-    valid: Object.values(validatorCases).map(({pass: code}) => ({options, parserOptions, code})),
-    invalid: Object.values(validatorCases).map(({fail: code, errors}) => ({options, parserOptions, code, errors})),
+    valid: values(validatorCases).map(({pass: code}) => ({options, parserOptions, code})),
+    invalid: values(validatorCases).map(({fail: code, errors}) => ({options, parserOptions, code, errors})),
   });
 
   options = [{
@@ -833,8 +838,8 @@ const requiredFieldsTestCases = {
   }];
   ruleTester.run('disabled all validators', rule, {
     valid: [].concat(
-      Object.values(validatorCases).map(({pass: code}) => code),
-      Object.values(validatorCases).map(({fail: code}) => code),
+      values(validatorCases).map(({pass: code}) => code),
+      values(validatorCases).map(({fail: code}) => code),
     ).map(code => ({options, parserOptions, code})),
     invalid: [],
   });
@@ -843,19 +848,19 @@ const requiredFieldsTestCases = {
   // that can fail. (Excluding test cases that include this validation rule as
   // 'alsoBreaks'…sometimes it's hard to make a test that fails exactly one
   // validator).
-  for (const [validatorName, {pass, fail, errors}] of Object.entries(validatorCases)) {
+  for (const [validatorName, {pass, fail, errors}] of entries(validatorCases)) {
     options = [{
       schemaJson, tagName: 'gql',
       validators: [validatorName],
     }];
     const otherValidators = (
-      Object.entries(validatorCases)
-        .filter(([otherValidatorName, {alsoBreaks}]) => otherValidatorName !== validatorName && !(alsoBreaks || []).includes(validatorName))
+      entries(validatorCases)
+        .filter(([otherValidatorName, {alsoBreaks}]) => otherValidatorName !== validatorName && !includes((alsoBreaks || []), validatorName))
         .map(([name, testCases]) => testCases)
     );
     ruleTester.run(`enabled only ${validatorName} validator`, rule, {
       valid: [].concat(
-        Object.values(validatorCases).map(({pass: code}) => code),
+        values(validatorCases).map(({pass: code}) => code),
         otherValidators.map(({fail: code}) => code),
       ).map(code => ({options, parserOptions, code})),
       invalid: [{options, parserOptions, errors, code: fail}],
@@ -867,8 +872,8 @@ const requiredFieldsTestCases = {
     schemaJson, tagName: 'gql',
   }];
   ruleTester.run('testing named-operations rule', rules['named-operations'], {
-    valid: Object.values(namedOperationsValidatorCases).map(({pass: code}) => ({options, parserOptions, code})),
-    invalid: Object.values(namedOperationsValidatorCases).map(({fail: code, errors}) => ({options, parserOptions, code, errors})),
+    valid: values(namedOperationsValidatorCases).map(({pass: code}) => ({options, parserOptions, code})),
+    invalid: values(namedOperationsValidatorCases).map(({fail: code, errors}) => ({options, parserOptions, code, errors})),
   });
 
   // Validate the required-fields rule
