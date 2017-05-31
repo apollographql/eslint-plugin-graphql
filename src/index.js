@@ -12,6 +12,7 @@ import {
   last,
   reduce,
   without,
+  includes,
 } from 'lodash';
 
 import * as customRules from './rules';
@@ -421,7 +422,7 @@ const gqlProcessor = {
   postprocess: function(messages) {
     // only report graphql-errors
     return flatten(messages).filter((message) => {
-      return keys(rules).map((key) => `graphql/${key}`).includes(message.ruleId);
+      return includes(keys(rules).map((key) => `graphql/${key}`), message.ruleId);
     })
   }
 }
