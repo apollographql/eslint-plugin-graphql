@@ -59,7 +59,7 @@ const parserOptions = {
         parserOptions,
         code: 'const x = gql``',
         errors: [{
-          message: 'Syntax Error GraphQL (1:1) Unexpected <EOF>',
+          message: 'Syntax Error GraphQL request (1:1) Unexpected <EOF>',
           type: 'TaggedTemplateExpression'
         }]
       },
@@ -107,7 +107,7 @@ const parserOptions = {
         parserOptions,
         code: 'const x = myGraphQLTag``',
         errors: [{
-          message: 'Syntax Error GraphQL (1:1) Unexpected <EOF>',
+          message: 'Syntax Error GraphQL request (1:1) Unexpected <EOF>',
           type: 'TaggedTemplateExpression'
         }]
       },
@@ -162,7 +162,7 @@ const parserOptions = {
         parserOptions,
         code: 'const x = gql`query }{ ${x}`',
         errors: [{
-          message: 'Syntax Error GraphQL (1:7) Expected {, found }',
+          message: 'Syntax Error GraphQL request (1:7) Expected {, found }',
           type: 'TaggedTemplateExpression'
         }]
       }
