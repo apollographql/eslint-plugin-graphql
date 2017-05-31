@@ -1,7 +1,10 @@
 # Change log
 
 ### vNEXT
+
+### v1.0.0
 - Fix template env for older runtimes (eg. node 5 and earlier) [Justin Schulz](https://github.com/PepperTeasdale) in [#73](https://github.com/apollographql/eslint-plugin-graphql/pull/73)
+- Updated `graphql-js` to `v0.10.1` in [#67](https://github.com/apollographql/eslint-plugin-graphql/pull/67) [Sashko Stubailo](https://github.com/stubailo)
 
 ### v0.8.2
 - Remove `KnownFragmentNames` and `UnusedFragment` from default rules in `literal` env. [Justin Schulz](https://github.com/PepperTeasdale) in [#70](https://github.com/apollographql/eslint-plugin-graphql/pull/70)
