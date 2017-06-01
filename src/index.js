@@ -161,6 +161,14 @@ const rules = {
           additionalProperties: false,
           properties: {
             ...defaultRuleProperties,
+            env: {
+              enum: [
+                'lokka',
+                'relay',
+                'apollo',
+                'literal',
+              ],
+            },
             requiredFields: {
               type: 'array',
               items: {

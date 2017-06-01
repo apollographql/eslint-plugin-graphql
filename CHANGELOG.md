@@ -1,6 +1,7 @@
 # Change log
 
 ### vNEXT
+- Add env config option for required-fields rule [Justin Schulz](https://github.com/PepperTeasdale) in [#75](https://github.com/apollographql/eslint-plugin-graphql/pull/75)
 
 ### v1.0.0
 - Fix template env for older runtimes (eg. node 5 and earlier) [Justin Schulz](https://github.com/PepperTeasdale) in [#73](https://github.com/apollographql/eslint-plugin-graphql/pull/73)

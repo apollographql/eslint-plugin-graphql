@@ -222,12 +222,12 @@ The full list of available validators is:
   - `FragmentsOnCompositeTypes`
   - `KnownArgumentNames`
   - `KnownDirectives` (*disabled by default in `relay`*)
-  - `KnownFragmentNames` (*disabled by default in `apollo`, `lokka`, and `relay`*)
+  - `KnownFragmentNames` (*disabled by default in all envs*)
   - `KnownTypeNames`
   - `LoneAnonymousOperation`
   - `NoFragmentCycles`
   - `NoUndefinedVariables` (*disabled by default in `relay`*)
-  - `NoUnusedFragments` (*disabled by default in `apollo`, `lokka`, and `relay`*)
+  - `NoUnusedFragments` (*disabled by default in all envs*)
   - `NoUnusedVariables`
   - `OverlappingFieldsCanBeMerged`
   - `PossibleFragmentSpreads`
@@ -347,7 +347,7 @@ query ViewerName {
 }
 ```
 
-The rule is defined as `graphql/required-fields` and requires a `schema` and `requiredFields`, with an optional `tagName`.
+The rule is defined as `graphql/required-fields` and requires a `schema` and `requiredFields`, with an optional `tagName` and `env`.
 
 ```js
 // In a file called .eslintrc.js
@@ -356,7 +356,8 @@ module.exports = {
     'graphql/required-fields': [
       'error',
       {
-        schemaJsonFilepath: require('./schema.json'),
+        env: 'apollo',
+        schemaJsonFilepath: path.resolve(__dirname, './schema.json'),
         requiredFields: ['uuid'],
       },
     ],
