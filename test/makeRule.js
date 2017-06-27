@@ -7,9 +7,11 @@ import {
   values,
   entries,
 } from 'lodash';
+import { printSchema, buildClientSchema } from 'graphql';
 
 const schemaJsonFilepath = path.resolve(__dirname, './schema.json');
 const secondSchemaJsonFilepath = path.resolve(__dirname, './second-schema.json');
+const schemaString = printSchema(buildClientSchema(schemaJson.data))
 
 // Init rule
 
@@ -30,6 +32,74 @@ const parserOptions = {
   ];
 
   ruleTester.run('default options', rule, {
+    valid: [
+      {
+        options,
+        parserOptions,
+        code: 'const x = gql`{ number }`',
+      },
+      {
+        options,
+        parserOptions,
+        code: 'const x = segmented.TagName`height: 12px;`'
+      },
+      {
+        options,
+        parserOptions,
+        code: 'const x = segmented.gql`height: 12px;`'
+      },
+      {
+        options,
+        parserOptions,
+        code: 'const x = gql.segmented`height: 12px;`'
+      },
+      {
+        options,
+        parserOptions,
+        code: 'const x = gql`{ number } ${x}`',
+      },
+    ],
+
+    invalid: [
+      {
+        options,
+        parserOptions,
+        code: 'const x = gql``',
+        errors: [{
+          message: 'Syntax Error GraphQL request (1:1) Unexpected <EOF>',
+          type: 'TaggedTemplateExpression'
+        }]
+      },
+      {
+        options,
+        parserOptions,
+        code: 'const x = gql`{ nonExistentQuery }`',
+        errors: [{
+          message: 'Cannot query field "nonExistentQuery" on type "RootQuery".',
+          type: 'TaggedTemplateExpression'
+        }]
+      },
+      {
+        options,
+        parserOptions,
+        code: 'const x = gql`{ ${x} }`',
+        errors: [{
+          message: 'Invalid interpolation - fragment interpolation must occur outside of the brackets.',
+          type: 'Identifier',
+          line: 1,
+          column: 19
+        }]
+      },
+    ]
+  });
+}
+
+{
+  const options = [
+    { schemaString },
+  ];
+
+  ruleTester.run('schemaString', rule, {
     valid: [
       {
         options,

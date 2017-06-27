@@ -3,6 +3,7 @@ import {
   parse,
   validate,
   buildClientSchema,
+  buildSchema,
   specifiedRules as allGraphQLValidators,
 } from 'graphql';
 
@@ -51,6 +52,9 @@ const defaultRuleProperties = {
     type: 'object',
   },
   schemaJsonFilepath: {
+    type: 'string',
+  },
+  schemaString: {
     type: 'string',
   },
   tagName: {
@@ -114,13 +118,16 @@ const rules = {
               }],
             },
           },
-          // schemaJson and schemaJsonFilepath are mutually exclusive:
+          // schemaJson, schemaJsonFilepath and schemaString are mutually exclusive:
           oneOf: [{
             required: ['schemaJson'],
-            not: { required: ['schemaJsonFilepath'], },
+            not: { required: ['schemaString', 'schemaJsonFilepath'], },
           }, {
             required: ['schemaJsonFilepath'],
-            not: { required: ['schemaJson'], },
+            not: { required: ['schemaString', 'schemaJson'], },
+          }, {
+            required: ['schemaString'],
+            not: { required: ['schemaJson', 'schemaJsonFilepath'], },
           }],
         }
       },
@@ -137,10 +144,13 @@ const rules = {
           properties: { ...defaultRuleProperties },
           oneOf: [{
             required: ['schemaJson'],
-            not: { required: ['schemaJsonFilepath'], },
+            not: { required: ['schemaString', 'schemaJsonFilepath'], },
           }, {
             required: ['schemaJsonFilepath'],
-            not: { required: ['schemaJson'], },
+            not: { required: ['schemaString', 'schemaJson'], },
+          }, {
+            required: ['schemaString'],
+            not: { required: ['schemaJson', 'schemaJsonFilepath'], },
           }],
         },
       },
@@ -168,16 +178,16 @@ const rules = {
               },
             },
           },
-          oneOf: [
-            {
-              required: ['schemaJson'],
-              not: { required: ['schemaJsonFilepath'] },
-            },
-            {
-              required: ['schemaJsonFilepath'],
-              not: { required: ['schemaJson'] },
-            },
-          ],
+          oneOf: [{
+            required: ['schemaJson'],
+            not: { required: ['schemaString', 'schemaJsonFilepath'], },
+          }, {
+            required: ['schemaJsonFilepath'],
+            not: { required: ['schemaString', 'schemaJson'], },
+          }, {
+            required: ['schemaString'],
+            not: { required: ['schemaJson', 'schemaJsonFilepath'], },
+          }],
         },
       },
     },
@@ -197,6 +207,7 @@ function parseOptions(optionGroup) {
   const {
     schemaJson, // Schema via JSON object
     schemaJsonFilepath, // Or Schema via absolute filepath
+    schemaString, // Or Schema as string,
     env,
     tagName: tagNameOption,
     validators: validatorNamesOption,
@@ -208,6 +219,8 @@ function parseOptions(optionGroup) {
     schema = initSchema(schemaJson);
   } else if (schemaJsonFilepath) {
     schema = initSchemaFromFile(schemaJsonFilepath);
+  } else if (schemaString) {
+    schema = initSchemaFromString(schemaString);
   } else {
     throw new Error('Must pass in `schemaJson` option with schema object '
                   + 'or `schemaJsonFilepath` with absolute path to the json file.');
@@ -263,6 +276,10 @@ function initSchema(json) {
 
 function initSchemaFromFile(jsonFile) {
   return initSchema(JSON.parse(fs.readFileSync(jsonFile, 'utf8')));
+}
+
+function initSchemaFromString(source) {
+  return buildSchema(source)
 }
 
 function templateExpressionMatchesTag(tagName, node) {
