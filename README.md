@@ -19,7 +19,7 @@ Has built-in settings for three GraphQL clients out of the box:
 
 ### Importing schema JSON
 
-You'll need to import your [introspection query result](https://github.com/graphql/graphql-js/blob/master/src/utilities/introspectionQuery.js). This can be done if you define your ESLint config in a JS file. Note: we're always looking for better ways to get the schema, so please open an issue with suggestions.
+You'll need to import your [introspection query result](https://github.com/graphql/graphql-js/blob/master/src/utilities/introspectionQuery.js) or the schema as a string in the Schema Language format. This can be done if you define your ESLint config in a JS file. Note: we're always looking for better ways to get the schema, so please open an issue with suggestions.
 
 ### Identity template literal tag
 
@@ -73,6 +73,9 @@ module.exports = {
       // OR provide absolute path to your schema JSON
       // schemaJsonFilepath: path.resolve(__dirname, './schema.json'),
 
+      // OR provide the schema in the Schema Language format
+      // schemaString: printSchema(schema),
+
       // tagName is gql by default
     }]
   },
@@ -99,6 +102,9 @@ module.exports = {
 
       // OR provide absolute path to your schema JSON
       // schemaJsonFilepath: path.resolve(__dirname, './schema.json'),
+
+      // OR provide the schema in the Schema Language format
+      // schemaString: printSchema(schema),
 
       // tagName is set for you to Relay.QL
     }]
@@ -127,6 +133,9 @@ module.exports = {
       // OR provide absolute path to your schema JSON
       // schemaJsonFilepath: path.resolve(__dirname, './schema.json'),
 
+      // OR provide the schema in the Schema Language format
+      // schemaString: printSchema(schema),
+
       // Optional, the name of the template tag, defaults to 'gql'
       tagName: 'gql'
     }]
@@ -154,6 +163,9 @@ module.exports = {
 
       // OR provide absolute path to your schema JSON
       // schemaJsonFilepath: path.resolve(__dirname, './schema.json'),
+
+      // OR provide the schema in the Schema Language format
+      // schemaString: printSchema(schema),
 
       // tagName is set automatically
     }]
