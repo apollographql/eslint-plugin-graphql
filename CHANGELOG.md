@@ -2,6 +2,9 @@
 
 ### vNEXT
 
+### v1.1.0
+- Add option to pass schema as string [Christopher Cliff](https://github.com/christophercliff) in [#78](https://github.com/apollographql/eslint-plugin-graphql/pull/78)
+
 ### v1.0.0
 - Fix template env for older runtimes (eg. node 5 and earlier) [Justin Schulz](https://github.com/PepperTeasdale) in [#73](https://github.com/apollographql/eslint-plugin-graphql/pull/73)
 - Updated `graphql-js` to `v0.10.1` in [#67](https://github.com/apollographql/eslint-plugin-graphql/pull/67) [Sashko Stubailo](https://github.com/stubailo)
