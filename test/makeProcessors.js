@@ -11,15 +11,22 @@ function execute(file) {
     extensions: [".gql", ".graphql"],
     baseConfig: {
       rules: {
-        "graphql/required-fields": {
-          schemaJson,
-          env: "literal",
-          requiredFields: ["id"]
-        }
+        "graphql/required-fields": [
+          "error",
+          {
+            schemaJson,
+            env: "literal",
+            requiredFields: ["id"]
+          }
+        ]
       }
     },
     ignore: false,
-    useEslintrc: false
+    useEslintrc: false,
+    parserOptions: {
+      ecmaVersion: 6,
+      sourceType: "module"
+    }
   });
   cli.addPlugin("eslint-plugin-graphql", plugin);
   return cli.executeOnFiles([
@@ -81,6 +88,8 @@ describe("processors", () => {
         it(`warns on file ${filename}`, () => {
           const results = execute(filename);
           assert.equal(results.errorCount, 1);
+          const message = results.results[0].messages[0].message;
+          assert.ok(new RegExp("'id' field required").test(message));
         });
       });
     });
