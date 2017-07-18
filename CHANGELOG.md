@@ -1,6 +1,7 @@
 # Change log
-
 ### vNEXT
+
+### v1.2.0
 - Add env config option for required-fields rule [Justin Schulz](https://github.com/PepperTeasdale) in [#75](https://github.com/apollographql/eslint-plugin-graphql/pull/75)
 
 ### v1.1.0
