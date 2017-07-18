@@ -75,6 +75,7 @@ function createRule(context, optionParser) {
     tagNames.add(tagName);
     tagRules.push({schema, env, tagName, validators: boundValidators});
   }
+
   return {
     TaggedTemplateExpression(node) {
       for (const {schema, env, tagName, validators} of tagRules) {
@@ -86,7 +87,7 @@ function createRule(context, optionParser) {
   };
 }
 
-const rules = {
+export const rules = {
   'template-strings': {
     meta: {
       schema: {
@@ -171,6 +172,14 @@ const rules = {
           additionalProperties: false,
           properties: {
             ...defaultRuleProperties,
+            env: {
+              enum: [
+                'lokka',
+                'relay',
+                'apollo',
+                'literal',
+              ],
+            },
             requiredFields: {
               type: 'array',
               items: {
@@ -444,11 +453,11 @@ const gqlProcessor = {
   }
 }
 
-const processors = reduce(gqlFiles, (result, value) => {
+export const processors = reduce(gqlFiles, (result, value) => {
     return { ...result, [`.${value}`]: gqlProcessor };
 }, {})
 
-module.exports = {
-  rules,
+export default {
+  rules, 
   processors
-};
+}

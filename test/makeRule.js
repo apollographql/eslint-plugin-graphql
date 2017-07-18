@@ -946,7 +946,20 @@ const requiredFieldsTestCases = {
     invalid: values(namedOperationsValidatorCases).map(({fail: code, errors}) => ({options, parserOptions, code, errors})),
   });
 
-  // Validate the required-fields rule
+  // Validate the required-fields rule with env specified
+  options = [{
+    schemaJson,
+    env: 'apollo',
+    tagName: 'gql',
+    requiredFields: ['id'],
+  }];
+
+  ruleTester.run('testing required-fields rule', rules['required-fields'], {
+    valid: requiredFieldsTestCases.pass.map((code) => ({options, parserOptions, code})),
+    invalid: requiredFieldsTestCases.fail.map(({code, errors}) => ({options, parserOptions, code, errors})),
+  });
+
+  // Validate required-fields without optional env argument
   options = [{
     schemaJson,
     tagName: 'gql',

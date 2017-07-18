@@ -1,10 +1,38 @@
 import assert from 'assert';
-import {
-  includes,
-  keys,
-} from 'lodash';
+import { CLIEngine } from 'eslint';
+import { includes, keys } from 'lodash';
+import path from 'path';
 
-import { processors } from '../src';
+import schemaJson from './schema.json';
+import plugin, { processors } from '../src';
+
+function execute(file) {
+  const cli = new CLIEngine({
+    extensions: ['.gql', '.graphql'],
+    baseConfig: {
+      rules: {
+        'graphql/required-fields': [
+          'error',
+          {
+            schemaJson,
+            env: 'literal',
+            requiredFields: ['id']
+          }
+        ]
+      }
+    },
+    ignore: false,
+    useEslintrc: false,
+    parserOptions: {
+      ecmaVersion: 6,
+      sourceType: 'module'
+    }
+  });
+  cli.addPlugin('eslint-plugin-graphql', plugin);
+  return cli.executeOnFiles([
+    path.join(__dirname, '__fixtures__', `${file}.graphql`)
+  ]);
+}
 
 describe('processors', () => {
   it('should define processors', () => {
@@ -15,8 +43,8 @@ describe('processors', () => {
   });
 
   it('should escape backticks and prepend internalTag', () => {
-    const query = 'query { someValueWith` }'
-    const expected = 'ESLintPluginGraphQLFile`query { someValueWith\\` }`'
+    const query = 'query { someValueWith` }';
+    const expected = 'ESLintPluginGraphQLFile`query { someValueWith\\` }`';
     const preprocess = processors['.gql'].preprocess;
     const result = preprocess(query);
 
@@ -28,7 +56,7 @@ describe('processors', () => {
       { ruleId: 'no-undef' },
       { ruleId: 'semi' },
       { ruleId: 'graphql/randomString' },
-      { ruleId: 'graphql/template-strings' },
+      { ruleId: 'graphql/template-strings' }
     ];
     const expected = { ruleId: 'graphql/template-strings' };
     const postprocess = processors['.gql'].postprocess;
@@ -36,5 +64,34 @@ describe('processors', () => {
 
     assert.equal(result.length, 1);
     assert.equal(result[0].ruleId, expected.ruleId);
+  });
+
+  describe('graphql/required-fields', () => {
+    describe('valid', () => {
+      [
+        'required-fields-valid-no-id',
+        'required-fields-valid-id',
+        'required-fields-valid-array'
+      ].forEach(filename => {
+        it(`does not warn on file ${filename}`, () => {
+          const results = execute(filename);
+          assert.equal(results.errorCount, 0);
+        });
+      });
+    });
+
+    describe('invalid', () => {
+      [
+        'required-fields-invalid-no-id',
+        'required-fields-invalid-array'
+      ].forEach(filename => {
+        it(`warns on file ${filename}`, () => {
+          const results = execute(filename);
+          assert.equal(results.errorCount, 1);
+          const message = results.results[0].messages[0].message;
+          assert.ok(new RegExp("'id' field required").test(message));
+        });
+      });
+    });
   });
 });
