@@ -75,6 +75,7 @@ function createRule(context, optionParser) {
     tagNames.add(tagName);
     tagRules.push({schema, env, tagName, validators: boundValidators});
   }
+
   return {
     TaggedTemplateExpression(node) {
       for (const {schema, env, tagName, validators} of tagRules) {
@@ -86,7 +87,7 @@ function createRule(context, optionParser) {
   };
 }
 
-const rules = {
+export const rules = {
   'template-strings': {
     meta: {
       schema: {
@@ -445,6 +446,7 @@ const gqlProcessor = {
     return [`${internalTag}\`${escaped}\``];
   },
   postprocess: function(messages) {
+    console.log('postprocess', messages)
     // only report graphql-errors
     return flatten(messages).filter((message) => {
       return includes(keys(rules).map((key) => `graphql/${key}`), message.ruleId);
@@ -452,11 +454,11 @@ const gqlProcessor = {
   }
 }
 
-const processors = reduce(gqlFiles, (result, value) => {
+export const processors = reduce(gqlFiles, (result, value) => {
     return { ...result, [`.${value}`]: gqlProcessor };
 }, {})
 
-module.exports = {
-  rules,
+export default {
+  rules, 
   processors
-};
+}

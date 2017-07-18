@@ -1,0 +1,1 @@
+query { stories { id comments { text } } }
