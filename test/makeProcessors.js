@@ -80,7 +80,7 @@ describe('processors', () => {
       });
     });
 
-    describe.only('invalid', () => {
+    describe('invalid', () => {
       [
         'required-fields-invalid-no-id',
         'required-fields-invalid-array'
