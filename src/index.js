@@ -446,7 +446,6 @@ const gqlProcessor = {
     return [`${internalTag}\`${escaped}\``];
   },
   postprocess: function(messages) {
-    console.log('postprocess', messages)
     // only report graphql-errors
     return flatten(messages).filter((message) => {
       return includes(keys(rules).map((key) => `graphql/${key}`), message.ruleId);
