@@ -1,6 +1,7 @@
 # Change log
 
 ### vNEXT
+- Add env config option for required-fields rule [Justin Schulz](https://github.com/PepperTeasdale) in [#75](https://github.com/apollographql/eslint-plugin-graphql/pull/75)
 
 ### v1.1.0
 - Add option to pass schema as string [Christopher Cliff](https://github.com/christophercliff) in [#78](https://github.com/apollographql/eslint-plugin-graphql/pull/78)
