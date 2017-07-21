@@ -1,0 +1,10 @@
+{
+  "projects": {
+    "gql": {
+      "schemaPath": "../../schema.graphql"
+    },
+    "swapi": {
+      "schemaPath": "../../second-schema.graphql"
+    }
+  }
+}

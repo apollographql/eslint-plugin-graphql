@@ -16,6 +16,11 @@ import {
   includes,
 } from 'lodash';
 
+import {
+  getGraphQLProjectConfig,
+  ConfigNotFoundError
+} from 'graphql-config'
+
 import * as customRules from './rules';
 
 const allGraphQLValidatorNames = allGraphQLValidators.map(rule => rule.name);
@@ -61,6 +66,9 @@ const defaultRuleProperties = {
     type: 'string',
     pattern: '^[$_a-zA-Z$_][a-zA-Z0-9$_]+(\\.[a-zA-Z0-9$_]+)?$',
   },
+  projectName: {
+    type: 'string'
+  }
 }
 
 function createRule(context, optionParser) {
@@ -85,6 +93,27 @@ function createRule(context, optionParser) {
       }
     },
   };
+}
+
+const schemaPropsExclusiveness = {
+  oneOf: [{
+    required: ['schemaJson'],
+    not: { required: ['schemaString', 'schemaJsonFilepath', 'projectName']}
+  }, {
+    required: ['schemaJsonFilepath'],
+    not: { required: ['schemaJson', 'schemaString', 'projectName']}
+  }, {
+    required: ['schemaString'],
+    not: { required: ['schemaJson', 'schemaJsonFilepath', 'projectName']}
+  }, {
+    not: {
+      anyOf: [
+        { required: ['schemaString'] },
+        { required: ['schemaJson'] },
+        { required: ['schemaJsonFilepath'] },
+      ]
+    }
+  }],
 }
 
 export const rules = {
@@ -119,17 +148,8 @@ export const rules = {
               }],
             },
           },
-          // schemaJson, schemaJsonFilepath and schemaString are mutually exclusive:
-          oneOf: [{
-            required: ['schemaJson'],
-            not: { required: ['schemaString', 'schemaJsonFilepath'], },
-          }, {
-            required: ['schemaJsonFilepath'],
-            not: { required: ['schemaString', 'schemaJson'], },
-          }, {
-            required: ['schemaString'],
-            not: { required: ['schemaJson', 'schemaJsonFilepath'], },
-          }],
+          // schemaJson, schemaJsonFilepath, schemaString and projectName are mutually exclusive:
+          ...schemaPropsExclusiveness,
         }
       },
     },
@@ -143,16 +163,7 @@ export const rules = {
         items: {
           additionalProperties: false,
           properties: { ...defaultRuleProperties },
-          oneOf: [{
-            required: ['schemaJson'],
-            not: { required: ['schemaString', 'schemaJsonFilepath'], },
-          }, {
-            required: ['schemaJsonFilepath'],
-            not: { required: ['schemaString', 'schemaJson'], },
-          }, {
-            required: ['schemaString'],
-            not: { required: ['schemaJson', 'schemaJsonFilepath'], },
-          }],
+          ...schemaPropsExclusiveness,
         },
       },
     },
@@ -187,16 +198,7 @@ export const rules = {
               },
             },
           },
-          oneOf: [{
-            required: ['schemaJson'],
-            not: { required: ['schemaString', 'schemaJsonFilepath'], },
-          }, {
-            required: ['schemaJsonFilepath'],
-            not: { required: ['schemaString', 'schemaJson'], },
-          }, {
-            required: ['schemaString'],
-            not: { required: ['schemaJson', 'schemaJsonFilepath'], },
-          }],
+          ...schemaPropsExclusiveness,
         },
       },
     },
@@ -218,6 +220,7 @@ function parseOptions(optionGroup) {
     schemaJsonFilepath, // Or Schema via absolute filepath
     schemaString, // Or Schema as string,
     env,
+    projectName,
     tagName: tagNameOption,
     validators: validatorNamesOption,
   } = optionGroup;
@@ -231,8 +234,17 @@ function parseOptions(optionGroup) {
   } else if (schemaString) {
     schema = initSchemaFromString(schemaString);
   } else {
-    throw new Error('Must pass in `schemaJson` option with schema object '
-                  + 'or `schemaJsonFilepath` with absolute path to the json file.');
+    try {
+      const config = getGraphQLProjectConfig('.', projectName);
+      schema = config.getSchema()
+    } catch (e) {
+      if (e instanceof ConfigNotFoundError) {
+        throw new Error('Must provide .graphqlconfig file or pass in `schemaJson` option ' +
+          'with schema object or `schemaJsonFilepath` with absolute path to the json file.');
+      }
+      throw e;
+    }
+
   }
 
   // Validate env
@@ -458,6 +470,6 @@ export const processors = reduce(gqlFiles, (result, value) => {
 }, {})
 
 export default {
-  rules, 
+  rules,
   processors
 }

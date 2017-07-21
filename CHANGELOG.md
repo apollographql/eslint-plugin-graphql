@@ -1,5 +1,6 @@
 # Change log
 ### vNEXT
+- add support for [.graphqlconfig](https://github.com/graphcool/graphql-config) [Roman Hotsiy](https://github.com/RomanGotsiy) in [#80](https://github.com/apollographql/eslint-plugin-graphql/pull/80)
 
 ### v1.2.0
 - Add env config option for required-fields rule [Justin Schulz](https://github.com/PepperTeasdale) in [#75](https://github.com/apollographql/eslint-plugin-graphql/pull/75)
