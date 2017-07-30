@@ -892,6 +892,16 @@ const requiredFieldsTestCases = {
   ],
 };
 
+const typeNameCapValidatorCases = {
+  'typeNamesShouldBeCapitalized': {
+    pass: 'const x = gql`fragment FilmFragment on Film { title } { allFilms { films { ...FilmFragment } } }`',
+    fail: 'const x = gql`fragment FilmFragment on film { title } { allFilms { films { ...FilmFragment } } }`',
+    errors: [{
+      message: 'All type names should start with a capital letter',
+      type: 'TaggedTemplateExpression',
+    }],
+  },
+};
 {
   let options = [{
     schemaJson, tagName: 'gql',
@@ -970,3 +980,11 @@ const requiredFieldsTestCases = {
     invalid: requiredFieldsTestCases.fail.map(({code, errors}) => ({options, parserOptions, code, errors})),
   });
 }
+
+let options = [{
+  schemaJson, tagName: 'gql',
+}];
+ruleTester.run('testing typeNameCap rule', rules['type-names-cap'], {
+  valid: values(typeNameCapValidatorCases).map(({pass: code}) => ({options, parserOptions, code})),
+  invalid: values(typeNameCapValidatorCases).map(({fail: code, errors}) => ({options, parserOptions, code, errors})),
+});

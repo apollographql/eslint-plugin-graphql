@@ -210,6 +210,34 @@ export const rules = {
       );
     },
   },
+  'type-names-cap': {
+    meta: {
+      schema: {
+        type: 'array',
+        minLength: 1,
+        items: {
+          additionalProperties: false,
+          properties: { ...defaultRuleProperties },
+          oneOf: [{
+            required: ['schemaJson'],
+            not: { required: ['schemaString', 'schemaJsonFilepath'], },
+          }, {
+            required: ['schemaJsonFilepath'],
+            not: { required: ['schemaString', 'schemaJson'], },
+          }, {
+            required: ['schemaString'],
+            not: { required: ['schemaJson', 'schemaJsonFilepath'], },
+          }],
+        },
+      },
+    },
+    create: (context) => {
+      return createRule(context, (optionGroup) => parseOptions({
+        validators: ['typeNamesShouldBeCapitalized'],
+        ...optionGroup,
+      }));;
+    },
+  },
 };
 
 function parseOptions(optionGroup) {
@@ -458,6 +486,6 @@ export const processors = reduce(gqlFiles, (result, value) => {
 }, {})
 
 export default {
-  rules, 
+  rules,
   processors
 }
