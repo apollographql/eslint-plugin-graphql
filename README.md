@@ -379,3 +379,50 @@ module.exports = {
   ]
 }
 ```
+
+### Capitalization of a first letter of a Type name
+
+This rule enforces that first letter of types is capitalized
+
+**Pass**
+```
+query {
+  someUnion {
+    ... on SomeType {
+      someField
+    }
+  }
+}
+```
+
+**Fail**
+```
+query {
+  someUnion {
+    ... on someType {
+      someField
+    }
+  }
+}
+```
+
+The rule is defined as `graphql/capitalized-type-name` and requires a `schema`;
+
+```js
+// In a file called .eslintrc.js
+module.exports = {
+  parser: "babel-eslint",
+  rules: {
+    "graphql/template-strings": ['error', {
+      env: 'apollo',
+      schemaJson: require('./schema.json'),
+    }],
+    "graphql/capitalized-type-name": ['warn', {
+      schemaJson: require('./schema.json'),
+    }],
+  },
+  plugins: [
+    'graphql'
+  ]
+}
+```

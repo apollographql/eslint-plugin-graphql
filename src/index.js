@@ -210,7 +210,7 @@ export const rules = {
       );
     },
   },
-  'type-names-cap': {
+  'capitalized-type-name': {
     meta: {
       schema: {
         type: 'array',
