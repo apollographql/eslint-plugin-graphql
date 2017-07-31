@@ -1,5 +1,7 @@
 # Change log
 ### vNEXT
+
+### v1.3.0
 - add support for [.graphqlconfig](https://github.com/graphcool/graphql-config) [Roman Hotsiy](https://github.com/RomanGotsiy) in [#80](https://github.com/apollographql/eslint-plugin-graphql/pull/80)
 - add `graphql/capitalized-type-name` rule to warn on uncapitalized type names [DianaSuvorova](https://github.com/DianaSuvorova) in [#81](https://github.com/apollographql/eslint-plugin-graphql/pull/81)
 
