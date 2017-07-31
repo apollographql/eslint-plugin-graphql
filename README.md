@@ -200,6 +200,50 @@ module.exports = {
 }
 ```
 
+### Example config when using [.graphqlconfig](https://github.com/graphcool/graphql-config)
+
+If you have `.graphqlconfig` file in the root of your repo you can omit schema-related
+properties (`schemaJson`, `schemaJsonFilepath` and `schemaString`) from rule config.
+
+```js
+// In a file called .eslintrc.js
+module.exports = {
+  parser: "babel-eslint",
+  rules: {
+    "graphql/template-strings": ['error', {
+      // Import default settings for your GraphQL client. Supported values:
+      // 'apollo', 'relay', 'lokka', 'literal'
+      env: 'literal'
+      // no need to specify schema here, it will be automatically determined using .graphqlconfig
+    }]
+  },
+  plugins: [
+    'graphql'
+  ]
+}
+```
+
+In case you use additional schemas, specify `projectName` from `.graphqlconfig` for each `tagName`:
+```js
+module.exports = {
+  parser: "babel-eslint",
+  rules: {
+    "graphql/template-strings": ['error', {
+      env: 'apollo',
+      tagName: 'FirstGQL',
+      projectName: 'FirstGQLProject'
+    }, {
+      env: 'relay',
+      tagName: 'SecondGQL',
+      projectName: 'SecondGQLProject'
+    }]
+  },
+  plugins: [
+    'graphql'
+  ]
+}
+```
+
 ### Selecting Validation Rules
 
 GraphQL validation rules can be configured in the eslint rule configuration using the `validators` option. The default selection depends on the `env` setting. If no `env` is specified, all rules are enabled by default.
