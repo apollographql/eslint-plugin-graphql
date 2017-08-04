@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/apollographql/eslint-plugin-graphql.svg?branch=master)](https://travis-ci.org/apollographql/eslint-plugin-graphql)
 [![Get on Slack](https://img.shields.io/badge/slack-join-orange.svg)](http://www.apollostack.com/#slack)
 
-An ESLint plugin that checks tagged query strings inside JavaScript or queries inside `.graphql` files against a GraphQL schema.
+An ESLint plugin that checks tagged query strings inside JavaScript, or queries inside `.graphql` files, against a GraphQL schema.
 
 ```
 npm install eslint-plugin-graphql
@@ -11,11 +11,13 @@ npm install eslint-plugin-graphql
 
 ![Screenshot from Atom](https://github.com/apollostack/eslint-plugin-graphql/raw/master/screenshot.png)
 
-Has built-in settings for three GraphQL clients out of the box:
+`eslint-plugin-graphql` has built-in settings for three GraphQL clients out of the box:
 
 1. [Apollo client](http://docs.apollostack.com/apollo-client/index.html)
 2. [Relay](https://facebook.github.io/relay/)
 3. [Lokka](https://github.com/kadirahq/lokka)
+
+If you want to lint your GraphQL schema, rather than queries, check out [cjoudrey/graphql-schema-linter](https://github.com/cjoudrey/graphql-schema-linter).
 
 ### Importing schema JSON
 
