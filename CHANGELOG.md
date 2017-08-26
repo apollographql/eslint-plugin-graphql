@@ -1,5 +1,6 @@
 # Change log
 ### vNEXT
+- Fix escaping of literal .graphql files [Simon Lydell](https://github.com/lydell/) in [#88](https://github.com/apollographql/eslint-plugin-graphql/pull/88)
 
 ### v1.3.0
 - add support for [.graphqlconfig](https://github.com/graphcool/graphql-config) [Roman Hotsiy](https://github.com/RomanGotsiy) in [#80](https://github.com/apollographql/eslint-plugin-graphql/pull/80)

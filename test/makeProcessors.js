@@ -42,9 +42,9 @@ describe('processors', () => {
     assert(includes(extensions, '.graphql'));
   });
 
-  it('should escape backticks and prepend internalTag', () => {
-    const query = 'query { someValueWith` }';
-    const expected = 'ESLintPluginGraphQLFile`query { someValueWith\\` }`';
+  it('should wrap with backticks, escape properly and prepend internalTag', () => {
+    const query = 'query { search(q: "` \\n ${}") { title } }';
+    const expected = 'ESLintPluginGraphQLFile`query { search(q: "\\` \\\\n \\${}") { title } }`';
     const preprocess = processors['.gql'].preprocess;
     const result = preprocess(query);
 
