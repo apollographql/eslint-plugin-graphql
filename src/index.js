@@ -95,6 +95,7 @@ function createRule(context, optionParser) {
   };
 }
 
+// schemaJson, schemaJsonFilepath, schemaString and projectName are mutually exclusive:
 const schemaPropsExclusiveness = {
   oneOf: [{
     required: ['schemaJson'],
@@ -148,7 +149,6 @@ export const rules = {
               }],
             },
           },
-          // schemaJson, schemaJsonFilepath, schemaString and projectName are mutually exclusive:
           ...schemaPropsExclusiveness,
         }
       },
@@ -220,16 +220,7 @@ export const rules = {
         items: {
           additionalProperties: false,
           properties: { ...defaultRuleProperties },
-          oneOf: [{
-            required: ['schemaJson'],
-            not: { required: ['schemaString', 'schemaJsonFilepath'], },
-          }, {
-            required: ['schemaJsonFilepath'],
-            not: { required: ['schemaString', 'schemaJson'], },
-          }, {
-            required: ['schemaString'],
-            not: { required: ['schemaJson', 'schemaJsonFilepath'], },
-          }],
+          ...schemaPropsExclusiveness,
         },
       },
     },
