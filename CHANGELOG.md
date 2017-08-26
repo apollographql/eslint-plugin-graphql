@@ -1,5 +1,6 @@
 # Change log
 ### vNEXT
+- Fix ESLint config validation [Simon Lydell](https://github.com/lydell/) in [#86](https://github.com/apollographql/eslint-plugin-graphql/pull/86)
 
 ### v1.3.0
 - add support for [.graphqlconfig](https://github.com/graphcool/graphql-config) [Roman Hotsiy](https://github.com/RomanGotsiy) in [#80](https://github.com/apollographql/eslint-plugin-graphql/pull/80)
