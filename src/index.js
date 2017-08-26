@@ -53,6 +53,14 @@ const internalTag = 'ESLintPluginGraphQLFile';
 const gqlFiles = ['gql', 'graphql'];
 
 const defaultRuleProperties = {
+  env: {
+    enum: [
+      'lokka',
+      'relay',
+      'apollo',
+      'literal',
+    ],
+  },
   schemaJson: {
     type: 'object',
   },
@@ -127,14 +135,6 @@ export const rules = {
           additionalProperties: false,
           properties: {
             ...defaultRuleProperties,
-            env: {
-              enum: [
-                'lokka',
-                'relay',
-                'apollo',
-                'literal',
-              ],
-            },
             validators: {
               oneOf: [{
                 type: 'array',
@@ -183,14 +183,6 @@ export const rules = {
           additionalProperties: false,
           properties: {
             ...defaultRuleProperties,
-            env: {
-              enum: [
-                'lokka',
-                'relay',
-                'apollo',
-                'literal',
-              ],
-            },
             requiredFields: {
               type: 'array',
               items: {
