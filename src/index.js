@@ -190,6 +190,7 @@ export const rules = {
               },
             },
           },
+          required: ['requiredFields'],
           ...schemaPropsExclusiveness,
         },
       },
