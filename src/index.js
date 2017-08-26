@@ -130,7 +130,7 @@ export const rules = {
     meta: {
       schema: {
         type: 'array',
-        minLength: 1,
+        minItems: 1,
         items: {
           additionalProperties: false,
           properties: {
@@ -159,7 +159,7 @@ export const rules = {
     meta: {
       schema: {
         type: 'array',
-        minLength: 1,
+        minItems: 1,
         items: {
           additionalProperties: false,
           properties: { ...defaultRuleProperties },
@@ -178,7 +178,7 @@ export const rules = {
     meta: {
       schema: {
         type: 'array',
-        minLength: 1,
+        minItems: 1,
         items: {
           additionalProperties: false,
           properties: {
@@ -208,7 +208,7 @@ export const rules = {
     meta: {
       schema: {
         type: 'array',
-        minLength: 1,
+        minItems: 1,
         items: {
           additionalProperties: false,
           properties: { ...defaultRuleProperties },
