@@ -23,6 +23,30 @@ If you want to lint your GraphQL schema, rather than queries, check out [cjoudre
 
 You'll need to import your [introspection query result](https://github.com/graphql/graphql-js/blob/master/src/utilities/introspectionQuery.js) or the schema as a string in the Schema Language format. This can be done if you define your ESLint config in a JS file. Note: we're always looking for better ways to get the schema, so please open an issue with suggestions.
 
+### Common options
+
+All of the rules provided by this plugin have a few options in common. There are examples of how to use these with Apollo, Relay, Lokka and literal files further down.
+
+- `env`: Import default settings for your GraphQL client. Supported values: `'apollo'`, `'relay'`, `'lokka'`, `'literal'`. Defaults to `'apollo'`. This is used for the slight parsing differences in the GraphQL syntax between Apollo, Relay and Lokka, as well as giving nice defaults to some other options.
+
+- `tagName`: The name of the template literal tag that this plugin should look for when searching for GraphQL queries. It has different defaults depending on the `env` option:
+
+  - `'relay'`: `'Relay.QL'`
+  - `'internal'`: Special automatic value
+  - others: `'gql'`
+
+You also have to specify a schema. You can either do it using _one_ of these options:
+
+- `schemaJson`: Your schema as JSON.
+- `schemaJsonFilepath`: The absolute path to your schema as a .json file.
+- `schemaString`: Your schema in the Schema Language format as a string.
+
+Alternatively, you can use a [.graphqlconfig](https://github.com/graphcool/graphql-config) file instead of the above three options. If you do there's one more option to know about:
+
+- `projectName`: In case you specify multiple schemas in your `.graphqlconfig` file, choose which one to use by providing the project name here as a string.
+
+There's an example on how to use a `.graphqlconfig` file further down.
+
 ### Identity template literal tag
 
 This plugin relies on GraphQL queries being prefixed with a special tag. In Relay and Apollo, this is always done, but other clients often take query strings without a tag. In this case, you can define an identity tag that doesn't do anything except for tell the linter this is a GraphQL query:
@@ -246,6 +270,24 @@ module.exports = {
 }
 ```
 
+When using `.graphqlconfig`, you might end up not needing to specify any additional options for a rule. Note that you still _have_ to provide an empty object (`{}`) to the rule:
+
+```js
+module.exports = {
+  parser: "babel-eslint",
+  rules: {
+    // The empty object is required here:
+    "graphql/named-operations": ['error', {}]
+
+    // It's nice to explicitly specify the env, though:
+    // "graphql/named-operations": ['error', {env: 'apollo'}]
+  },
+  plugins: [
+    'graphql'
+  ]
+}
+```
+
 ### Selecting Validation Rules
 
 GraphQL validation rules can be configured in the eslint rule configuration using the `validators` option. The default selection depends on the `env` setting. If no `env` is specified, all rules are enabled by default.
@@ -321,7 +363,7 @@ query {
 }
 ```
 
-The rule is defined as `graphql/named-operations` and requires a `schema` and optional `tagName`.
+The rule is defined as `graphql/named-operations`.
 
 ```js
 // In a file called .eslintrc.js
@@ -405,7 +447,7 @@ query ViewerName {
 }
 ```
 
-The rule is defined as `graphql/required-fields` and requires a `schema` and `requiredFields`, with an optional `tagName` and `env`.
+The rule is defined as `graphql/required-fields` and requires the `requiredFields` option.
 
 ```js
 // In a file called .eslintrc.js
@@ -452,7 +494,7 @@ query {
 }
 ```
 
-The rule is defined as `graphql/capitalized-type-name` and requires a `schema`;
+The rule is defined as `graphql/capitalized-type-name`.
 
 ```js
 // In a file called .eslintrc.js
