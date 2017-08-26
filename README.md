@@ -347,13 +347,13 @@ The Required Fields rule validates that any specified required field is part of 
 
 **Pass**
 ```
-// 'uuid' required
+// 'uuid' required and present in the schema
 
 schema {
   query {
     viewer {
-      uuid
       name
+      uuid
     }
   }
 }
@@ -368,7 +368,7 @@ query ViewerName {
 
 **Pass**
 ```
-// 'uuid' required
+// 'uuid' usually required but not present in the schema here
 
 schema {
   query {
@@ -387,7 +387,7 @@ query ViewerName {
 
 **Fail**
 ```
-// 'uuid' required
+// 'uuid' required and present in the schema
 
 schema {
   query {
