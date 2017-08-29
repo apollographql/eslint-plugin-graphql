@@ -270,24 +270,6 @@ module.exports = {
 }
 ```
 
-When using `.graphqlconfig`, you might end up not needing to specify any additional options for a rule. Note that you still _have_ to provide an empty object (`{}`) to the rule:
-
-```js
-module.exports = {
-  parser: "babel-eslint",
-  rules: {
-    // The empty object is required here:
-    "graphql/named-operations": ['error', {}]
-
-    // It's nice to explicitly specify the env, though:
-    // "graphql/named-operations": ['error', {env: 'apollo'}]
-  },
-  plugins: [
-    'graphql'
-  ]
-}
-```
-
 ### Selecting Validation Rules
 
 GraphQL validation rules can be configured in the eslint rule configuration using the `validators` option. The default selection depends on the `env` setting. If no `env` is specified, all rules are enabled by default.

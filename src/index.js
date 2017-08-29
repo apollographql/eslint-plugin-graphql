@@ -82,7 +82,8 @@ const defaultRuleProperties = {
 function createRule(context, optionParser) {
   const tagNames = new Set();
   const tagRules = [];
-  for (const optionGroup of context.options) {
+  const options = context.options.length === 0 ? [{}] : context.options;
+  for (const optionGroup of options) {
     const {schema, env, tagName, validators} = optionParser(optionGroup);
     const boundValidators = validators.map(v => (ctx) => v(ctx, optionGroup));
     if (tagNames.has(tagName)) {
@@ -130,7 +131,6 @@ export const rules = {
     meta: {
       schema: {
         type: 'array',
-        minItems: 1,
         items: {
           additionalProperties: false,
           properties: {
@@ -159,7 +159,6 @@ export const rules = {
     meta: {
       schema: {
         type: 'array',
-        minItems: 1,
         items: {
           additionalProperties: false,
           properties: { ...defaultRuleProperties },
@@ -209,7 +208,6 @@ export const rules = {
     meta: {
       schema: {
         type: 'array',
-        minItems: 1,
         items: {
           additionalProperties: false,
           properties: { ...defaultRuleProperties },
@@ -221,7 +219,7 @@ export const rules = {
       return createRule(context, (optionGroup) => parseOptions({
         validators: ['typeNamesShouldBeCapitalized'],
         ...optionGroup,
-      }));;
+      }));
     },
   },
 };
