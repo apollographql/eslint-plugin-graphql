@@ -463,8 +463,16 @@ function strWithLen(len) {
 
 const gqlProcessor = {
   preprocess: function(text) {
-    const escaped = text.replace(/`/g, '\\`');
-
+    // Wrap the text in backticks and prepend the internal tag. First the text
+    // must be escaped, because of the three sequences that have special
+    // meaning in JavaScript template literals, and could change the meaning of
+    // the text or cause syntax errors.
+    // https://tc39.github.io/ecma262/#prod-TemplateCharacter
+    //
+    // - "`" would end the template literal.
+    // - "\" would start an escape sequence.
+    // - "${" would start an interpolation.
+    const escaped = text.replace(/[`\\]|\$\{/g, '\\$&');
     return [`${internalTag}\`${escaped}\``];
   },
   postprocess: function(messages) {
