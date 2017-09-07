@@ -53,6 +53,14 @@ const internalTag = 'ESLintPluginGraphQLFile';
 const gqlFiles = ['gql', 'graphql'];
 
 const defaultRuleProperties = {
+  env: {
+    enum: [
+      'lokka',
+      'relay',
+      'apollo',
+      'literal',
+    ],
+  },
   schemaJson: {
     type: 'object',
   },
@@ -74,7 +82,8 @@ const defaultRuleProperties = {
 function createRule(context, optionParser) {
   const tagNames = new Set();
   const tagRules = [];
-  for (const optionGroup of context.options) {
+  const options = context.options.length === 0 ? [{}] : context.options;
+  for (const optionGroup of options) {
     const {schema, env, tagName, validators} = optionParser(optionGroup);
     const boundValidators = validators.map(v => (ctx) => v(ctx, optionGroup));
     if (tagNames.has(tagName)) {
@@ -95,6 +104,7 @@ function createRule(context, optionParser) {
   };
 }
 
+// schemaJson, schemaJsonFilepath, schemaString and projectName are mutually exclusive:
 const schemaPropsExclusiveness = {
   oneOf: [{
     required: ['schemaJson'],
@@ -121,19 +131,10 @@ export const rules = {
     meta: {
       schema: {
         type: 'array',
-        minLength: 1,
         items: {
           additionalProperties: false,
           properties: {
             ...defaultRuleProperties,
-            env: {
-              enum: [
-                'lokka',
-                'relay',
-                'apollo',
-                'literal',
-              ],
-            },
             validators: {
               oneOf: [{
                 type: 'array',
@@ -148,7 +149,6 @@ export const rules = {
               }],
             },
           },
-          // schemaJson, schemaJsonFilepath, schemaString and projectName are mutually exclusive:
           ...schemaPropsExclusiveness,
         }
       },
@@ -159,7 +159,6 @@ export const rules = {
     meta: {
       schema: {
         type: 'array',
-        minLength: 1,
         items: {
           additionalProperties: false,
           properties: { ...defaultRuleProperties },
@@ -178,19 +177,11 @@ export const rules = {
     meta: {
       schema: {
         type: 'array',
-        minLength: 1,
+        minItems: 1,
         items: {
           additionalProperties: false,
           properties: {
             ...defaultRuleProperties,
-            env: {
-              enum: [
-                'lokka',
-                'relay',
-                'apollo',
-                'literal',
-              ],
-            },
             requiredFields: {
               type: 'array',
               items: {
@@ -198,6 +189,7 @@ export const rules = {
               },
             },
           },
+          required: ['requiredFields'],
           ...schemaPropsExclusiveness,
         },
       },
@@ -216,20 +208,10 @@ export const rules = {
     meta: {
       schema: {
         type: 'array',
-        minLength: 1,
         items: {
           additionalProperties: false,
           properties: { ...defaultRuleProperties },
-          oneOf: [{
-            required: ['schemaJson'],
-            not: { required: ['schemaString', 'schemaJsonFilepath'], },
-          }, {
-            required: ['schemaJsonFilepath'],
-            not: { required: ['schemaString', 'schemaJson'], },
-          }, {
-            required: ['schemaString'],
-            not: { required: ['schemaJson', 'schemaJsonFilepath'], },
-          }],
+          ...schemaPropsExclusiveness,
         },
       },
     },
@@ -237,7 +219,7 @@ export const rules = {
       return createRule(context, (optionGroup) => parseOptions({
         validators: ['typeNamesShouldBeCapitalized'],
         ...optionGroup,
-      }));;
+      }));
     },
   },
 };
