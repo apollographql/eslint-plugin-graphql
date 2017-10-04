@@ -24,7 +24,7 @@
     "babel-preset-stage-0": "^6.5.0",
     "eslint": "^4.1.1",
     "graphql": "^0.11.0",
-    "graphql-tools": "^1.0.0",
+    "graphql-tools": "^2.0.0",
     "mocha": "^3.4.2"
   },
   "babel": {
@@ -37,5 +37,8 @@
   "dependencies": {
     "graphql-config": "^1.0.7",
     "lodash": "^4.11.1"
+  },
+  "peerDependencies": {
+    "graphql": "^0.10.1 || ^0.11.0"
   }
 }
