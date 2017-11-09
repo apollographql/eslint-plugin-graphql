@@ -1,5 +1,9 @@
 # Change log
 ### vNEXT
+
+### v1.4.1
+Skipped v1.4.0 because of incorrect version tag in `package.json`
+- Move `graphql-js` to `peerDependencies`, support `graphql@^0.11.0` in [Jon Wong](https://github.com/jnwng/)[#91](https://github.com/apollographql/eslint-plugin-graphql/pull/91)
 - Fix escaping of literal .graphql files [Simon Lydell](https://github.com/lydell/) in [#88](https://github.com/apollographql/eslint-plugin-graphql/pull/88)
 - Fix ESLint config validation [Simon Lydell](https://github.com/lydell/) in [#86](https://github.com/apollographql/eslint-plugin-graphql/pull/86)
 
