@@ -21,7 +21,13 @@ If you want to lint your GraphQL schema, rather than queries, check out [cjoudre
 
 ### Importing schema JSON
 
-You'll need to import your [introspection query result](https://github.com/graphql/graphql-js/blob/master/src/utilities/introspectionQuery.js) or the schema as a string in the Schema Language format. This can be done if you define your ESLint config in a JS file. Note: we're always looking for better ways to get the schema, so please open an issue with suggestions.
+You'll need to import your [introspection query result](https://github.com/graphql/graphql-js/blob/master/src/utilities/introspectionQuery.js) or the schema as a string in the Schema Language format. This can be done if you define your ESLint config in a JS file. 
+
+### Retrieving a remote GraphQL schema
+
+[graphql-cli](https://github.com/graphcool/graphql-cli) provides a `get-schema` command (in conjunction with a `.graphqlconfig` file) that makes retrieving remote schemas very simple.
+
+[apollo-codegen](https://github.com/apollographql/apollo-codegen) also provides an [introspect-schema](https://github.com/apollographql/apollo-codegen#introspect-schema) command that can get your remote schemas as well
 
 ### Common options
 
