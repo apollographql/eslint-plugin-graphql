@@ -45,6 +45,7 @@ type Film {
 type Greetings {
   id: ID
   hello: String
+  hi: String @deprecated(reason: "Please use the more formal greeting 'hello'")
 }
 
 type Story {

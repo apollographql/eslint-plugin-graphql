@@ -5,6 +5,7 @@ import {
   buildClientSchema,
   buildSchema,
   specifiedRules as allGraphQLValidators,
+  findDeprecatedUsages
 } from 'graphql';
 
 import {
@@ -369,6 +370,16 @@ function handleTemplateTag(node, context, schema, env, validators) {
       node,
       message: validationErrors[0].message,
       loc: locFrom(node, validationErrors[0]),
+    });
+    return;
+  }
+
+  const deprecationErrors = schema ? findDeprecatedUsages(schema, ast) : [];
+  if (deprecationErrors && deprecationErrors.length > 0) {
+    context.report({
+      node,
+      message: deprecationErrors[0].message,
+      loc: locFrom(node, deprecationErrors[0]),
     });
     return;
   }

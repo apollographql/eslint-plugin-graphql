@@ -526,6 +526,28 @@ const parserOptions = {
           column: 19
         }]
       },
+      {
+        options,
+        parser,
+        code: `
+          @relay({
+            fragments: {
+              greetings: () => Relay.QL\`
+                fragment on Greetings {
+                  hi,
+                }
+              \`,
+            }
+          })
+          class HelloApp extends React.Component {}
+        `,
+        errors: [{
+          message: "The field Greetings.hi is deprecated. Please use the more formal greeting 'hello'",
+          type: 'TaggedTemplateExpression',
+          line: 6,
+          column: 19
+        }]
+      },
 
       // Example from issue report:
       // https://github.com/apollostack/eslint-plugin-graphql/issues/12#issuecomment-215445880
