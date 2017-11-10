@@ -21,7 +21,7 @@ If you want to lint your GraphQL schema, rather than queries, check out [cjoudre
 
 ### Importing schema JSON
 
-You'll need to import your [introspection query result](https://github.com/graphql/graphql-js/blob/master/src/utilities/introspectionQuery.js) or the schema as a string in the Schema Language format. This can be done if you define your ESLint config in a JS file. 
+You'll need to import your [introspection query result](https://github.com/graphql/graphql-js/blob/master/src/utilities/introspectionQuery.js) or the schema as a string in the Schema Language format. This can be done if you define your ESLint config in a JS file.
 
 ### Retrieving a remote GraphQL schema
 
@@ -496,6 +496,50 @@ module.exports = {
     "graphql/capitalized-type-name": ['warn', {
       schemaJson: require('./schema.json'),
     }],
+  },
+  plugins: [
+    'graphql'
+  ]
+}
+```
+
+### No Deprecated Fields Validation Rule
+
+The No Deprecated Fields rule validates that no deprecated fields are part of the query. This is useful to discover fields that have been marked as deprecated and shouldn't be used.
+
+**Fail**
+```
+// 'id' requested and marked as deprecated in the schema
+
+schema {
+  query {
+    viewer {
+      id: Int @deprecated(reason: "Use the 'uuid' field instead")
+      uuid: String
+    }
+  }
+}
+
+query ViewerName {
+  viewer {
+    id
+  }
+}
+```
+
+The rule is defined as `graphql/no-deprecated-fields`.
+
+```js
+// In a file called .eslintrc.js
+module.exports = {
+  rules: {
+    'graphql/no-deprecated-fields': [
+      'error',
+      {
+        env: 'relay',
+        schemaJson: require('./schema.json')
+      },
+    ],
   },
   plugins: [
     'graphql'
