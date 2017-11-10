@@ -4,8 +4,7 @@ import {
   validate,
   buildClientSchema,
   buildSchema,
-  specifiedRules as allGraphQLValidators,
-  findDeprecatedUsages
+  specifiedRules as allGraphQLValidators
 } from 'graphql';
 
 import {
@@ -223,6 +222,24 @@ export const rules = {
       }));
     },
   },
+  'no-deprecated-fields': {
+    meta: {
+      schema: {
+        type: 'array',
+        items: {
+          additionalProperties: false,
+          properties: { ...defaultRuleProperties },
+          ...schemaPropsExclusiveness,
+        },
+      },
+    },
+    create: (context) => {
+      return createRule(context, (optionGroup) => parseOptions({
+        validators: ['noDeprecatedFields'],
+        ...optionGroup,
+      }));
+    },
+  },
 };
 
 function parseOptions(optionGroup) {
@@ -370,16 +387,6 @@ function handleTemplateTag(node, context, schema, env, validators) {
       node,
       message: validationErrors[0].message,
       loc: locFrom(node, validationErrors[0]),
-    });
-    return;
-  }
-
-  const deprecationErrors = schema ? findDeprecatedUsages(schema, ast) : [];
-  if (deprecationErrors && deprecationErrors.length > 0) {
-    context.report({
-      node,
-      message: deprecationErrors[0].message,
-      loc: locFrom(node, deprecationErrors[0]),
     });
     return;
   }

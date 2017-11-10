@@ -427,6 +427,7 @@ const parserOptions = {
             greetings: () => Relay.QL\`
               fragment on Greetings {
                 hello,
+                hi,
               }
             \`,
           }
@@ -526,29 +527,6 @@ const parserOptions = {
           column: 19
         }]
       },
-      {
-        options,
-        parser,
-        code: `
-          @relay({
-            fragments: {
-              greetings: () => Relay.QL\`
-                fragment on Greetings {
-                  hi,
-                }
-              \`,
-            }
-          })
-          class HelloApp extends React.Component {}
-        `,
-        errors: [{
-          message: "The field Greetings.hi is deprecated. Please use the more formal greeting 'hello'",
-          type: 'TaggedTemplateExpression',
-          line: 6,
-          column: 19
-        }]
-      },
-
       // Example from issue report:
       // https://github.com/apollostack/eslint-plugin-graphql/issues/12#issuecomment-215445880
       {
@@ -936,6 +914,48 @@ const typeNameCapValidatorCases = {
     },
   ]
 };
+
+const noDeprecatedFieldsCases = {
+  pass: [
+    `
+      @relay({
+        fragments: {
+          greetings: () => Relay.QL\`
+            fragment on Greetings {
+              hello,
+            }
+          \`,
+        }
+      })
+      class HelloApp extends React.Component {}
+    `
+  ],
+  fail: [
+    {
+      options,
+      parser: 'babel-eslint',
+      code: `
+        @relay({
+          fragments: {
+            greetings: () => Relay.QL\`
+              fragment on Greetings {
+                hi,
+              }
+            \`,
+          }
+        })
+        class HelloApp extends React.Component {}
+      `,
+      errors: [{
+        message: "The field Greetings.hi is deprecated. Please use the more formal greeting 'hello'",
+        type: 'TaggedTemplateExpression',
+        line: 6,
+        column: 17
+      }]
+    }
+  ]
+};
+
 {
   let options = [{
     schemaJson, tagName: 'gql',
@@ -1021,4 +1041,15 @@ let options = [{
 ruleTester.run('testing capitalized-type-name rule', rules['capitalized-type-name'], {
   valid: typeNameCapValidatorCases.pass.map((code) => ({options, parserOptions, code})),
   invalid: typeNameCapValidatorCases.fail.map(({code, errors}) => ({options, parserOptions, code, errors})),
+});
+
+options = [
+  {
+    schemaJson,
+    env: 'relay',
+  },
+];
+ruleTester.run('testing no-deprecated-fields rule', rules['no-deprecated-fields'], {
+  valid: noDeprecatedFieldsCases.pass.map((code) => ({options, parser: 'babel-eslint', code})),
+  invalid: noDeprecatedFieldsCases.fail.map(({code, errors}) => ({options, parser: 'babel-eslint', code, errors})),
 });

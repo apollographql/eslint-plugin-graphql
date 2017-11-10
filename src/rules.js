@@ -58,3 +58,36 @@ export function typeNamesShouldBeCapitalized(context) {
     }
   }
 }
+
+export function noDeprecatedFields(context) {
+  return {
+    Field(node) {
+      const fieldDef = context.getFieldDef();
+      if (fieldDef && fieldDef.isDeprecated) {
+        const parentType = context.getParentType();
+        if (parentType) {
+          const reason = fieldDef.deprecationReason;
+          context.reportError(new GraphQLError(
+            `The field ${parentType.name}.${fieldDef.name} is deprecated.` +
+            (reason ? ' ' + reason : ''),
+            [ node ]
+          ));
+        }
+      }
+    },
+    EnumValue(node) {
+      const enumVal = context.getEnumValue();
+      if (enumVal && enumVal.isDeprecated) {
+        const type = getNamedType(context.getInputType());
+        if (type) {
+          const reason = enumVal.deprecationReason;
+          errors.push(new GraphQLError(
+            `The enum value ${type.name}.${enumVal.name} is deprecated.` +
+            (reason ? ' ' + reason : ''),
+            [ node ]
+          ));
+        }
+      }
+    }
+  }
+}
