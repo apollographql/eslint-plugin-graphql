@@ -1,5 +1,6 @@
 # Change log
 ### vNEXT
+- Add new rule `no-deprecated-fields` in [Kristján Oddsson](https://github.com/koddsson/)[#92](https://github.com/apollographql/eslint-plugin-graphql/pull/93)
 
 ### v1.4.1
 Skipped v1.4.0 because of incorrect version tag in `package.json`
