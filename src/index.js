@@ -4,7 +4,7 @@ import {
   validate,
   buildClientSchema,
   buildSchema,
-  specifiedRules as allGraphQLValidators,
+  specifiedRules as allGraphQLValidators
 } from 'graphql';
 
 import {
@@ -218,6 +218,24 @@ export const rules = {
     create: (context) => {
       return createRule(context, (optionGroup) => parseOptions({
         validators: ['typeNamesShouldBeCapitalized'],
+        ...optionGroup,
+      }));
+    },
+  },
+  'no-deprecated-fields': {
+    meta: {
+      schema: {
+        type: 'array',
+        items: {
+          additionalProperties: false,
+          properties: { ...defaultRuleProperties },
+          ...schemaPropsExclusiveness,
+        },
+      },
+    },
+    create: (context) => {
+      return createRule(context, (optionGroup) => parseOptions({
+        validators: ['noDeprecatedFields'],
         ...optionGroup,
       }));
     },
