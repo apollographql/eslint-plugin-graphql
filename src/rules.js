@@ -59,6 +59,8 @@ export function typeNamesShouldBeCapitalized(context) {
   }
 }
 
+// Mostly taken from https://github.com/graphql/graphql-js/blob/063148de039b02670a760b8d3dfaf2a04a467169/src/utilities/findDeprecatedUsages.js
+// See explanation in [#93](https://github.com/apollographql/eslint-plugin-graphql/pull/93)
 export function noDeprecatedFields(context) {
   return {
     Field(node) {
