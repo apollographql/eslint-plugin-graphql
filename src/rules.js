@@ -1,4 +1,4 @@
-import { GraphQLError } from 'graphql';
+import { GraphQLError, getNamedType } from 'graphql';
 
 export function OperationsMustHaveNames(context) {
   return {
@@ -76,12 +76,14 @@ export function noDeprecatedFields(context) {
       }
     },
     EnumValue(node) {
-      const enumVal = context.getEnumValue();
+      // context is of type ValidationContext which doesn't export getEnumValue.
+      // Bypass the public API to grab that information directly from _typeInfo.
+      const enumVal = context._typeInfo.getEnumValue();
       if (enumVal && enumVal.isDeprecated) {
         const type = getNamedType(context.getInputType());
         if (type) {
           const reason = enumVal.deprecationReason;
-          errors.push(new GraphQLError(
+          context.reportError(new GraphQLError(
             `The enum value ${type.name}.${enumVal.name} is deprecated.` +
             (reason ? ' ' + reason : ''),
             [ node ]

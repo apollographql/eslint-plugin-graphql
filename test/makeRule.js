@@ -928,7 +928,19 @@ const noDeprecatedFieldsCases = {
         }
       })
       class HelloApp extends React.Component {}
+    `,
     `
+      @relay({
+        fragments: {
+          greetings: () => Relay.QL\`
+            fragment on Greetings {
+              image(size: LARGE) { size }
+            }
+          \`,
+        }
+      })
+      class HelloApp extends React.Component {}
+    `,
   ],
   fail: [
     {
@@ -952,7 +964,29 @@ const noDeprecatedFieldsCases = {
         line: 6,
         column: 17
       }]
-    }
+    },
+    {
+      options,
+      parser: 'babel-eslint',
+      code: `
+        @relay({
+          fragments: {
+            greetings: () => Relay.QL\`
+              fragment on Greetings {
+                image(size: SMALL) { size }
+              }
+            \`,
+          }
+        })
+        class HelloApp extends React.Component {}
+      `,
+      errors: [{
+        message: "The enum value ImageSize.SMALL is deprecated. Use 'LARGE' instead",
+        type: 'TaggedTemplateExpression',
+        line: 6,
+        column: 29
+      }]
+    },
   ]
 };
 

@@ -46,6 +46,16 @@ type Greetings {
   id: ID
   hello: String
   hi: String @deprecated(reason: "Please use the more formal greeting 'hello'")
+  image(size: ImageSize!): Image
+}
+
+type Image {
+  size: ImageSize!
+}
+
+enum ImageSize {
+  SMALL @deprecated(reason: "Use 'LARGE' instead")
+  LARGE
 }
 
 type Story {
