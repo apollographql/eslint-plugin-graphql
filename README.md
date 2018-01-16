@@ -329,6 +329,14 @@ The full list of available validators is:
   - `VariablesAreInputTypes`
   - `VariablesInAllowedPosition`
 
+**Note:** As of graphql [v0.12.0](https://github.com/graphql/graphql-js/releases/tag/v0.12.0) the rules
+  - `ArgumentsOfCorrectTypeRule`
+  - `DefaultValuesOfCorrectTypeRule`
+
+ have been removed and are replaced with two new rules
+  - `ValuesOfCorrectType`
+  - `VariablesDefaultValueAllowed`
+
 ### Named Operations Validation Rule
 
 The Named Operation rule validates that all operations are named. Naming operations is valuable for including in server-side logs and debugging.
