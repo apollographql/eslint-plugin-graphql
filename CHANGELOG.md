@@ -4,6 +4,7 @@
 ### v1.5.0
 - Add new rule `no-deprecated-fields` in [Kristján Oddsson](https://github.com/koddsson/)[#92](https://github.com/apollographql/eslint-plugin-graphql/pull/93)
 - Add support for deprecated fields on enums in [#100](https://github.com/apollographql/eslint-plugin-graphql/pull/100) by [Daniel Rinehart](https://github.com/NeoPhi)
+- Bumped `babel-eslint` and pinned `graphql-config` in [#101](https://github.com/apollographql/eslint-plugin-graphql/pull/101) by [Jon Wong](https://github.com/jnwng)
 
 ### v1.4.1
 Skipped v1.4.0 because of incorrect version tag in `package.json`
