@@ -70,6 +70,7 @@ describe('processors', () => {
     describe('valid', () => {
       [
         'required-fields-valid-no-id',
+        'required-fields-inline-valid-no-id',
         'required-fields-valid-id',
         'required-fields-valid-array'
       ].forEach(filename => {

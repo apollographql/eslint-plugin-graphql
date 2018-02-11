@@ -5,10 +5,15 @@ schema {
 
 type RootMutation {
   createComment(input: CreateCommentInput): CreateCommentPayload
+  createStory(input: CreateStoryInput): Story
 }
 
 input CreateCommentInput {
   stuff: String
+}
+
+input CreateStoryInput {
+  text: String
 }
 
 type CreateCommentPayload {
