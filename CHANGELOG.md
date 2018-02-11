@@ -1,5 +1,6 @@
 # Change log
 ### vNEXT
+- Fix required field crash error on inline fragments [Scott Peper](https://github.com/cspeper/)
 
 ### v1.5.0
 - Add new rule `no-deprecated-fields` in [Kristján Oddsson](https://github.com/koddsson/)[#92](https://github.com/apollographql/eslint-plugin-graphql/pull/93)

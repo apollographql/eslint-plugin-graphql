@@ -33,7 +33,7 @@ export function RequiredFields(context, options) {
         }
         if (fieldAvaliableOnType || fieldAvaliableOnOfType) {
           const fieldWasRequested = !!node.selectionSet.selections.find(
-            n => (n.name.value === field || n.kind === 'FragmentSpread')
+            n => (n.kind === 'FragmentSpread' || n.kind === 'InlineFragment' || n.name.value === field)
           );
           if (!fieldWasRequested) {
             context.reportError(
