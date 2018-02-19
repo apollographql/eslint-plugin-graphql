@@ -19,7 +19,7 @@ export function RequiredFields(context, options) {
       if (!def) {
         return;
       }
-      const { requiredFields } = options;
+      const { requiredFields, ignoreFragmentSpreads } = options;
       requiredFields.forEach(field => {
         const fieldAvaliableOnType = def.type && def.type._fields && def.type._fields[field];
 
@@ -33,7 +33,7 @@ export function RequiredFields(context, options) {
         }
         if (fieldAvaliableOnType || fieldAvaliableOnOfType) {
           const fieldWasRequested = !!node.selectionSet.selections.find(
-            n => (n.name.value === field || n.kind === 'FragmentSpread')
+            n => (n.name.value === field || (!ignoreFragmentSpreads && n.kind === 'FragmentSpread'))
           );
           if (!fieldWasRequested) {
             context.reportError(

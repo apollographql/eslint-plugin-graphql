@@ -188,6 +188,9 @@ export const rules = {
                 type: 'string',
               },
             },
+            ignoreFragmentSpreads: {
+              type: 'boolean',
+            }
           },
           required: ['requiredFields'],
           ...schemaPropsExclusiveness,
