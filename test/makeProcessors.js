@@ -93,5 +93,12 @@ describe('processors', () => {
         });
       });
     });
+
+    describe('apollo-link-state', () => {
+      it('skips queries that contain the @client directive', () => {
+        const results = execute('skip-apollo-link-state-directive');
+        assert.equal(results.errorCount, 0);
+      });
+    });
   });
 });

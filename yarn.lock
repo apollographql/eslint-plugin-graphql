@@ -125,6 +125,10 @@ anymatch@^1.3.0:
     arrify "^1.0.0"
     micromatch "^2.1.5"
 
+apollo-utilities@^1.0.9:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/apollo-utilities/-/apollo-utilities-1.0.9.tgz#16f9f2f92fd6c651d497aba6f2747ce17d87d80a"
+
 aproba@^1.0.3:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/aproba/-/aproba-1.1.1.tgz#95d3600f07710aa0e9298c726ad5ecf2eacbabab"

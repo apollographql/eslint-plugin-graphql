@@ -21,6 +21,8 @@ import {
   ConfigNotFoundError
 } from 'graphql-config'
 
+import {hasDirectives} from 'apollo-utilities'
+
 import * as customRules from './rules';
 
 const allGraphQLValidatorNames = allGraphQLValidators.map(rule => rule.name);
@@ -382,7 +384,7 @@ function handleTemplateTag(node, context, schema, env, validators) {
   }
 
   const validationErrors = schema ? validate(schema, ast, validators) : [];
-  if (validationErrors && validationErrors.length > 0) {
+  if (validationErrors && validationErrors.length > 0 && !hasDirectives(['client'], ast)) {
     context.report({
       node,
       message: validationErrors[0].message,
