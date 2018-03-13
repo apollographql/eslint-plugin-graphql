@@ -8,6 +8,7 @@ While not necessary, you can help organize our pull request by labeling this pul
 
 - [ ] has-reproduction
 - [ ] feature
+- [ ] docs
 - [ ] blocking
 - [ ] good first issue
 
