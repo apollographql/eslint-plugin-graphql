@@ -198,7 +198,7 @@ aws4@^1.2.1:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.6.0.tgz#83ef5ca860b2b32e4a0deedee8c771b9db57471e"
 
-babel-cli@^6.7.7:
+babel-cli@6.24.1:
   version "6.24.1"
   resolved "https://registry.yarnpkg.com/babel-cli/-/babel-cli-6.24.1.tgz#207cd705bba61489b2ea41b5312341cf6aca2283"
   dependencies:
@@ -227,7 +227,7 @@ babel-code-frame@^6.22.0:
     esutils "^2.0.2"
     js-tokens "^3.0.0"
 
-babel-core@^6.24.1, babel-core@^6.7.7:
+babel-core@6.24.1, babel-core@^6.24.1:
   version "6.24.1"
   resolved "https://registry.yarnpkg.com/babel-core/-/babel-core-6.24.1.tgz#8c428564dce1e1f41fb337ec34f4c3b022b5ad83"
   dependencies:
@@ -251,7 +251,7 @@ babel-core@^6.24.1, babel-core@^6.7.7:
     slash "^1.0.0"
     source-map "^0.5.0"
 
-babel-eslint@^8.2.1:
+babel-eslint@8.2.1:
   version "8.2.1"
   resolved "https://registry.yarnpkg.com/babel-eslint/-/babel-eslint-8.2.1.tgz#136888f3c109edc65376c23ebf494f36a3e03951"
   dependencies:
@@ -706,7 +706,7 @@ babel-plugin-transform-regenerator@^6.24.1:
   dependencies:
     regenerator-transform "0.9.11"
 
-babel-plugin-transform-runtime@^6.23.0:
+babel-plugin-transform-runtime@6.23.0:
   version "6.23.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-transform-runtime/-/babel-plugin-transform-runtime-6.23.0.tgz#88490d446502ea9b8e7efb0fe09ec4d99479b1ee"
   dependencies:
@@ -727,7 +727,7 @@ babel-polyfill@^6.23.0:
     core-js "^2.4.0"
     regenerator-runtime "^0.10.0"
 
-babel-preset-es2015@^6.6.0:
+babel-preset-es2015@6.24.1:
   version "6.24.1"
   resolved "https://registry.yarnpkg.com/babel-preset-es2015/-/babel-preset-es2015-6.24.1.tgz#d44050d6bc2c9feea702aaf38d727a0210538939"
   dependencies:
@@ -756,7 +756,7 @@ babel-preset-es2015@^6.6.0:
     babel-plugin-transform-es2015-unicode-regex "^6.24.1"
     babel-plugin-transform-regenerator "^6.24.1"
 
-babel-preset-stage-0@^6.5.0:
+babel-preset-stage-0@6.24.1:
   version "6.24.1"
   resolved "https://registry.yarnpkg.com/babel-preset-stage-0/-/babel-preset-stage-0-6.24.1.tgz#5642d15042f91384d7e5af8bc88b1db95b039e6a"
   dependencies:
@@ -843,7 +843,7 @@ babel-types@^6.19.0, babel-types@^6.24.1:
     lodash "^4.2.0"
     to-fast-properties "^1.0.1"
 
-babel@^6.5.2:
+babel@6.23.0:
   version "6.23.0"
   resolved "https://registry.yarnpkg.com/babel/-/babel-6.23.0.tgz#d0d1e7d803e974765beea3232d4e153c0efb90f4"
 
@@ -1142,7 +1142,7 @@ eslint-visitor-keys@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/eslint-visitor-keys/-/eslint-visitor-keys-1.0.0.tgz#3f3180fb2e291017716acb4c9d6d5b5c34a6a81d"
 
-eslint@^4.1.1:
+eslint@4.2.0:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/eslint/-/eslint-4.2.0.tgz#a2b3184111b198e02e9c7f3cca625a5e01c56b3d"
   dependencies:
@@ -1445,7 +1445,7 @@ graphql-request@^1.4.0:
   dependencies:
     cross-fetch "1.1.1"
 
-graphql-tools@^2.0.0:
+graphql-tools@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/graphql-tools/-/graphql-tools-2.0.0.tgz#d4a848639af17417bf412472b34c0cdd648983f4"
   dependencies:
@@ -1454,7 +1454,7 @@ graphql-tools@^2.0.0:
   optionalDependencies:
     "@types/graphql" "^0.11.4"
 
-graphql@^0.11.0, graphql@^0.11.7:
+graphql@0.11.7, graphql@^0.11.7:
   version "0.11.7"
   resolved "https://registry.yarnpkg.com/graphql/-/graphql-0.11.7.tgz#e5abaa9cb7b7cccb84e9f0836bf4370d268750c6"
   dependencies:
@@ -1890,7 +1890,7 @@ mkdirp@0.5.1, "mkdirp@>=0.5 0", mkdirp@^0.5.1:
   dependencies:
     minimist "0.0.8"
 
-mocha@^3.4.2:
+mocha@3.4.2:
   version "3.4.2"
   resolved "https://registry.yarnpkg.com/mocha/-/mocha-3.4.2.tgz#d0ef4d332126dbf18d0d640c9b382dd48be97594"
   dependencies:
