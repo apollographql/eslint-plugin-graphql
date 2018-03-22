@@ -36,7 +36,7 @@ describe('graphqlconfig support', () => {
           options,
           code: 'const y = gql`{ hero(episode: NEWHOPE) { id, name } }`;',
           errors: [{
-            message: 'Cannot query field "hero" on type "RootQuery".',
+            message: 'Cannot query field "hero" on type "Query".',
             type: 'TaggedTemplateExpression',
           }],
         },
@@ -81,7 +81,7 @@ describe('graphqlconfig support', () => {
             message: 'Cannot query field "number" on type "Query".',
             type: 'TaggedTemplateExpression',
           }, {
-            message: 'Cannot query field "hero" on type "RootQuery".',
+            message: 'Cannot query field "hero" on type "Query".',
             type: 'TaggedTemplateExpression',
           }],
         },
