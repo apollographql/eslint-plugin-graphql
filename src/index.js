@@ -418,11 +418,11 @@ function locFrom(node, error) {
 
   let line;
   let column;
-  if (location.line === 1) {
+  if (location.line === 1 && node.tag.name !== internalTag) {
     line = node.loc.start.line;
-    column = node.loc.start.col + location.col;
+    column = node.tag.loc.end.column + location.column;
   } else {
-    line = node.loc.start.line + location.line;
+    line = node.loc.start.line + location.line - 1;
     column = location.column - 1;
   }
 
@@ -489,7 +489,7 @@ function replaceExpressions(node, context, env) {
     }
   });
 
-  return chunks.join('').trim();
+  return chunks.join('');
 }
 
 function strWithLen(len) {
