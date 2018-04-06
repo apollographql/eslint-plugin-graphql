@@ -304,8 +304,7 @@ module.exports = {
 ```
 
 The full list of available validators is:
-  - `ArgumentsOfCorrectType`
-  - `DefaultValuesOfCorrectType`
+  - `ExecutableDefinitions`
   - `FieldsOnCorrectType`
   - `FragmentsOnCompositeTypes`
   - `KnownArgumentNames`
@@ -321,12 +320,16 @@ The full list of available validators is:
   - `PossibleFragmentSpreads`
   - `ProvidedNonNullArguments` (*disabled by default in `relay`*)
   - `ScalarLeafs` (*disabled by default in `relay`*)
+  - `SingleFieldSubscriptions`
   - `UniqueArgumentNames`
+  - `UniqueDirectivesPerLocation`
   - `UniqueFragmentNames`
   - `UniqueInputFieldNames`
   - `UniqueOperationNames`
   - `UniqueVariableNames`
+  - `ValuesOfCorrectType`
   - `VariablesAreInputTypes`
+  - `VariablesDefaultValueAllowed`
   - `VariablesInAllowedPosition`
 
 ### Named Operations Validation Rule
