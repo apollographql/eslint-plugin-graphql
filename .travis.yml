@@ -1,12 +1,12 @@
 language: node_js
 node_js:
-  - "5"
-  - "4"
+  - "8"
+  - "6"
 install:
-  - npm install
+  - yarn install
 
 script:
-  - npm test
+  - yarn test
 
 # Allow Travis tests to run in containers.
 sudo: false
