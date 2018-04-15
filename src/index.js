@@ -1,4 +1,5 @@
 import fs from 'fs';
+import path from 'path';
 import {
   parse,
   validate,
@@ -16,10 +17,7 @@ import {
   includes,
 } from 'lodash';
 
-import {
-  getGraphQLProjectConfig,
-  ConfigNotFoundError
-} from 'graphql-config'
+import { getGraphQLConfig, ConfigNotFoundError } from 'graphql-config';
 
 import * as customRules from './rules';
 
@@ -153,7 +151,7 @@ export const rules = {
         }
       },
     },
-    create: (context) => createRule(context, parseOptions)
+    create: (context) => createRule(context, (optionGroup) => parseOptions(optionGroup, context))
   },
   'named-operations': {
     meta: {
@@ -170,7 +168,7 @@ export const rules = {
       return createRule(context, (optionGroup) => parseOptions({
         validators: ['OperationsMustHaveNames'],
         ...optionGroup,
-      }));;
+      }, context));
     },
   },
   'required-fields': {
@@ -196,11 +194,14 @@ export const rules = {
     },
     create: context => {
       return createRule(context, optionGroup =>
-        parseOptions({
-          validators: ['RequiredFields'],
-          options: { requiredFields: optionGroup.requiredFields },
-          ...optionGroup,
-        })
+        parseOptions(
+          {
+            validators: ['RequiredFields'],
+            options: { requiredFields: optionGroup.requiredFields },
+            ...optionGroup,
+          },
+          context
+        )
       );
     },
   },
@@ -219,7 +220,7 @@ export const rules = {
       return createRule(context, (optionGroup) => parseOptions({
         validators: ['typeNamesShouldBeCapitalized'],
         ...optionGroup,
-      }));
+      }, context));
     },
   },
   'no-deprecated-fields': {
@@ -237,12 +238,12 @@ export const rules = {
       return createRule(context, (optionGroup) => parseOptions({
         validators: ['noDeprecatedFields'],
         ...optionGroup,
-      }));
+      }, context));
     },
   },
 };
 
-function parseOptions(optionGroup) {
+function parseOptions(optionGroup, context) {
   const {
     schemaJson, // Schema via JSON object
     schemaJsonFilepath, // Or Schema via absolute filepath
@@ -263,8 +264,17 @@ function parseOptions(optionGroup) {
     schema = initSchemaFromString(schemaString);
   } else {
     try {
-      const config = getGraphQLProjectConfig('.', projectName);
-      schema = config.getSchema()
+      const config = getGraphQLConfig(path.dirname(context.getFilename()));
+      let projectConfig;
+      if (projectName) {
+        projectConfig = config.getProjects()[projectName];
+        if (!projectConfig) {
+          throw new Error(`Project with name "${projectName}" not found in ${config.configPath}.`);
+        }
+      } else {
+        projectConfig = config.getConfigForFile(context.getFilename());
+      }
+      schema = projectConfig.getSchema();
     } catch (e) {
       if (e instanceof ConfigNotFoundError) {
         throw new Error('Must provide .graphqlconfig file or pass in `schemaJson` option ' +
