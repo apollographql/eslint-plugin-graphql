@@ -50,7 +50,6 @@ describe('graphqlconfig support', () => {
       { projectName: 'swapi', tagName: 'swapi' },
     ];
 
-
     beforeEach(() => {
       process.chdir('test/graphqlconfig/multiproject');
     })

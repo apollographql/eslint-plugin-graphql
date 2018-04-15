@@ -150,7 +150,7 @@ export const rules = {
         }
       },
     },
-    create: (context) => createRule(context, parseOptions)
+    create: (context) => createRule(context, (optionGroup) => parseOptions(optionGroup, context))
   },
   'named-operations': {
     meta: {
@@ -167,7 +167,7 @@ export const rules = {
       return createRule(context, (optionGroup) => parseOptions({
         validators: ['OperationsMustHaveNames'],
         ...optionGroup,
-      }));;
+      }, context));
     },
   },
   'required-fields': {
@@ -219,7 +219,7 @@ export const rules = {
       return createRule(context, (optionGroup) => parseOptions({
         validators: ['typeNamesShouldBeCapitalized'],
         ...optionGroup,
-      }));
+      }, context));
     },
   },
   'no-deprecated-fields': {
@@ -237,7 +237,7 @@ export const rules = {
       return createRule(context, (optionGroup) => parseOptions({
         validators: ['noDeprecatedFields'],
         ...optionGroup,
-      }));
+      }, context));
     },
   },
 };
@@ -264,7 +264,16 @@ function parseOptions(optionGroup, context) {
   } else {
     try {
       const config = getGraphQLConfig();
-      schema = config.getConfigForFile(context.getFilename()).getSchema();
+      let projectConfig;
+      if (projectName) {
+        projectConfig = config.getProjects()[projectName];
+        if (!projectConfig) {
+          throw new Error(`Project with name "${projectName}" not found in ${config.configPath}.`);
+        }
+      } else {
+        projectConfig = config.getConfigForFile(context.getFilename());
+      }
+      schema = projectConfig.getSchema();
     } catch (e) {
       if (e instanceof ConfigNotFoundError) {
         throw new Error('Must provide .graphqlconfig file or pass in `schemaJson` option ' +
