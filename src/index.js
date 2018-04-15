@@ -16,10 +16,7 @@ import {
   includes,
 } from 'lodash';
 
-import {
-  getGraphQLProjectConfig,
-  ConfigNotFoundError
-} from 'graphql-config'
+import { getGraphQLConfig, ConfigNotFoundError } from 'graphql-config';
 
 import * as customRules from './rules';
 
@@ -196,11 +193,14 @@ export const rules = {
     },
     create: context => {
       return createRule(context, optionGroup =>
-        parseOptions({
-          validators: ['RequiredFields'],
-          options: { requiredFields: optionGroup.requiredFields },
-          ...optionGroup,
-        })
+        parseOptions(
+          {
+            validators: ['RequiredFields'],
+            options: { requiredFields: optionGroup.requiredFields },
+            ...optionGroup,
+          },
+          context
+        )
       );
     },
   },
@@ -242,7 +242,7 @@ export const rules = {
   },
 };
 
-function parseOptions(optionGroup) {
+function parseOptions(optionGroup, context) {
   const {
     schemaJson, // Schema via JSON object
     schemaJsonFilepath, // Or Schema via absolute filepath
@@ -263,8 +263,8 @@ function parseOptions(optionGroup) {
     schema = initSchemaFromString(schemaString);
   } else {
     try {
-      const config = getGraphQLProjectConfig('.', projectName);
-      schema = config.getSchema()
+      const config = getGraphQLConfig();
+      schema = config.getConfigForFile(context.getFilename()).getSchema();
     } catch (e) {
       if (e instanceof ConfigNotFoundError) {
         throw new Error('Must provide .graphqlconfig file or pass in `schemaJson` option ' +
