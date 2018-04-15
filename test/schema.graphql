@@ -1,9 +1,9 @@
 schema {
-  query: RootQuery
-  mutation: RootMutation
+  query: Query
+  mutation: Mutation
 }
 
-type RootMutation {
+type Mutation {
   createComment(input: CreateCommentInput): CreateCommentPayload
 }
 
@@ -24,7 +24,7 @@ type User {
   events: [String]
 }
 
-type RootQuery {
+type Query {
   number: Int
   allFilms: AllFilmsObj
   sum(a: Int!, b: Int!): Int!
