@@ -3,4 +3,3 @@ lib
 test/schema.json
 test/second-schema.json
 .vscode/
-yarn-error.log
