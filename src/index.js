@@ -1,4 +1,5 @@
 import fs from 'fs';
+import path from 'path';
 import {
   parse,
   validate,
@@ -263,7 +264,7 @@ function parseOptions(optionGroup, context) {
     schema = initSchemaFromString(schemaString);
   } else {
     try {
-      const config = getGraphQLConfig();
+      const config = getGraphQLConfig(path.dirname(context.getFilename()));
       let projectConfig;
       if (projectName) {
         projectConfig = config.getProjects()[projectName];
