@@ -1,5 +1,6 @@
 # Change log
 ### vNEXT
+- Retrieves `.graphqlconfig` relative to the file being linted, which re-enables support for `vscode-eslint` using `.graphqlconfig` in [#108](https://github.com/apollographql/eslint-plugin-graphql/pull/108) by [Jon Wong][https://github.com/jnwng/]
 
 ### v2.0.0
 - Add support for `graphql-js@^0.12.0` and `graphql-js@^0.13.0` in [Jon Wong](https://github.com/jnwng/)[#119] (https://github.com/apollographql/eslint-plugin-graphql/pull/93)
