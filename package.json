@@ -5,11 +5,7 @@
   "author": "Sashko Stubailo",
   "main": "lib/index.js",
   "scripts": {
-<<<<<<< HEAD
-    "test": "yarn tav --ci && mocha test/index.js",
-=======
     "test": "tav --ci && mocha test/index.js",
->>>>>>> d62430118632fa46bb36e825e6c5817b547207c4
     "prepublish": "babel ./src --ignore test --out-dir ./lib",
     "pretest": "node test/updateSchemaJson.js"
   },

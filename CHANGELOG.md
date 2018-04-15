@@ -1,6 +1,11 @@
 # Change log
 ### vNEXT
 
+### v2.0.0
+- Add support for `graphql-js@^0.12.0` and `graphql-js@^0.13.0` in [Jon Wong](https://github.com/jnwng/)[#119] (https://github.com/apollographql/eslint-plugin-graphql/pull/93)
+- Update list of available validators in [#121]((https://github.com/apollographql/eslint-plugin-graphql/pull/121) by [Pleun Vanderbauwhede](https://github.com/pleunv)
+- Update supported Node `engines` to >= 6.0 in [#133](https://github.com/apollographql/eslint-plugin-graphql/pull/133) by [Jon Wong](https://github.com/jnwng/)
+
 ### v1.5.0
 - Add new rule `no-deprecated-fields` in [Kristján Oddsson](https://github.com/koddsson/)[#92](https://github.com/apollographql/eslint-plugin-graphql/pull/93)
 - Add support for deprecated fields on enums in [#100](https://github.com/apollographql/eslint-plugin-graphql/pull/100) by [Daniel Rinehart](https://github.com/NeoPhi)
