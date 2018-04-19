@@ -1,5 +1,7 @@
 # Change log
 ### vNEXT
+
+### v2.1.0
 - Retrieves `.graphqlconfig` relative to the file being linted, which re-enables support for `vscode-eslint` using `.graphqlconfig` in [#108](https://github.com/apollographql/eslint-plugin-graphql/pull/108) by [Jon Wong][https://github.com/jnwng/]
 - Cache schema reading/parsing results each time a rule is created in [#137](https://github.com/apollographql/eslint-plugin-graphql/pull/137) by [Kristján Oddsson](https://github.com/koddsson)
 
