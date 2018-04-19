@@ -243,7 +243,13 @@ export const rules = {
   },
 };
 
+const schemaCache = {};
+
 function parseOptions(optionGroup, context) {
+  const cacheHit = schemaCache[JSON.stringify(optionGroup)];
+  if (cacheHit) {
+    return cacheHit;
+  }
   const {
     schemaJson, // Schema via JSON object
     schemaJsonFilepath, // Or Schema via absolute filepath
@@ -322,7 +328,9 @@ function parseOptions(optionGroup, context) {
       return require(`graphql/validation/rules/${name}`)[name];
     }
   });
-  return {schema, env, tagName, validators};
+  const results = {schema, env, tagName, validators};
+  schemaCache[JSON.stringify(optionGroup)] = results;
+  return results;
 }
 
 function initSchema(json) {
