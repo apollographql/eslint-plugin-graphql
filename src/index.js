@@ -243,12 +243,12 @@ export const rules = {
   },
 };
 
-const schemaCache = {}
+const schemaCache = {};
 
 function parseOptions(optionGroup, context) {
-  const cacheHit = schemaCache[JSON.stringify(optionGroup)]
+  const cacheHit = schemaCache[JSON.stringify(optionGroup)];
   if (cacheHit) {
-    return cacheHit
+    return cacheHit;
   }
   const {
     schemaJson, // Schema via JSON object
