@@ -371,8 +371,9 @@ function templateExpressionMatchesTag(tagName, node) {
 
 function handleTemplateTag(node, context, schema, env, validators) {
   let text;
+  let sourceMaps;
   try {
-    text = replaceExpressions(node.quasi, context, env);
+    ({value: text, sourceMaps} = replaceExpressions(node.quasi, context, env));
   } catch (e) {
     if (e.message !== 'Invalid interpolation') {
       console.log(e);
@@ -394,7 +395,7 @@ function handleTemplateTag(node, context, schema, env, validators) {
     context.report({
       node,
       message: error.message.split('\n')[0],
-      loc: locFrom(node, error),
+      loc: locFrom(node, error, sourceMaps),
     });
     return;
   }
@@ -404,42 +405,104 @@ function handleTemplateTag(node, context, schema, env, validators) {
     context.report({
       node,
       message: validationErrors[0].message,
-      loc: locFrom(node, validationErrors[0]),
+      loc: locFrom(node, validationErrors[0], sourceMaps),
     });
     return;
   }
 }
 
-function locFrom(node, error) {
+function locFrom(node, error, sourceMaps) {
   if (!error.locations || !error.locations.length) {
     return;
   }
-  const location = error.locations[0];
 
-  let line;
-  let column;
-  if (location.line === 1 && node.tag.name !== internalTag) {
-    line = node.loc.start.line;
-    column = node.tag.loc.end.column + location.column;
-  } else {
-    line = node.loc.start.line + location.line - 1;
-    column = location.column - 1;
+  // location.line and location.column represent *dest* in the source map.
+  const location = {
+    line: error.locations[0].line,
+    column: error.locations[0].column - 1,
+  };
+
+  // Start off with a "best guess" of the location.
+  let bestLoc = transformLocation({
+    loc: location,
+    ref: location,
+    target: node.loc.start,
+  });
+
+  // "dest" refers to the GraphQL document text and "source" is the source code.
+  for (const {source, dest} of sourceMaps) {
+    if (isLocationInSpan(dest, location)) {
+      bestLoc = transformLocation({
+        loc: location,
+        ref: dest.start,
+        target: source.start,
+      });
+    }
   }
 
+  // Special corrective adjustment for the implicit tag prepended to literal
+  // GraphQL files before parsing.
+  if (node.tag.name === internalTag && bestLoc.line === 1) {
+    return {
+      line: bestLoc.line,
+      column: bestLoc.column - (node.tag.loc.end.column - 1),
+    };
+  }
+
+  return bestLoc;
+}
+
+function isLocationInSpan(haystack, needle) {
+  return (
+    needle.line >= haystack.start.line
+    && needle.line <= haystack.end.line
+    && (needle.line !== haystack.start.line || needle.column >= haystack.start.column)
+    && (needle.line !== haystack.end.line || needle.column < haystack.end.column)
+  );
+}
+
+// Transform location 'loc' from the reference space 'ref' mapping to 'target'
+function transformLocation({loc, ref, target}) {
   return {
-    line,
-    column,
+    line: target.line + (loc.line - ref.line),
+    column: (
+      loc.line === ref.line
+      ? target.column + (loc.column - ref.column)
+      : loc.column
+    ),
   };
 }
 
 function replaceExpressions(node, context, env) {
   const chunks = [];
+  const sourceMaps = [];
+
+  let line = 1;
+  let column = 1;
+  function appendSource(value, sourceLoc) {
+    const currentCursor = {line, column};
+    const newCursor = transformLocation({
+      loc: sourceLoc.end,
+      ref: sourceLoc.start,
+      target: currentCursor,
+    });
+    const sourceMap = {
+      source: sourceLoc,
+      dest: {
+        start: currentCursor,
+        end: newCursor,
+      },
+    };
+    chunks.push(value);
+    sourceMaps.push(sourceMap);
+    ({line, column} = newCursor);
+  }
 
   node.quasis.forEach((element, i) => {
     const chunk = element.value.cooked;
     const value = node.expressions[i];
 
-    chunks.push(chunk);
+    appendSource(chunk, element.loc);
 
     if (!env || env === 'apollo') {
       // In Apollo, interpolation is only valid outside top-level structures like `query` or `mutation`.
@@ -455,29 +518,23 @@ function replaceExpressions(node, context, env) {
     }
 
     if (!element.tail) {
-      // Preserve location of errors by replacing with exactly the same length
-      const nameLength = value.end - value.start;
-
+      let placeholder;
       if (env === 'relay' && /:\s*$/.test(chunk)) {
         // The chunk before this one had a colon at the end, so this
         // is a variable
-
-        // Add 2 for brackets in the interpolation
-        const placeholder = strWithLen(nameLength + 2)
-        chunks.push('$' + placeholder);
+        placeholder = '$x';
       } else if (env === 'lokka' && /\.\.\.\s*$/.test(chunk)) {
         // This is Lokka-style fragment interpolation where you actually type the '...' yourself
-        const placeholder = strWithLen(nameLength + 3);
-        chunks.push(placeholder);
+        placeholder = 'x';
       } else if (env === 'relay') {
         // This is Relay-style fragment interpolation where you don't type '...'
         // Ellipsis cancels out extra characters
-        const placeholder = strWithLen(nameLength);
-        chunks.push('...' + placeholder);
+        placeholder = '...x';
       } else if (!env || env === 'apollo') {
         // In Apollo, fragment interpolation is only valid outside of brackets
         // Since we don't know what we'd interpolate here (that occurs at runtime),
         // we're not going to do anything with this interpolation.
+        placeholder = '';
       } else {
         // Invalid interpolation
         context.report({
@@ -486,15 +543,11 @@ function replaceExpressions(node, context, env) {
         });
         throw new Error('Invalid interpolation');
       }
+      appendSource(placeholder, value.loc);
     }
   });
 
-  return chunks.join('');
-}
-
-function strWithLen(len) {
-  // from http://stackoverflow.com/questions/14343844/create-a-string-of-variable-length-filled-with-a-repeated-character
-  return new Array(len + 1).join( 'x' );
+  return {value: chunks.join(''), sourceMaps};
 }
 
 const gqlProcessor = {
