@@ -383,6 +383,34 @@ const parserOptions = {
           column: 19
         }]
       },
+      // Make sure that template literals with multi-line expressions
+      // do not interfere with source location reporting
+      {
+        options,
+        parserOptions,
+        code: `
+          client.query(gql\`
+            {
+              allFilms {
+                films {
+                  ...\${
+                        filmInfo
+                  }
+                  unknownField
+                }
+              }
+            }
+          \`).then(result => {
+            console.log(result.allFilms.films);
+          });
+        `,
+        errors: [{
+          message: 'Cannot query field "unknownField" on type "Film".',
+          type: 'TaggedTemplateExpression',
+          line: 9,
+          column: 19
+        }]
+      },
       {
         options,
         parserOptions,
