@@ -1,6 +1,7 @@
 # Change log
 ### vNEXT
 - Fix error location information for literal .graphql files and strings with leading newlines in [#122](https://github.com/apollographql/eslint-plugin-graphql/pull/122) by [Dan Freeman](https://github.com/dfreeman)
+- Fix error location information for templates with multi-line expressions in [#143](https://github.com/apollographql/eslint-plugin-graphql/pull/143) by [Robert Estelle](https://github.com/erydo)
 
 ### v2.1.0
 - Retrieves `.graphqlconfig` relative to the file being linted, which re-enables support for `vscode-eslint` using `.graphqlconfig` in [#108](https://github.com/apollographql/eslint-plugin-graphql/pull/108) by [Jon Wong][https://github.com/jnwng/]
@@ -72,13 +73,11 @@ Skipped v1.4.0 because of incorrect version tag in `package.json`
 
 ### v0.4.1
 
-- Support for selecting validation rules one by one, by [erydo in
-#34](https://github.com/apollostack/eslint-plugin-graphql/pull/34)
+- Support for selecting validation rules one by one, by [Robert Estelle](https://github.com/erydo) in [#34](https://github.com/apollostack/eslint-plugin-graphql/pull/34)
 
 ### v0.4.0
 
-- Support for multiple schemas, by [erydo in
-#31](https://github.com/apollostack/eslint-plugin-graphql/pull/31)
+- Support for multiple schemas, by [Robert Estelle](https://github.com/erydo) in [#31](https://github.com/apollostack/eslint-plugin-graphql/pull/31)
 
 ### v0.3.1
 
