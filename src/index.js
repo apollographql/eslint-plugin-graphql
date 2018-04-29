@@ -32,23 +32,19 @@ const allGraphQLValidatorNames = allGraphQLValidators.map(rule => rule.name);
 // Map of env name to list of rule names.
 const envGraphQLValidatorNames = {
   apollo: without(allGraphQLValidatorNames,
-    'KnownFragmentNames',
     'NoUnusedFragments',
   ),
   lokka: without(allGraphQLValidatorNames,
-    'KnownFragmentNames',
     'NoUnusedFragments',
   ),
   relay: without(allGraphQLValidatorNames,
     'KnownDirectives',
-    'KnownFragmentNames',
     'NoUndefinedVariables',
     'NoUnusedFragments',
     'ProvidedNonNullArguments',
     'ScalarLeafs',
   ),
   literal: without(allGraphQLValidatorNames,
-    'KnownFragmentNames',
     'NoUnusedFragments',
   ),
 };
@@ -88,20 +84,26 @@ function createRule(context, optionParser) {
   const tagRules = [];
   const options = context.options.length === 0 ? [{}] : context.options;
   for (const optionGroup of options) {
-    const {schema, env, tagName, validators} = optionParser(optionGroup);
-    const boundValidators = validators.map(v => (ctx) => v(ctx, optionGroup));
+    const {schema, env, tagName, validators, fallbackValidators} = optionParser(optionGroup);
     if (tagNames.has(tagName)) {
       throw new Error('Multiple options for GraphQL tag ' + tagName);
     }
     tagNames.add(tagName);
-    tagRules.push({schema, env, tagName, validators: boundValidators});
+
+    tagRules.push({
+      schema,
+      env,
+      tagName,
+      validators: validators.map(v => (ctx) => v(ctx, optionGroup)),
+      fallbackValidators: fallbackValidators.map(v => (ctx) => v(ctx, optionGroup)),
+    });
   }
 
   return {
     TaggedTemplateExpression(node) {
-      for (const {schema, env, tagName, validators} of tagRules) {
+      for (const {schema, env, tagName, validators, fallbackValidators} of tagRules) {
         if (templateExpressionMatchesTag(tagName, node)) {
-          return handleTemplateTag(node, context, schema, env, validators);
+          return handleTemplateTag(node, context, schema, env, validators, fallbackValidators);
         }
       }
     },
@@ -319,22 +321,30 @@ function parseOptions(optionGroup, context) {
   //    An array of rule names.
   //    null/undefined to use the default rule set of the environment, or all rules.
   let validatorNames;
+  let fallbackValidatorNames;
   if (validatorNamesOption === 'all') {
     validatorNames = allGraphQLValidatorNames;
+    fallbackValidatorNames = validatorNames;
   } else if (validatorNamesOption) {
     validatorNames = validatorNamesOption;
+    fallbackValidatorNames = validatorNames;
   } else {
     validatorNames = envGraphQLValidatorNames[env] || allGraphQLValidatorNames;
+    fallbackValidatorNames = without(validatorNames, 'KnownFragmentNames', 'NoUnusedFragments');
   }
 
-  const validators = validatorNames.map(name => {
+  const getValidator = name => {
     if (name in customRules) {
       return customRules[name];
     } else {
       return require(`graphql/validation/rules/${name}`)[name];
     }
-  });
-  const results = {schema, env, tagName, validators};
+  };
+
+  const validators = validatorNames.map(getValidator);
+  const fallbackValidators = fallbackValidatorNames.map(getValidator);
+
+  const results = {schema, env, tagName, validators, fallbackValidators};
   schemaCache[JSON.stringify(optionGroup)] = results;
   return results;
 }
@@ -375,11 +385,12 @@ function templateExpressionMatchesTag(tagName, node) {
   return true;
 }
 
-function handleTemplateTag(node, context, schema, env, validators) {
+function handleTemplateTag(node, context, schema, env, fullValidators, fallbackValidators) {
   let text;
   let sourceMaps;
+  let isFullyLiteral;
   try {
-    ({value: text, sourceMaps} = replaceExpressions(node.quasi, context, env));
+    ({value: text, sourceMaps, isFullyLiteral} = replaceExpressions(node.quasi, context, env));
   } catch (e) {
     if (e.message !== 'Invalid interpolation') {
       console.log(e);
@@ -405,6 +416,11 @@ function handleTemplateTag(node, context, schema, env, validators) {
     });
     return;
   }
+
+  // If this template's components were not fully inferrable, we can't detect
+  // unused fragments or unknown fragments. They might be used or known by
+  // those parts of the query.
+  const validators = isFullyLiteral ? fullValidators : fallbackValidators;
 
   const validationErrors = schema ? validate(schema, ast, validators) : [];
   if (validationErrors && validationErrors.length > 0) {
@@ -514,7 +530,7 @@ function replaceExpressions(node, context, env) {
     }
   });
 
-  return {value: chunks.join(''), sourceMaps};
+  return {value: chunks.join(''), sourceMaps, isFullyLiteral: false};
 }
 
 const gqlProcessor = {
