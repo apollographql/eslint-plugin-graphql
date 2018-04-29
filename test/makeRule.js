@@ -440,6 +440,140 @@ const parserOptions = {
 
 {
   const options = [
+    { schemaJsonFilepath, tagName: 'gql' },
+    { schemaJsonFilepath: secondSchemaJsonFilepath, tagName: 'swapi' },
+  ];
+
+  ruleTester.run('handles inferred literals', rule, {
+    valid: [
+      {
+        options,
+        parserOptions,
+        code: `
+          const myHeroFragment = \`
+            fragment HeroFragment on Character {
+              id
+              name
+            }
+          \`;
+
+          const someQuery = swapi\`
+            \${myHeroFragment}
+
+            query GetHero {
+              hero(episode: NEWHOPE) {
+                ...HeroFragment
+              }
+            }
+          \`;
+        `
+      },
+      {
+        options,
+        parserOptions,
+        code: `
+          const myHeroFragment = process.env.THIS_CANNOT_BE_INFERRED;
+
+          const someQuery = swapi\`
+            \${myHeroFragment}
+
+            query GetHero {
+              hero(episode: NEWHOPE) {
+                ...HeroFragment
+              }
+            }
+          \`;
+        `,
+      },
+    ],
+    invalid: [
+      {
+        options,
+        parserOptions,
+        code: `
+          const myHeroFragment = \`
+            fragment HeroFragment on Character {
+              id
+              name
+              notAValidField
+            }
+          \`;
+
+          const someQuery = swapi\`
+            \${myHeroFragment}
+
+            query GetHero {
+              hero(episode: NEWHOPE) {
+                ...HeroFragment
+              }
+            }
+          \`;
+        `,
+        errors: [{
+          message: 'Cannot query field "notAValidField" on type "Character".',
+          type: 'TaggedTemplateExpression',
+          line: 6,
+        }],
+      },
+      {
+        options,
+        parserOptions,
+        code: `
+          const notTheRightFragment = \`
+            fragment DroidFragment on Droid {
+              id
+              name
+            }
+          \`;
+
+          const someQuery = swapi\`
+            \${notTheRightFragment}
+
+            query GetHuman {
+              human(id: "luke") {
+                ...HumanFragment
+              }
+            }
+          \`;
+        `,
+        errors: [{
+          message: 'Unknown fragment "HumanFragment".',
+          type: 'TaggedTemplateExpression',
+          line: 14,
+        }],
+      }, {
+        options,
+        parserOptions,
+        code: `
+          const myDroidFragment = \`
+            fragment DroidFragment on Droid {
+              id
+              name
+            }
+          \`;
+
+          const oopsWrongFragment = swapi\`
+            \${myDroidFragment}
+
+            query GetHuman {
+              human(id: "luke") {
+                ...DroidFragment
+              }
+            }
+          \`;
+        `,
+        errors: [{
+          message: 'Fragment "DroidFragment" cannot be spread here as objects of type "Human" can never be of type "Droid".',
+          type: 'TaggedTemplateExpression',
+          line: 14,
+        }],
+      },
+    ],
+  });
+}
+
+{
+  const options = [
     {
       schemaJson,
       env: 'relay',

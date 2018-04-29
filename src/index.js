@@ -27,6 +27,8 @@ import {
   getSourceLocationFromDocLocation,
 } from './location';
 
+import infer from './infer';
+
 const allGraphQLValidatorNames = allGraphQLValidators.map(rule => rule.name);
 
 // Map of env name to list of rule names.
@@ -457,6 +459,13 @@ function getErrorLocation(node, error, sourceMaps) {
 
 
 function replaceExpressions(node, context, env) {
+  const inferred = infer(node, context);
+  if (inferred) {
+    return {...inferred, isFullyLiteral: true};
+  }
+
+  // If we can't infer the actual value, mock up a placeholder query for
+  // fallback validation:
   const chunks = [];
   const sourceMaps = [];
 
