@@ -2,6 +2,7 @@
 ### vNEXT
 - Fix error location information for literal .graphql files and strings with leading newlines in [#122](https://github.com/apollographql/eslint-plugin-graphql/pull/122) by [Dan Freeman](https://github.com/dfreeman)
 - Fix error location information for templates with multi-line expressions in [#143](https://github.com/apollographql/eslint-plugin-graphql/pull/143) by [Robert Estelle](https://github.com/erydo)
+- Infer template values when possible for stricter checking in [#144](https://github.com/apollographql/eslint-plugin-graphql/pull/144) by [Robert Estelle](https://github.com/erydo)
 
 ### v2.1.0
 - Retrieves `.graphqlconfig` relative to the file being linted, which re-enables support for `vscode-eslint` using `.graphqlconfig` in [#108](https://github.com/apollographql/eslint-plugin-graphql/pull/108) by [Jon Wong][https://github.com/jnwng/]
