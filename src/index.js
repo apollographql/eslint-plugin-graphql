@@ -21,6 +21,12 @@ import { getGraphQLConfig, ConfigNotFoundError } from 'graphql-config';
 
 import * as customRules from './rules';
 
+import {
+  transformLocation,
+  isLocationInSpan,
+  getSourceLocationFromDocLocation,
+} from './location';
+
 const allGraphQLValidatorNames = allGraphQLValidators.map(rule => rule.name);
 
 // Map of env name to list of rule names.
@@ -395,7 +401,7 @@ function handleTemplateTag(node, context, schema, env, validators) {
     context.report({
       node,
       message: error.message.split('\n')[0],
-      loc: locFrom(node, error, sourceMaps),
+      loc: getErrorLocation(node, error, sourceMaps),
     });
     return;
   }
@@ -405,73 +411,34 @@ function handleTemplateTag(node, context, schema, env, validators) {
     context.report({
       node,
       message: validationErrors[0].message,
-      loc: locFrom(node, validationErrors[0], sourceMaps),
+      loc: getErrorLocation(node, validationErrors[0], sourceMaps),
     });
     return;
   }
 }
 
-function locFrom(node, error, sourceMaps) {
+function getErrorLocation(node, error, sourceMaps) {
   if (!error.locations || !error.locations.length) {
     return;
   }
 
-  // location.line and location.column represent *dest* in the source map.
-  const location = {
+  const sourceLocation = getSourceLocationFromDocLocation(node.loc.start, {
     line: error.locations[0].line,
     column: error.locations[0].column - 1,
-  };
-
-  // Start off with a "best guess" of the location.
-  let bestLoc = transformLocation({
-    loc: location,
-    ref: location,
-    target: node.loc.start,
-  });
-
-  // "dest" refers to the GraphQL document text and "source" is the source code.
-  for (const {source, dest} of sourceMaps) {
-    if (isLocationInSpan(dest, location)) {
-      bestLoc = transformLocation({
-        loc: location,
-        ref: dest.start,
-        target: source.start,
-      });
-    }
-  }
+  }, sourceMaps);
 
   // Special corrective adjustment for the implicit tag prepended to literal
   // GraphQL files before parsing.
-  if (node.tag.name === internalTag && bestLoc.line === 1) {
+  if (node.tag.name === internalTag && sourceLocation.line === 1) {
     return {
-      line: bestLoc.line,
-      column: bestLoc.column - (node.tag.loc.end.column - 1),
+      line: sourceLocation.line,
+      column: sourceLocation.column - (node.tag.loc.end.column - 1),
     };
   }
 
-  return bestLoc;
+  return sourceLocation;
 }
 
-function isLocationInSpan(haystack, needle) {
-  return (
-    needle.line >= haystack.start.line
-    && needle.line <= haystack.end.line
-    && (needle.line !== haystack.start.line || needle.column >= haystack.start.column)
-    && (needle.line !== haystack.end.line || needle.column < haystack.end.column)
-  );
-}
-
-// Transform location 'loc' from the reference space 'ref' mapping to 'target'
-function transformLocation({loc, ref, target}) {
-  return {
-    line: target.line + (loc.line - ref.line),
-    column: (
-      loc.line === ref.line
-      ? target.column + (loc.column - ref.column)
-      : loc.column
-    ),
-  };
-}
 
 function replaceExpressions(node, context, env) {
   const chunks = [];
