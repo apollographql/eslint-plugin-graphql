@@ -309,7 +309,7 @@ The full list of available validators is:
   - `FragmentsOnCompositeTypes`
   - `KnownArgumentNames`
   - `KnownDirectives` (*disabled by default in `relay`*)
-  - `KnownFragmentNames` (*disabled by default in all envs*)
+  - `KnownFragmentNames` (*disabled by default in all envs, except when template tags can be completely inferred*)
   - `KnownTypeNames`
   - `LoneAnonymousOperation`
   - `NoFragmentCycles`
