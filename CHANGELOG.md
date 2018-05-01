@@ -1,5 +1,8 @@
 # Change log
 ### vNEXT
+
+### v2.1.1
+- Fix support for InlineFragments with the `required-fields` rule in [#140](https://github.com/apollographql/eslint-plugin-graphql/pull/140/files) by [Steve Hollaar](https://github.com/stevehollaar)
 - Fix error location information for literal .graphql files and strings with leading newlines in [#122](https://github.com/apollographql/eslint-plugin-graphql/pull/122) by [Dan Freeman](https://github.com/dfreeman)
 
 ### v2.1.0
