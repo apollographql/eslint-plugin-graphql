@@ -1,1 +1,5 @@
-query { greetings { hello } }
+query {
+  greetings {
+    hello
+  }
+}

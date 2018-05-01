@@ -73,10 +73,12 @@ const parserOptions = {
       {
         options,
         parserOptions,
-        code: 'const x = gql`{ nonExistentQuery }`',
+        code: 'const x = gql`\n  query {\n    nonExistentQuery\n  }\n`',
         errors: [{
           message: 'Cannot query field "nonExistentQuery" on type "Query".',
-          type: 'TaggedTemplateExpression'
+          type: 'TaggedTemplateExpression',
+          line: 3,
+          column: 5
         }]
       },
       {
