@@ -858,7 +858,8 @@ const requiredFieldsTestCases = {
   pass: [
     'const x = gql`query { allFilms { films { title } } }`',
     'const x = gql`query { stories { id comments { text } } }`',
-    'const x = gql`query { greetings { id, hello, foo } }`'
+    'const x = gql`query { greetings { id, hello, foo } }`',
+    'const x = gql`query { greetings { hello ... on Greetings { id } } }`',
   ],
   fail: [
     {
@@ -874,6 +875,15 @@ const requiredFieldsTestCases = {
         message: `'id' field required on 'greetings'`,
         type: 'TaggedTemplateExpression',
       }],
+    },
+    {
+      code: 'const x = gql`query { greetings { hello ... on Greetings { foo } } }`',
+      errors: [
+        {
+          message: `'id' field required on 'greetings'`,
+          type: 'TaggedTemplateExpression',
+        },
+      ],
     },
   ],
 };
