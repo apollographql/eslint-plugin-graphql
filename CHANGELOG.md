@@ -1,5 +1,15 @@
 # Change log
 ### vNEXT
+- Fix error location information for literal .graphql files and strings with leading newlines in [#122](https://github.com/apollographql/eslint-plugin-graphql/pull/122) by [Dan Freeman](https://github.com/dfreeman)
+
+### v2.1.0
+- Retrieves `.graphqlconfig` relative to the file being linted, which re-enables support for `vscode-eslint` using `.graphqlconfig` in [#108](https://github.com/apollographql/eslint-plugin-graphql/pull/108) by [Jon Wong][https://github.com/jnwng/]
+- Cache schema reading/parsing results each time a rule is created in [#137](https://github.com/apollographql/eslint-plugin-graphql/pull/137) by [Kristján Oddsson](https://github.com/koddsson)
+
+### v2.0.0
+- Add support for `graphql-js@^0.12.0` and `graphql-js@^0.13.0` in [Jon Wong](https://github.com/jnwng/)[#119] (https://github.com/apollographql/eslint-plugin-graphql/pull/93)
+- Update list of available validators in [#121]((https://github.com/apollographql/eslint-plugin-graphql/pull/121) by [Pleun Vanderbauwhede](https://github.com/pleunv)
+- Update supported Node `engines` to >= 6.0 in [#133](https://github.com/apollographql/eslint-plugin-graphql/pull/133) by [Jon Wong](https://github.com/jnwng/)
 
 ### v1.5.0
 - Add new rule `no-deprecated-fields` in [Kristján Oddsson](https://github.com/koddsson/)[#92](https://github.com/apollographql/eslint-plugin-graphql/pull/93)

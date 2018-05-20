@@ -66,17 +66,19 @@ const parserOptions = {
         parserOptions,
         code: 'const x = gql``',
         errors: [{
-          message: 'Syntax Error GraphQL request (1:1) Unexpected <EOF>',
+          message: 'Syntax Error: Unexpected <EOF>',
           type: 'TaggedTemplateExpression'
         }]
       },
       {
         options,
         parserOptions,
-        code: 'const x = gql`{ nonExistentQuery }`',
+        code: 'const x = gql`\n  query {\n    nonExistentQuery\n  }\n`',
         errors: [{
-          message: 'Cannot query field "nonExistentQuery" on type "RootQuery".',
-          type: 'TaggedTemplateExpression'
+          message: 'Cannot query field "nonExistentQuery" on type "Query".',
+          type: 'TaggedTemplateExpression',
+          line: 3,
+          column: 5
         }]
       },
       {
@@ -134,7 +136,7 @@ const parserOptions = {
         parserOptions,
         code: 'const x = gql``',
         errors: [{
-          message: 'Syntax Error GraphQL request (1:1) Unexpected <EOF>',
+          message: 'Syntax Error: Unexpected <EOF>',
           type: 'TaggedTemplateExpression'
         }]
       },
@@ -143,7 +145,7 @@ const parserOptions = {
         parserOptions,
         code: 'const x = gql`{ nonExistentQuery }`',
         errors: [{
-          message: 'Cannot query field "nonExistentQuery" on type "RootQuery".',
+          message: 'Cannot query field "nonExistentQuery" on type "Query".',
           type: 'TaggedTemplateExpression'
         }]
       },
@@ -182,7 +184,7 @@ const parserOptions = {
         parserOptions,
         code: 'const x = myGraphQLTag``',
         errors: [{
-          message: 'Syntax Error GraphQL request (1:1) Unexpected <EOF>',
+          message: 'Syntax Error: Unexpected <EOF>',
           type: 'TaggedTemplateExpression'
         }]
       },
@@ -191,7 +193,7 @@ const parserOptions = {
         parserOptions,
         code: 'const x = myGraphQLTag`{ nonExistentQuery }`',
         errors: [{
-          message: 'Cannot query field "nonExistentQuery" on type "RootQuery".',
+          message: 'Cannot query field "nonExistentQuery" on type "Query".',
           type: 'TaggedTemplateExpression'
         }]
       },
@@ -237,7 +239,7 @@ const parserOptions = {
         parserOptions,
         code: 'const x = gql`query }{ ${x}`',
         errors: [{
-          message: 'Syntax Error GraphQL request (1:7) Expected {, found }',
+          message: 'Syntax Error: Expected {, found }',
           type: 'TaggedTemplateExpression'
         }]
       }
@@ -332,7 +334,7 @@ const parserOptions = {
           });
         `,
         errors: [{
-          message: 'Cannot query field "allFilmsx" on type "RootQuery". Did you mean "allFilms"?',
+          message: 'Cannot query field "allFilmsx" on type "Query". Did you mean "allFilms"?',
           type: 'TaggedTemplateExpression',
           line: 4,
           column: 17
@@ -609,7 +611,7 @@ const parserOptions = {
         parserOptions,
         code: 'const x = absolute`{ nonExistentQuery }`',
         errors: [{
-          message: 'Cannot query field "nonExistentQuery" on type "RootQuery".',
+          message: 'Cannot query field "nonExistentQuery" on type "Query".',
           type: 'TaggedTemplateExpression'
         }]
       }
@@ -647,7 +649,7 @@ const parserOptions = {
           message: 'Cannot query field "number" on type "Query".',
           type: 'TaggedTemplateExpression',
         }, {
-          message: 'Cannot query field "hero" on type "RootQuery".',
+          message: 'Cannot query field "hero" on type "Query".',
           type: 'TaggedTemplateExpression',
         }],
       },
@@ -656,22 +658,6 @@ const parserOptions = {
 }
 
 const validatorCases = {
-  'ArgumentsOfCorrectType': {
-    pass: 'const x = gql`{ sum(a: 1, b: 2) }`',
-    fail: 'const x = gql`{ sum(a: "string", b: false) }`',
-    errors: [{
-      message: 'Argument "a" has invalid value "string".\nExpected type "Int", found "string".',
-      type: 'TaggedTemplateExpression',
-    }],
-  },
-  'DefaultValuesOfCorrectType': {
-    pass: 'const x = gql`query($a: Int=1, $b: Int=2) { sum(a: $a, b: $b) }`',
-    fail: 'const x = gql`query($a: Int="string", $b: Int=false) { sum(a: $a, b: $b) }`',
-    errors: [{
-      message: 'Variable "$a" of type "Int" has invalid default value "string".\nExpected type "Int", found "string".',
-      type: 'TaggedTemplateExpression',
-    }],
-  },
   'FieldsOnCorrectType': {
     pass: 'const x = gql`{ allFilms { films { title } } }`',
     fail: 'const x = gql`{ allFilms { films { greetings } } }`',
@@ -694,7 +680,7 @@ const validatorCases = {
     fail: 'const x = gql`{ sum(c: 1, d: 2) }`',
     alsoBreaks: ['ProvidedNonNullArguments'],
     errors: [{
-      message: 'Unknown argument "c" on field "sum" of type "RootQuery". Did you mean "a" or "b"?',
+      message: 'Unknown argument "c" on field "sum" of type "Query". Did you mean "a" or "b"?',
       type: 'TaggedTemplateExpression',
     }],
   },
@@ -766,8 +752,8 @@ const validatorCases = {
     }],
   },
   'OverlappingFieldsCanBeMerged': {
-    pass: 'const x = gql`fragment Sum on RootQuery { sum(a: 1, b: 2) } { ...Sum, sum(a: 1, b: 2) }`',
-    fail: 'const x = gql`fragment Sum on RootQuery { sum(a: 1, b: 2) } { ...Sum, sum(a: 2, b: 3) }`',
+    pass: 'const x = gql`fragment Sum on Query { sum(a: 1, b: 2) } { ...Sum, sum(a: 1, b: 2) }`',
+    fail: 'const x = gql`fragment Sum on Query { sum(a: 1, b: 2) } { ...Sum, sum(a: 2, b: 3) }`',
     errors: [{
       message: 'Fields "sum" conflict because they have differing arguments. Use different aliases on the fields to fetch both if this was intentional.',
       type: 'TaggedTemplateExpression',
@@ -872,7 +858,8 @@ const requiredFieldsTestCases = {
   pass: [
     'const x = gql`query { allFilms { films { title } } }`',
     'const x = gql`query { stories { id comments { text } } }`',
-    'const x = gql`query { greetings { id, hello, foo } }`'
+    'const x = gql`query { greetings { id, hello, foo } }`',
+    'const x = gql`query { greetings { hello ... on Greetings { id } } }`',
   ],
   fail: [
     {
@@ -888,6 +875,15 @@ const requiredFieldsTestCases = {
         message: `'id' field required on 'greetings'`,
         type: 'TaggedTemplateExpression',
       }],
+    },
+    {
+      code: 'const x = gql`query { greetings { hello ... on Greetings { foo } } }`',
+      errors: [
+        {
+          message: `'id' field required on 'greetings'`,
+          type: 'TaggedTemplateExpression',
+        },
+      ],
     },
   ],
 };

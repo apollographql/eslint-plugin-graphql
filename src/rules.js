@@ -12,6 +12,20 @@ export function OperationsMustHaveNames(context) {
   };
 }
 
+function getFieldWasRequestedOnNode(node, field, recursing = false) {
+  return node.selectionSet.selections.some(n => {
+    // If it's an inline fragment, we need to look deeper
+    if (n.kind === 'InlineFragment' && !recursing) {
+      return getFieldWasRequestedOnNode(n, field, true);
+    }
+    if (n.kind === 'FragmentSpread') {
+      // We don't know if the field was requested in this case, so default to not erroring.
+      return true;
+    }
+    return n.name.value === field;
+  });
+}
+
 export function RequiredFields(context, options) {
   return {
     Field(node) {
@@ -32,9 +46,7 @@ export function RequiredFields(context, options) {
           fieldAvaliableOnOfType = recursivelyCheckOnType(def.type.ofType, field);
         }
         if (fieldAvaliableOnType || fieldAvaliableOnOfType) {
-          const fieldWasRequested = !!node.selectionSet.selections.find(
-            n => (n.name.value === field || n.kind === 'FragmentSpread')
-          );
+          const fieldWasRequested = getFieldWasRequestedOnNode(node, field);
           if (!fieldWasRequested) {
             context.reportError(
               new GraphQLError(`'${field}' field required on '${node.name.value}'`, [node])

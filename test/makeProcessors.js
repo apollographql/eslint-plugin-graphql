@@ -94,11 +94,41 @@ describe('processors', () => {
       });
     });
 
-    describe('apollo-link-state', () => {
-      it('skips queries that contain the @client directive', () => {
-        const results = execute('skip-apollo-link-state-directive');
-        assert.equal(results.errorCount, 0);
+    describe('error line/column locations', () => {
+      it('populates correctly for a single-line document', () => {
+        const results = execute('required-fields-invalid-array');
+        assert.equal(results.errorCount, 1);
+        assert.deepEqual(results.results[0].messages[0], {
+          column: 9,
+          line: 1,
+          message: "'id' field required on 'stories'",
+          nodeType: 'TaggedTemplateExpression',
+          ruleId: 'graphql/required-fields',
+          severity: 2,
+          source: 'ESLintPluginGraphQLFile`query { stories { comments { text } } }'
+        });
       });
+
+      it('populates correctly for a multi-line document', () => {
+        const results = execute('required-fields-invalid-no-id');
+        assert.equal(results.errorCount, 1);
+        assert.deepEqual(results.results[0].messages[0], {
+          column: 3,
+          line: 2,
+          message: "'id' field required on 'greetings'",
+          nodeType: 'TaggedTemplateExpression',
+          ruleId: 'graphql/required-fields',
+          severity: 2,
+          source: '  greetings {'
+        });
+      });
+    });
+  });
+  
+  describe('apollo-link-state', () => {
+    it('skips queries that contain the @client directive', () => {
+      const results = execute('skip-apollo-link-state-directive');
+      assert.equal(results.errorCount, 0);
     });
   });
 });
