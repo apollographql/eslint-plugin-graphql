@@ -19,7 +19,7 @@ import {
 
 import { getGraphQLConfig, ConfigNotFoundError } from 'graphql-config';
 
-import {hasDirectives} from 'apollo-utilities'
+import { hasDirectives, removeDirectivesFromDocument } from 'apollo-utilities';
 
 import * as customRules from './rules';
 
@@ -401,8 +401,13 @@ function handleTemplateTag(node, context, schema, env, validators) {
     return;
   }
 
+  // Handle apollo-link-state @client directives
+  if(hasDirectives(['client'], ast)) {
+    ast = removeDirectivesFromDocument( [{ name: 'client' }], ast);
+  }
+
   const validationErrors = schema ? validate(schema, ast, validators) : [];
-  if (validationErrors && validationErrors.length > 0 && !hasDirectives(['client'], ast)) {
+  if (validationErrors && validationErrors.length > 0) {
     context.report({
       node,
       message: validationErrors[0].message,
