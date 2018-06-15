@@ -33,6 +33,10 @@ const envGraphQLValidatorNames = {
     'KnownFragmentNames',
     'NoUnusedFragments',
   ),
+  fraql: without(allGraphQLValidatorNames,
+    'KnownFragmentNames',
+    'NoUnusedFragments',
+  ),
   relay: without(allGraphQLValidatorNames,
     'KnownDirectives',
     'KnownFragmentNames',
@@ -54,6 +58,7 @@ const defaultRuleProperties = {
   env: {
     enum: [
       'lokka',
+      'fraql',
       'relay',
       'apollo',
       'literal',
@@ -292,8 +297,8 @@ function parseOptions(optionGroup, context) {
   }
 
   // Validate env
-  if (env && env !== 'lokka' && env !== 'relay' && env !== 'apollo' && env !== 'literal') {
-    throw new Error('Invalid option for env, only `apollo`, `lokka`, `relay`, and `literal` supported.')
+  if (env && env !== 'lokka' && env !== 'fraql' && env !== 'relay' && env !== 'apollo' && env !== 'literal') {
+    throw new Error('Invalid option for env, only `apollo`, `lokka`, `fraql`, `relay`, and `literal` supported.')
   }
 
   // Validate tagName and set default
@@ -382,7 +387,7 @@ function handleTemplateTag(node, context, schema, env, validators) {
 
   // Re-implement syntax sugar for fragment names, which is technically not valid
   // graphql
-  if ((env === 'lokka' || env === 'relay') && /fragment\s+on/.test(text)) {
+  if ((env === 'lokka' || env === 'relay' || env === 'fraql') && /fragment\s+on/.test(text)) {
     text = text.replace('fragment', `fragment _`);
   }
 
@@ -478,6 +483,10 @@ function replaceExpressions(node, context, env) {
         // In Apollo, fragment interpolation is only valid outside of brackets
         // Since we don't know what we'd interpolate here (that occurs at runtime),
         // we're not going to do anything with this interpolation.
+      } else if (env === 'fraql') {
+        if (chunk.lastIndexOf('{') > chunk.lastIndexOf('}')) {
+          chunks.push('__typename');
+        }
       } else {
         // Invalid interpolation
         context.report({
