@@ -1,5 +1,6 @@
 # Change log
 ### vNEXT
+- Add `clearSchemaCache` by [Daniel Stříbrný](https://github.com/danoha)
 
 ### v2.1.1
 - Fix support for InlineFragments with the `required-fields` rule in [#140](https://github.com/apollographql/eslint-plugin-graphql/pull/140/files) by [Steve Hollaar](https://github.com/stevehollaar)

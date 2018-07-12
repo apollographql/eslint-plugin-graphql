@@ -549,3 +549,27 @@ module.exports = {
   ]
 }
 ```
+
+### Schema cache
+
+Parsed `.graphqlconfig` and GraphQL schema are cached to avoid loading each time.
+If you use eslint in combination with some kind of file watcher to lint only changed files,
+it may become an obstacle to update GraphQL schema without restarting eslint.
+
+If you know your schema has changed after last run of eslint and you want to
+lint against new schema the next time, just call `clearSchemaCache`.
+
+Eg. in gulpfile.js:
+
+```js
+const { clearSchemaCache } = require('eslint-plugin-graphql').default;
+
+gulp.task('lint', () => {
+    updateSchema();
+    clearSchemaCache();
+
+    return gulp.src(src)
+        .pipe(eslint());
+});
+
+```

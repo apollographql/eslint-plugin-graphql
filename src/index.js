@@ -243,7 +243,7 @@ export const rules = {
   },
 };
 
-const schemaCache = {};
+let schemaCache = {};
 
 function parseOptions(optionGroup, context) {
   const cacheHit = schemaCache[JSON.stringify(optionGroup)];
@@ -497,6 +497,10 @@ function strWithLen(len) {
   return new Array(len + 1).join( 'x' );
 }
 
+export function clearSchemaCache() {
+  schemaCache = {};
+}
+
 const gqlProcessor = {
   preprocess: function(text) {
     // Wrap the text in backticks and prepend the internal tag. First the text
@@ -525,5 +529,6 @@ export const processors = reduce(gqlFiles, (result, value) => {
 
 export default {
   rules,
-  processors
+  processors,
+  clearSchemaCache
 }
