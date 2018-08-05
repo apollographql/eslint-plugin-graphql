@@ -38,7 +38,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "apollo-utilities": "^1.0.12",
+    "apollo-utilities": "^1.0.17",
     "graphql-config": "^2.0.1",
     "lodash": "^4.11.1"
   },
