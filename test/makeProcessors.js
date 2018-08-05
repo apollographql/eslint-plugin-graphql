@@ -16,7 +16,7 @@ function execute(file) {
           {
             schemaJson,
             env: 'literal',
-            requiredFields: ['id']
+            requiredFields: ['id'],
           }
         ]
       }
@@ -126,6 +126,35 @@ describe('processors', () => {
   });
   
   describe('apollo-link-state', () => {
+    function execute(file) {
+      const cli = new CLIEngine({
+        extensions: ['.gql', '.graphql'],
+        baseConfig: {
+          rules: {
+            'graphql/required-fields': [
+              'error',
+              {
+                schemaJson,
+                env: 'literal',
+                requiredFields: ['id'],
+                // Needs this validator to ensure test fails correctly
+                validators: ['KnownDirectives'],
+              }
+            ]
+          }
+        },
+        ignore: false,
+        useEslintrc: false,
+        parserOptions: {
+          ecmaVersion: 6,
+          sourceType: 'module'
+        }
+      });
+      cli.addPlugin('eslint-plugin-graphql', plugin);
+      return cli.executeOnFiles([
+        path.join(__dirname, '__fixtures__', `${file}.graphql`)
+      ]);
+    }
     it('skips queries that contain the @client directive', () => {
       const results = execute('skip-apollo-link-state-directive');
       assert.equal(results.errorCount, 0);
