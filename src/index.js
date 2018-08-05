@@ -19,9 +19,11 @@ import {
 
 import { getGraphQLConfig, ConfigNotFoundError } from 'graphql-config';
 
-import { hasDirectives, removeDirectivesFromDocument } from 'apollo-utilities';
+import { hasDirectives } from 'apollo-utilities';
 
 import * as customRules from './rules';
+
+import removeDirectivesFromDocument from './removeDirectivesFromDocument';
 
 const allGraphQLValidatorNames = allGraphQLValidators.map(rule => rule.name);
 
