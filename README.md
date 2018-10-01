@@ -39,7 +39,7 @@ All of the rules provided by this plugin have a few options in common. There are
 
   - `'relay'`: `'Relay.QL'`
   - `'internal'`: Special automatic value
-  - others: `'gql'`
+  - others: `'gql'`, `'graphql'`
 
 You also have to specify a schema. You can either do it using _one_ of these options:
 
