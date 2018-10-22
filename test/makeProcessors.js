@@ -105,7 +105,6 @@ describe('processors', () => {
           nodeType: 'TaggedTemplateExpression',
           ruleId: 'graphql/required-fields',
           severity: 2,
-          source: 'ESLintPluginGraphQLFile`query { stories { comments { text } } }'
         });
       });
 
@@ -119,7 +118,6 @@ describe('processors', () => {
           nodeType: 'TaggedTemplateExpression',
           ruleId: 'graphql/required-fields',
           severity: 2,
-          source: '  greetings {'
         });
       });
     });
