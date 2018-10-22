@@ -1,5 +1,6 @@
 # Change log
 ### vNEXT
+- Fix breaking change in `graphql@^14.0.0` that renamed `ProvidedNonNullArguments` to `ProvidedRequiredArguments` [#180](https://github.com/apollographql/eslint-plugin-graphql/pull/180)
 
 ### v2.1.1
 - Fix support for InlineFragments with the `required-fields` rule in [#140](https://github.com/apollographql/eslint-plugin-graphql/pull/140/files) by [Steve Hollaar](https://github.com/stevehollaar)

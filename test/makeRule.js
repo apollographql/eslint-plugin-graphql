@@ -678,7 +678,7 @@ const validatorCases = {
   'KnownArgumentNames': {
     pass: 'const x = gql`{ sum(a: 1, b: 2) }`',
     fail: 'const x = gql`{ sum(c: 1, d: 2) }`',
-    alsoBreaks: ['ProvidedNonNullArguments'],
+    alsoBreaks: ['ProvidedRequiredArguments'],
     errors: [{
       message: 'Unknown argument "c" on field "sum" of type "Query". Did you mean "a" or "b"?',
       type: 'TaggedTemplateExpression',
@@ -767,7 +767,7 @@ const validatorCases = {
       type: 'TaggedTemplateExpression',
     }],
   },
-  'ProvidedNonNullArguments': {
+  'ProvidedRequiredArguments': {
     pass: 'const x = gql`{ sum(a: 1, b: 2) }`',
     fail: 'const x = gql`{ sum(a: 1) }`',
     errors: [{
@@ -786,7 +786,7 @@ const validatorCases = {
   'UniqueArgumentNames': {
     pass: 'const x = gql`{ sum(a: 1, b: 2) }`',
     fail: 'const x = gql`{ sum(a: 1, a: 2) }`',
-    alsoBreaks: ['ProvidedNonNullArguments'],
+    alsoBreaks: ['ProvidedRequiredArguments'],
     errors: [{
       message: 'There can be only one argument named "a".',
       type: 'TaggedTemplateExpression',
