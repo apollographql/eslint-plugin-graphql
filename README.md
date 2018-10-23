@@ -44,7 +44,7 @@ All of the rules provided by this plugin have a few options in common. There are
 You also have to specify a schema. You can either do it using _one_ of these options:
 
 - `schemaJson`: Your schema as JSON.
-- `schemaJsonFilepath`: The absolute path to your schema as a .json file.
+- `schemaJsonFilepath`: The absolute path to your schema as a .json file. (Warning: this variant is incompatible with `eslint --cache`.)
 - `schemaString`: Your schema in the Schema Language format as a string.
 
 Alternatively, you can use a [.graphqlconfig](https://github.com/graphcool/graphql-config) file instead of the above three options. If you do there's one more option to know about:
@@ -102,7 +102,7 @@ module.exports = {
       // Import your schema JSON here
       schemaJson: require('./schema.json'),
 
-      // OR provide absolute path to your schema JSON
+      // OR provide absolute path to your schema JSON (but not if using `eslint --cache`!)
       // schemaJsonFilepath: path.resolve(__dirname, './schema.json'),
 
       // OR provide the schema in the Schema Language format
@@ -132,7 +132,7 @@ module.exports = {
       // Import your schema JSON here
       schemaJson: require('./schema.json'),
 
-      // OR provide absolute path to your schema JSON
+      // OR provide absolute path to your schema JSON (but not if using `eslint --cache`!)
       // schemaJsonFilepath: path.resolve(__dirname, './schema.json'),
 
       // OR provide the schema in the Schema Language format
@@ -162,7 +162,7 @@ module.exports = {
       // Import your schema JSON here
       schemaJson: require('./schema.json'),
 
-      // OR provide absolute path to your schema JSON
+      // OR provide absolute path to your schema JSON (but not if using `eslint --cache`!)
       // schemaJsonFilepath: path.resolve(__dirname, './schema.json'),
 
       // OR provide the schema in the Schema Language format
@@ -193,7 +193,7 @@ module.exports = {
       // Import your schema JSON here
       schemaJson: require('./schema.json'),
 
-      // OR provide absolute path to your schema JSON
+      // OR provide absolute path to your schema JSON (but not if using `eslint --cache`!)
       // schemaJsonFilepath: path.resolve(__dirname, './schema.json'),
 
       // OR provide the schema in the Schema Language format
