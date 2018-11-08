@@ -38,7 +38,6 @@
   },
   "license": "MIT",
   "dependencies": {
-    "add": "^2.0.6",
     "graphql-config": "^2.0.1",
     "lodash": "^4.11.1"
   },
