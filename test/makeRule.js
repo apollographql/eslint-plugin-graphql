@@ -775,6 +775,14 @@ const validatorCases = {
       type: 'TaggedTemplateExpression',
     }],
   },
+  'ProvidedNonNullArguments': {
+    pass: 'const x = gql`{ sum(a: 1, b: 2) }`',
+    fail: 'const x = gql`{ sum(a: 1) }`',
+    errors: [{
+      message: 'Field "sum" argument "b" of type "Int!" is required but not provided.',
+      type: 'TaggedTemplateExpression',
+    }],
+  },
   'ProvidedRequiredArguments': {
     pass: 'const x = gql`{ sum(a: 1, b: 2) }`',
     fail: 'const x = gql`{ sum(a: 1) }`',
