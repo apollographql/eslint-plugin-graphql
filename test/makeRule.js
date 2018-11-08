@@ -1,4 +1,4 @@
-import { rules } from '../src';
+import { rules, processors } from '../src';
 import { RuleTester } from 'eslint';
 import schemaJson from './schema.json';
 import path from 'path';
@@ -7,7 +7,7 @@ import {
   values,
   entries,
 } from 'lodash';
-import { printSchema, buildClientSchema } from 'graphql';
+import { printSchema, buildClientSchema, specifiedRules } from 'graphql';
 
 const schemaJsonFilepath = path.resolve(__dirname, './schema.json');
 const secondSchemaJsonFilepath = path.resolve(__dirname, './second-schema.json');
@@ -678,7 +678,7 @@ const validatorCases = {
   'KnownArgumentNames': {
     pass: 'const x = gql`{ sum(a: 1, b: 2) }`',
     fail: 'const x = gql`{ sum(c: 1, d: 2) }`',
-    alsoBreaks: ['ProvidedRequiredArguments'],
+    alsoBreaks: ['ProvidedNonNullArguments', 'ProvidedRequiredArguments'],
     errors: [{
       message: 'Unknown argument "c" on field "sum" of type "Query". Did you mean "a" or "b"?',
       type: 'TaggedTemplateExpression',
@@ -775,6 +775,14 @@ const validatorCases = {
       type: 'TaggedTemplateExpression',
     }],
   },
+  'ProvidedRequiredArguments': {
+    pass: 'const x = gql`{ sum(a: 1, b: 2) }`',
+    fail: 'const x = gql`{ sum(a: 1) }`',
+    errors: [{
+      message: 'Field "sum" argument "b" of type "Int!" is required but not provided.',
+      type: 'TaggedTemplateExpression',
+    }],
+  },
   'ScalarLeafs': {
     pass: 'const x = gql`{ number }`',
     fail: 'const x = gql`{ allFilms }`',
@@ -786,7 +794,7 @@ const validatorCases = {
   'UniqueArgumentNames': {
     pass: 'const x = gql`{ sum(a: 1, b: 2) }`',
     fail: 'const x = gql`{ sum(a: 1, a: 2) }`',
-    alsoBreaks: ['ProvidedRequiredArguments'],
+    alsoBreaks: ['ProvidedNonNullArguments', 'ProvidedRequiredArguments'],
     errors: [{
       message: 'There can be only one argument named "a".',
       type: 'TaggedTemplateExpression',
@@ -986,14 +994,29 @@ const noDeprecatedFieldsCases = {
   ]
 };
 
+/* 
+ * These tests support `graphql` 0.12 through 14. 
+ * Instead of checking which version we have installed, let's use the exported validators to figure out which ones to test.
+ */
+const supportedValidatorCases = specifiedRules.map(rule => rule.name)
+const validatorCasesForVersion = Object.keys(validatorCases)
+  .filter(validatorCase => supportedValidatorCases.includes(validatorCase))
+  .reduce(
+    (filteredValidatorCases, validatorCase) => ({
+      ...filteredValidatorCases,
+      [validatorCase]: validatorCases[validatorCase]
+    }),
+    {}
+  );
+
 {
   let options = [{
     schemaJson, tagName: 'gql',
     validators: 'all',
   }];
   ruleTester.run('enabled all validators', rule, {
-    valid: values(validatorCases).map(({pass: code}) => ({options, parserOptions, code})),
-    invalid: values(validatorCases).map(({fail: code, errors}) => ({options, parserOptions, code, errors})),
+    valid: values(validatorCasesForVersion).map(({pass: code}) => ({options, parserOptions, code})),
+    invalid: values(validatorCasesForVersion).map(({fail: code, errors}) => ({options, parserOptions, code, errors})),
   });
 
   options = [{
@@ -1002,8 +1025,8 @@ const noDeprecatedFieldsCases = {
   }];
   ruleTester.run('disabled all validators', rule, {
     valid: [].concat(
-      values(validatorCases).map(({pass: code}) => code),
-      values(validatorCases).map(({fail: code}) => code),
+      values(validatorCasesForVersion).map(({pass: code}) => code),
+      values(validatorCasesForVersion).map(({fail: code}) => code),
     ).map(code => ({options, parserOptions, code})),
     invalid: [],
   });
@@ -1012,19 +1035,19 @@ const noDeprecatedFieldsCases = {
   // that can fail. (Excluding test cases that include this validation rule as
   // 'alsoBreaks'…sometimes it's hard to make a test that fails exactly one
   // validator).
-  for (const [validatorName, {pass, fail, errors}] of entries(validatorCases)) {
+  for (const [validatorName, {pass, fail, errors}] of entries(validatorCasesForVersion)) {
     options = [{
       schemaJson, tagName: 'gql',
       validators: [validatorName],
     }];
     const otherValidators = (
-      entries(validatorCases)
+      entries(validatorCasesForVersion)
         .filter(([otherValidatorName, {alsoBreaks}]) => otherValidatorName !== validatorName && !includes((alsoBreaks || []), validatorName))
         .map(([name, testCases]) => testCases)
     );
     ruleTester.run(`enabled only ${validatorName} validator`, rule, {
       valid: [].concat(
-        values(validatorCases).map(({pass: code}) => code),
+        values(validatorCasesForVersion).map(({pass: code}) => code),
         otherValidators.map(({fail: code}) => code),
       ).map(code => ({options, parserOptions, code})),
       invalid: [{options, parserOptions, errors, code: fail}],
