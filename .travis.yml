@@ -6,7 +6,7 @@ install:
   - npm install
 
 script:
-  - npm test
+  - npm run lint && npm test
 
 # Allow Travis tests to run in containers.
 sudo: false

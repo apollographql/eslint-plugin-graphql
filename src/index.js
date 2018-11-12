@@ -11,7 +11,6 @@ import {
 import {
   flatten,
   keys,
-  last,
   reduce,
   without,
   includes,
@@ -383,7 +382,7 @@ function handleTemplateTag(node, context, schema, env, validators) {
     text = replaceExpressions(node.quasi, context, env);
   } catch (e) {
     if (e.message !== 'Invalid interpolation') {
-      console.log(e);
+      console.log(e); // eslint-disable-line no-console
     }
     return;
   }
