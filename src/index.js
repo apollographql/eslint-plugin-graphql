@@ -38,7 +38,7 @@ const envGraphQLValidatorNames = {
     'KnownFragmentNames',
     'NoUndefinedVariables',
     'NoUnusedFragments',
-    'ProvidedNonNullArguments',
+    'ProvidedRequiredArguments',
     'ScalarLeafs',
   ),
   literal: without(allGraphQLValidatorNames,
