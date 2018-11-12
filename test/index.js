@@ -12,3 +12,4 @@ require('./graphqlconfig/');
 require('./env');
 require('./customTagName');
 require('./default');
+require('./schemaTests');
