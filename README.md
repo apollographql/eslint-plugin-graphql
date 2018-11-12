@@ -318,7 +318,7 @@ The full list of available validators is:
   - `NoUnusedVariables`
   - `OverlappingFieldsCanBeMerged`
   - `PossibleFragmentSpreads`
-  - `ProvidedNonNullArguments` (*disabled by default in `relay`*)
+  - `ProvidedRequiredArguments` (*disabled by default in `relay`*)
   - `ScalarLeafs` (*disabled by default in `relay`*)
   - `SingleFieldSubscriptions`
   - `UniqueArgumentNames`
