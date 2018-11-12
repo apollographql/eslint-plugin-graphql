@@ -16,6 +16,7 @@ npm install eslint-plugin-graphql
 1. [Apollo client](http://docs.apollostack.com/apollo-client/index.html)
 2. [Relay](https://facebook.github.io/relay/)
 3. [Lokka](https://github.com/kadirahq/lokka)
+3. [FraQL](https://github.com/smooth-code/fraql)
 
 If you want to lint your GraphQL schema, rather than queries, check out [cjoudrey/graphql-schema-linter](https://github.com/cjoudrey/graphql-schema-linter).
 
@@ -31,9 +32,9 @@ You'll need to import your [introspection query result](https://github.com/graph
 
 ### Common options
 
-All of the rules provided by this plugin have a few options in common. There are examples of how to use these with Apollo, Relay, Lokka and literal files further down.
+All of the rules provided by this plugin have a few options in common. There are examples of how to use these with Apollo, Relay, Lokka, FraQL and literal files further down.
 
-- `env`: Import default settings for your GraphQL client. Supported values: `'apollo'`, `'relay'`, `'lokka'`, `'literal'`. Defaults to `'apollo'`. This is used for the slight parsing differences in the GraphQL syntax between Apollo, Relay and Lokka, as well as giving nice defaults to some other options.
+- `env`: Import default settings for your GraphQL client. Supported values: `'apollo'`, `'relay'`, `'lokka'`, `'fraql'` `'literal'`. Defaults to `'apollo'`. This is used for the slight parsing differences in the GraphQL syntax between Apollo, Relay, Lokka and FraQL as well as giving nice defaults to some other options.
 
 - `tagName`: The name of the template literal tag that this plugin should look for when searching for GraphQL queries. It has different defaults depending on the `env` option:
 
@@ -96,7 +97,7 @@ module.exports = {
   rules: {
     "graphql/template-strings": ['error', {
       // Import default settings for your GraphQL client. Supported values:
-      // 'apollo', 'relay', 'lokka', 'literal'
+      // 'apollo', 'relay', 'lokka', 'fraql', 'literal'
       env: 'apollo',
 
       // Import your schema JSON here
@@ -126,7 +127,7 @@ module.exports = {
   rules: {
     "graphql/template-strings": ['error', {
       // Import default settings for your GraphQL client. Supported values:
-      // 'apollo', 'relay', 'lokka', 'literal'
+      // 'apollo', 'relay', 'lokka', 'fraql', 'literal'
       env: 'relay',
 
       // Import your schema JSON here
@@ -156,13 +157,44 @@ module.exports = {
   rules: {
     "graphql/template-strings": ['error', {
       // Import default settings for your GraphQL client. Supported values:
-      // 'apollo', 'relay', 'lokka', 'literal'
+      // 'apollo', 'relay', 'lokka', 'fraql', 'literal'
       env: 'lokka',
 
       // Import your schema JSON here
       schemaJson: require('./schema.json'),
 
       // OR provide absolute path to your schema JSON (but not if using `eslint --cache`!)
+      // schemaJsonFilepath: path.resolve(__dirname, './schema.json'),
+
+      // OR provide the schema in the Schema Language format
+      // schemaString: printSchema(schema),
+
+      // Optional, the name of the template tag, defaults to 'gql'
+      tagName: 'gql'
+    }]
+  },
+  plugins: [
+    'graphql'
+  ]
+}
+```
+
+### Example config for FraQL
+
+```js
+// In a file called .eslintrc.js
+module.exports = {
+  parser: "babel-eslint",
+  rules: {
+    "graphql/template-strings": ['error', {
+      // Import default settings for your GraphQL client. Supported values:
+      // 'apollo', 'relay', 'lokka', 'fraql', 'literal'
+      env: 'fraql',
+
+      // Import your schema JSON here
+      schemaJson: require('./schema.json'),
+
+      // OR provide absolute path to your schema JSON
       // schemaJsonFilepath: path.resolve(__dirname, './schema.json'),
 
       // OR provide the schema in the Schema Language format
@@ -187,7 +219,7 @@ module.exports = {
   rules: {
     "graphql/template-strings": ['error', {
       // Import default settings for your GraphQL client. Supported values:
-      // 'apollo', 'relay', 'lokka', 'literal'
+      // 'apollo', 'relay', 'lokka', 'fraql', 'literal'
       env: 'literal',
 
       // Import your schema JSON here
@@ -244,7 +276,7 @@ module.exports = {
   rules: {
     "graphql/template-strings": ['error', {
       // Import default settings for your GraphQL client. Supported values:
-      // 'apollo', 'relay', 'lokka', 'literal'
+      // 'apollo', 'relay', 'lokka', 'fraql', 'literal'
       env: 'literal'
       // no need to specify schema here, it will be automatically determined using .graphqlconfig
     }]
