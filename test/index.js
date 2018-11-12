@@ -9,3 +9,6 @@ require('babel-core').transform('code', {
 require('./makeRule');
 require('./makeProcessors');
 require('./graphqlconfig/');
+require('./env');
+require('./customTagName');
+require('./default');
