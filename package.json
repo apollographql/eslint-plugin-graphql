@@ -7,7 +7,8 @@
   "scripts": {
     "test": "tav --ci && mocha test/index.js",
     "prepublish": "babel ./src --ignore test --out-dir ./lib",
-    "pretest": "node test/updateSchemaJson.js"
+    "pretest": "node test/updateSchemaJson.js",
+    "tav": "tav"
   },
   "homepage": "https://github.com/apollostack/eslint-plugin-graphql",
   "repository": {
