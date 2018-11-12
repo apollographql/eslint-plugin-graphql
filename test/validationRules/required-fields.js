@@ -38,7 +38,16 @@ const requiredFieldsTestCases = {
           type: "TaggedTemplateExpression"
         }
       ]
-    }
+    },
+    {
+      code: 'const x = gql`query { greetings { hello ...GreetingsFragment} }`',
+      errors: [
+        {
+          message: `'id' field required on 'greetings'`,
+          type: 'TaggedTemplateExpression',
+        },
+      ],
+    },
   ]
 };
 
