@@ -13,6 +13,6 @@ Promise.all(['schema', 'second-schema'].map(schemaName => {
 }))
 .then(() => process.exit(0))
 .catch(e => {
-  console.error(e);
+  console.error(e); // eslint-disable-line no-console
   process.exit(127);
 });
