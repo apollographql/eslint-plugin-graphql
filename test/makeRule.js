@@ -1,34 +1,20 @@
 import { rules } from '../src';
-import { RuleTester } from 'eslint';
 import schemaJson from './schema.json';
-import path from 'path';
 import {
   includes,
   values,
   entries,
 } from 'lodash';
-import { printSchema, buildClientSchema, specifiedRules as allGraphQLValidators } from 'graphql';
 
-const schemaJsonFilepath = path.resolve(__dirname, './schema.json');
-const secondSchemaJsonFilepath = path.resolve(__dirname, './second-schema.json');
-const schemaString = printSchema(buildClientSchema(schemaJson.data))
-
-const allGraphQLValidatorNames = allGraphQLValidators.map(rule => rule.name);
-const requiredArgumentRuleName = allGraphQLValidatorNames.includes('ProvidedRequiredArguments') ?
-  'ProvidedRequiredArguments':'ProvidedNonNullArguments';
-
-// Init rule
-
-const rule = rules['template-strings'];
-
-// Set up tests
-
-const ruleTester = new RuleTester();
-
-const parserOptions = {
-  'ecmaVersion': 6,
-  'sourceType': 'module',
-};
+import {
+  schemaJsonFilepath,
+  secondSchemaJsonFilepath,
+  schemaString,
+  requiredArgumentRuleName,
+  rule,
+  ruleTester,
+  parserOptions
+} from './helpers';
 
 {
   const options = [
@@ -1058,7 +1044,7 @@ const noDeprecatedFieldsCases = {
   // that can fail. (Excluding test cases that include this validation rule as
   // 'alsoBreaks'…sometimes it's hard to make a test that fails exactly one
   // validator).
-  for (const [validatorName, {pass, fail, errors}] of entries(validatorCases)) {
+  for (const [validatorName, {fail, errors}] of entries(validatorCases)) {
     options = [{
       schemaJson, tagName: 'gql',
       validators: [validatorName],
@@ -1066,7 +1052,7 @@ const noDeprecatedFieldsCases = {
     const otherValidators = (
       entries(validatorCases)
         .filter(([otherValidatorName, {alsoBreaks}]) => otherValidatorName !== validatorName && !includes((alsoBreaks || []), validatorName))
-        .map(([name, testCases]) => testCases)
+        .map((kvPair) => kvPair[1])
     );
     ruleTester.run(`enabled only ${validatorName} validator`, rule, {
       valid: [].concat(
