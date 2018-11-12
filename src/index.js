@@ -16,7 +16,7 @@ import {
 
 import { getGraphQLConfig, ConfigNotFoundError } from 'graphql-config';
 
-import * as customRules from './rules';
+import * as customRules from './customGraphQLValidationRules';
 import {internalTag} from './constants';
 import {createRule} from './createRule';
 
