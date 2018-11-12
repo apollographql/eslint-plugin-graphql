@@ -38,6 +38,9 @@ const envGraphQLValidatorNames = {
     'KnownFragmentNames',
     'NoUndefinedVariables',
     'NoUnusedFragments',
+    // `graphql` < 14
+    'ProvidedNonNullArguments',
+    // `graphql`@14
     'ProvidedRequiredArguments',
     'ScalarLeafs',
   ),
