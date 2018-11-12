@@ -1,5 +1,4 @@
-import { rules } from '../src';
-import schemaJson from './schema.json';
+import schemaJson from '../schema.json';
 import {
   includes,
   values,
@@ -11,7 +10,7 @@ import {
   rule,
   ruleTester,
   parserOptions
-} from './helpers';
+} from '../helpers';
 
 const validatorCases = {
   'FieldsOnCorrectType': {
@@ -199,149 +198,6 @@ const validatorCases = {
   },
 };
 
-const namedOperationsValidatorCases = {
-  'OperationsMustHaveNames': {
-    pass: 'const x = gql`query Test { sum(a: 1, b: 2) }`',
-    fail: 'const x = gql`query { sum(a: 1, b: 2) }`',
-    errors: [{
-      message: 'All operations must be named',
-      type: 'TaggedTemplateExpression',
-    }],
-  },
-};
-
-const requiredFieldsTestCases = {
-  pass: [
-    'const x = gql`query { allFilms { films { title } } }`',
-    'const x = gql`query { stories { id comments { text } } }`',
-    'const x = gql`query { greetings { id, hello, foo } }`',
-    'const x = gql`query { greetings { hello ... on Greetings { id } } }`',
-  ],
-  fail: [
-    {
-      code: 'const x = gql`query { stories { comments { text } } }`',
-      errors: [{
-        message: `'id' field required on 'stories'`,
-        type: 'TaggedTemplateExpression',
-      }],
-    },
-    {
-      code: 'const x = gql`query { greetings { hello } }`',
-      errors: [{
-        message: `'id' field required on 'greetings'`,
-        type: 'TaggedTemplateExpression',
-      }],
-    },
-    {
-      code: 'const x = gql`query { greetings { hello ... on Greetings { foo } } }`',
-      errors: [
-        {
-          message: `'id' field required on 'greetings'`,
-          type: 'TaggedTemplateExpression',
-        },
-      ],
-    },
-  ],
-};
-
-const typeNameCapValidatorCases = {
-  pass: [
-    'const x = gql`fragment FilmFragment on Film { title } { allFilms { films { ...FilmFragment } } }`',
-    'const x = gql`query { someUnion {... on SomeUnionMember { someField }}}`',
-  ],
-  fail: [
-    {
-      code: 'const x = gql`fragment FilmFragment on film { title } { allFilms { films { ...FilmFragment } } }`',
-      errors: [{
-        message: 'All type names should start with a capital letter',
-        type: 'TaggedTemplateExpression',
-      }],
-    },
-    {
-      code: 'const x = gql`query { someUnion {... on someUnionMember { someField }}}`',
-      errors: [{
-        message: 'All type names should start with a capital letter',
-        type: 'TaggedTemplateExpression',
-      }],
-    },
-  ]
-};
-
-const noDeprecatedFieldsCases = {
-  pass: [
-    `
-      @relay({
-        fragments: {
-          greetings: () => Relay.QL\`
-            fragment on Greetings {
-              hello,
-            }
-          \`,
-        }
-      })
-      class HelloApp extends React.Component {}
-    `,
-    `
-      @relay({
-        fragments: {
-          greetings: () => Relay.QL\`
-            fragment on Greetings {
-              image(size: LARGE) { size }
-            }
-          \`,
-        }
-      })
-      class HelloApp extends React.Component {}
-    `,
-  ],
-  fail: [
-    {
-      options,
-      parser: 'babel-eslint',
-      code: `
-        @relay({
-          fragments: {
-            greetings: () => Relay.QL\`
-              fragment on Greetings {
-                hi,
-              }
-            \`,
-          }
-        })
-        class HelloApp extends React.Component {}
-      `,
-      errors: [{
-        message: "The field Greetings.hi is deprecated. Please use the more formal greeting 'hello'",
-        type: 'TaggedTemplateExpression',
-        line: 6,
-        column: 17
-      }]
-    },
-    {
-      options,
-      parser: 'babel-eslint',
-      code: `
-        @relay({
-          fragments: {
-            greetings: () => Relay.QL\`
-              fragment on Greetings {
-                image(size: SMALL) { size }
-              }
-            \`,
-          }
-        })
-        class HelloApp extends React.Component {}
-      `,
-      errors: [{
-        message: "The enum value ImageSize.SMALL is deprecated. Use 'LARGE' instead",
-        type: 'TaggedTemplateExpression',
-        line: 6,
-        column: 29
-      }]
-    },
-  ]
-};
-
 {
   let options = [{
     schemaJson, tagName: 'gql',
@@ -386,56 +242,4 @@ const noDeprecatedFieldsCases = {
       invalid: [{options, parserOptions, errors, code: fail}],
     });
   }
-
-  // Validate the named-operations rule
-  options = [{
-    schemaJson, tagName: 'gql',
-  }];
-  ruleTester.run('testing named-operations rule', rules['named-operations'], {
-    valid: values(namedOperationsValidatorCases).map(({pass: code}) => ({options, parserOptions, code})),
-    invalid: values(namedOperationsValidatorCases).map(({fail: code, errors}) => ({options, parserOptions, code, errors})),
-  });
-
-  // Validate the required-fields rule with env specified
-  options = [{
-    schemaJson,
-    env: 'apollo',
-    tagName: 'gql',
-    requiredFields: ['id'],
-  }];
-
-  ruleTester.run('testing required-fields rule', rules['required-fields'], {
-    valid: requiredFieldsTestCases.pass.map((code) => ({options, parserOptions, code})),
-    invalid: requiredFieldsTestCases.fail.map(({code, errors}) => ({options, parserOptions, code, errors})),
-  });
-
-  // Validate required-fields without optional env argument
-  options = [{
-    schemaJson,
-    tagName: 'gql',
-    requiredFields: ['id'],
-  }];
-  ruleTester.run('testing required-fields rule', rules['required-fields'], {
-    valid: requiredFieldsTestCases.pass.map((code) => ({options, parserOptions, code})),
-    invalid: requiredFieldsTestCases.fail.map(({code, errors}) => ({options, parserOptions, code, errors})),
-  });
 }
-
-let options = [{
-  schemaJson, tagName: 'gql',
-}];
-ruleTester.run('testing capitalized-type-name rule', rules['capitalized-type-name'], {
-  valid: typeNameCapValidatorCases.pass.map((code) => ({options, parserOptions, code})),
-  invalid: typeNameCapValidatorCases.fail.map(({code, errors}) => ({options, parserOptions, code, errors})),
-});
-
-options = [
-  {
-    schemaJson,
-    env: 'relay',
-  },
-];
-ruleTester.run('testing no-deprecated-fields rule', rules['no-deprecated-fields'], {
-  valid: noDeprecatedFieldsCases.pass.map((code) => ({options, parser: 'babel-eslint', code})),
-  invalid: noDeprecatedFieldsCases.fail.map(({code, errors}) => ({options, parser: 'babel-eslint', code, errors})),
-});
