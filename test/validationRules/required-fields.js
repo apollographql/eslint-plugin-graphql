@@ -7,8 +7,9 @@ const requiredFieldsTestCases = {
   pass: [
     "const x = gql`query { allFilms { films { title } } }`",
     "const x = gql`query { stories { id comments { text } } }`",
-    "const x = gql`query { greetings { id, hello, foo } }`",
-    "const x = gql`query { greetings { hello ... on Greetings { id } } }`"
+    "const x = gql`query { greetings { id, hello, hi } }`",
+    "const x = gql`query { greetings { hello ... on Greetings { id } } }`",
+    "const x = gql`fragment Name on Greetings { id hello }`"
   ],
   fail: [
     {
@@ -31,7 +32,7 @@ const requiredFieldsTestCases = {
     },
     {
       code:
-        "const x = gql`query { greetings { hello ... on Greetings { foo } } }`",
+        "const x = gql`query { greetings { hello ... on Greetings { hello } } }`",
       errors: [
         {
           message: `'id' field required on 'greetings'`,
@@ -44,6 +45,15 @@ const requiredFieldsTestCases = {
       errors: [
         {
           message: `'id' field required on 'greetings'`,
+          type: 'TaggedTemplateExpression',
+        },
+      ],
+    },
+    {
+      code: 'const x = gql`fragment Name on Greetings { hello }`',
+      errors: [
+        {
+          message: `'id' field required on 'fragment Name on Greetings'`,
           type: 'TaggedTemplateExpression',
         },
       ],

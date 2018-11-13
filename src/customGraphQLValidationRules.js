@@ -1,61 +1,79 @@
-import { GraphQLError, getNamedType } from 'graphql';
+import { GraphQLError, getNamedType } from "graphql";
 
 export function OperationsMustHaveNames(context) {
   return {
     OperationDefinition(node) {
       if (!node.name) {
         context.reportError(
-          new GraphQLError("All operations must be named", [ node ])
+          new GraphQLError("All operations must be named", [node])
         );
       }
-    },
+    }
   };
 }
 
 function getFieldWasRequestedOnNode(node, field, recursing = false) {
   return node.selectionSet.selections.some(n => {
     // If it's an inline fragment, we need to look deeper
-    if (n.kind === 'InlineFragment' && !recursing) {
+    if (n.kind === "InlineFragment" && !recursing) {
       return getFieldWasRequestedOnNode(n, field, true);
     }
     // We don't know if the field was requested within the fragment, so default to assuming it's
     // not, to be safe. This requires that the field be requested outside the fragment.
-    if (n.kind === 'FragmentSpread') {
+    if (n.kind === "FragmentSpread") {
       return false;
     }
     return n.name.value === field;
   });
 }
 
+function fieldAvailableOnType(type, field) {
+  return (
+    (type && type._fields && type._fields[field]) ||
+    (type.ofType && fieldAvailableOnType(type.ofType, field))
+  );
+}
+
 export function RequiredFields(context, options) {
+  const { requiredFields } = options;
+
   return {
-    Field(node) {
-      const def = context.getFieldDef();
-      if (!def) {
-        return;
-      }
-      const { requiredFields } = options;
+    FragmentDefinition(node) {
       requiredFields.forEach(field => {
-        const fieldAvaliableOnType = def.type && def.type._fields && def.type._fields[field];
+        const type = context.getType();
 
-        function recursivelyCheckOnType(ofType, field) {
-          return (ofType._fields && ofType._fields[field]) || (ofType.ofType && recursivelyCheckOnType(ofType.ofType, field));
-        }
-
-        let fieldAvaliableOnOfType = false;
-        if (def.type && def.type.ofType) {
-          fieldAvaliableOnOfType = recursivelyCheckOnType(def.type.ofType, field);
-        }
-        if (fieldAvaliableOnType || fieldAvaliableOnOfType) {
+        if (fieldAvailableOnType(type, field)) {
           const fieldWasRequested = getFieldWasRequestedOnNode(node, field);
           if (!fieldWasRequested) {
             context.reportError(
-              new GraphQLError(`'${field}' field required on '${node.name.value}'`, [node])
+              new GraphQLError(
+                `'${field}' field required on 'fragment ${node.name.value} on ${
+                  node.typeCondition.name.value
+                }'`,
+                [node]
+              )
             );
           }
         }
       });
     },
+    Field(node) {
+      const def = context.getFieldDef();
+
+      requiredFields.forEach(field => {
+        if (fieldAvailableOnType(def.type, field)) {
+          const fieldWasRequested = getFieldWasRequestedOnNode(node, field);
+          if (!fieldWasRequested) {
+            context.reportError(
+              new GraphQLError(
+                `'${field}' field required on '${node.name.value}'`,
+                [node]
+              )
+            );
+          }
+        }
+      });
+    }
   };
 }
 
@@ -65,11 +83,14 @@ export function typeNamesShouldBeCapitalized(context) {
       const typeName = node.name.value;
       if (typeName[0] == typeName[0].toLowerCase()) {
         context.reportError(
-          new GraphQLError("All type names should start with a capital letter", [ node ])
+          new GraphQLError(
+            "All type names should start with a capital letter",
+            [node]
+          )
         );
       }
     }
-  }
+  };
 }
 
 // Mostly taken from https://github.com/graphql/graphql-js/blob/063148de039b02670a760b8d3dfaf2a04a467169/src/utilities/findDeprecatedUsages.js
@@ -82,11 +103,13 @@ export function noDeprecatedFields(context) {
         const parentType = context.getParentType();
         if (parentType) {
           const reason = fieldDef.deprecationReason;
-          context.reportError(new GraphQLError(
-            `The field ${parentType.name}.${fieldDef.name} is deprecated.` +
-            (reason ? ' ' + reason : ''),
-            [ node ]
-          ));
+          context.reportError(
+            new GraphQLError(
+              `The field ${parentType.name}.${fieldDef.name} is deprecated.` +
+                (reason ? " " + reason : ""),
+              [node]
+            )
+          );
         }
       }
     },
@@ -98,13 +121,15 @@ export function noDeprecatedFields(context) {
         const type = getNamedType(context.getInputType());
         if (type) {
           const reason = enumVal.deprecationReason;
-          context.reportError(new GraphQLError(
-            `The enum value ${type.name}.${enumVal.name} is deprecated.` +
-            (reason ? ' ' + reason : ''),
-            [ node ]
-          ));
+          context.reportError(
+            new GraphQLError(
+              `The enum value ${type.name}.${enumVal.name} is deprecated.` +
+                (reason ? " " + reason : ""),
+              [node]
+            )
+          );
         }
       }
     }
-  }
+  };
 }
