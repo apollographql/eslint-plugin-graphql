@@ -56,10 +56,20 @@ export function RequiredFields(context, options) {
         const type = context.getType();
 
         if (fieldAvailableOnType(type, field)) {
+          // First, check the selection set on this inline fragment
+          if (
+            node.selectionSet &&
+            getFieldWasRequestedOnNode(node, field)
+          ) {
+            return true;
+          }
+
           const ancestorClone = [...ancestors];
 
           let nearestField;
           let nextAncestor;
+
+          // Now, walk up the ancestors, until you see a field.
           while (!nearestField) {
             nextAncestor = ancestorClone.pop();
 
@@ -75,12 +85,15 @@ export function RequiredFields(context, options) {
             }
           }
 
+          // If we never found a field, the query is malformed
           if (!nearestField) {
             throw new Error(
               "Inline fragment found inside document without a parent field."
             );
           }
 
+          // We found a field, but we never saw the field we were looking for in
+          // the intermediate selection sets.
           context.reportError(
             new GraphQLError(
               `'${field}' field required on '... on ${
