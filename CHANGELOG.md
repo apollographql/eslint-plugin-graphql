@@ -1,5 +1,8 @@
 # Change log
 ### vNEXT
+
+### v3.0.0
+
 - BREAKING: The `required-fields` rule has been significantly changed to make it a completely reliable method of ensuring an `id` field (or any other field name) is always requested when available. [PR #199](https://github.com/apollographql/eslint-plugin-graphql/pull/199) Here is the behavior, let's say we are requiring field `id`:
     - On any field whose return type defines a field called `id`, the selection set must directly contain `id`.
     - In any named fragment declaration whose type defines a field called `id`, the selection set must directly contain `id`.
