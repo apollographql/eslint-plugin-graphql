@@ -30,6 +30,7 @@ type Query {
   sum(a: Int!, b: Int!): Int!
   greetings: Greetings
   stories: [Story!]!
+  greetingOrStory: GreetingOrStory
 }
 
 type AllFilmsObj {
@@ -70,3 +71,5 @@ type Comment {
 type PublicUser {
   fullName: String
 }
+
+union GreetingOrStory = Greetings | Story

@@ -12,18 +12,9 @@ export function OperationsMustHaveNames(context) {
   };
 }
 
-function getFieldWasRequestedOnNode(node, field, recursing = false) {
+function getFieldWasRequestedOnNode(node, field) {
   return node.selectionSet.selections.some(n => {
-    // If it's an inline fragment, we need to look deeper
-    if (n.kind === "InlineFragment" && !recursing) {
-      return getFieldWasRequestedOnNode(n, field, true);
-    }
-    // We don't know if the field was requested within the fragment, so default to assuming it's
-    // not, to be safe. This requires that the field be requested outside the fragment.
-    if (n.kind === "FragmentSpread") {
-      return false;
-    }
-    return n.name.value === field;
+    return n.kind === "Field" && n.name.value === field;
   });
 }
 
@@ -57,6 +48,54 @@ export function RequiredFields(context, options) {
         }
       });
     },
+
+    // Every inline fragment must have an ID specified inside itself or in some
+    // parent selection set.
+    InlineFragment(node, key, parent, path, ancestors) {
+      requiredFields.forEach(field => {
+        const type = context.getType();
+
+        if (fieldAvailableOnType(type, field)) {
+          const ancestorClone = [...ancestors];
+
+          let nearestField;
+          let nextAncestor;
+          while (!nearestField) {
+            nextAncestor = ancestorClone.pop();
+
+            if (
+              nextAncestor.selectionSet &&
+              getFieldWasRequestedOnNode(nextAncestor, field)
+            ) {
+              return true;
+            }
+
+            if (nextAncestor.kind === "Field") {
+              nearestField = nextAncestor;
+            }
+          }
+
+          if (!nearestField) {
+            throw new Error(
+              "Inline fragment found inside document without a parent field."
+            );
+          }
+
+          context.reportError(
+            new GraphQLError(
+              `'${field}' field required on '... on ${
+                node.typeCondition.name.value
+              }'`,
+              [node]
+            )
+          );
+        }
+      });
+    },
+
+    // Every field that can have the field directly on it, should. It's not
+    // enough to have some child fragment to include the field, since we don't
+    // know if that fragment covers all of the possible type options.
     Field(node) {
       const def = context.getFieldDef();
 
