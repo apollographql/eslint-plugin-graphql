@@ -1,9 +1,9 @@
 # Change log
 ### vNEXT
-- BREAKING: The `required-fields` rule has been significantly changed to make it a completely reliable method of ensuring `id` fields are always requested when available. [PR #199](https://github.com/apollographql/eslint-plugin-graphql/pull/199) Here is the behavior, let's say we are requiring field `x`:
-    - On any field whose return type defines a field called `x`, the selection set must directly contain `x`.
-    - In any named fragment declaration whose type defines a field called `x`, the selection set must directly contain `x`.
-    - An inline fragment whose type defines a field called `x` must contain `x` in its selection set unless its parent is also an inline fragment that contains the field `x`.
+- BREAKING: The `required-fields` rule has been significantly changed to make it a completely reliable method of ensuring an `id` field (or any other field name) is always requested when available. [PR #199](https://github.com/apollographql/eslint-plugin-graphql/pull/199) Here is the behavior, let's say we are requiring field `id`:
+    - On any field whose return type defines a field called `id`, the selection set must directly contain `id`.
+    - In any named fragment declaration whose type defines a field called `id`, the selection set must directly contain `id`.
+    - An inline fragment whose type defines a field called `id` must contain `id` in its selection set unless its parent is also an inline fragment that contains the field `id`.
     - Here's a specific case which is _no longer valid_:
         - `query { greetings { hello ... on Greetings { id } } }`
         - This must now be written as `query { greetings { id hello ... on Greetings { id } } }`

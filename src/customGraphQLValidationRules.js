@@ -49,18 +49,15 @@ export function RequiredFields(context, options) {
       });
     },
 
-    // Every inline fragment must have an ID specified inside itself or in some
-    // parent selection set.
+    // Every inline fragment must have the required field specified inside
+    // itself or in some parent selection set.
     InlineFragment(node, key, parent, path, ancestors) {
       requiredFields.forEach(field => {
         const type = context.getType();
 
         if (fieldAvailableOnType(type, field)) {
           // First, check the selection set on this inline fragment
-          if (
-            node.selectionSet &&
-            getFieldWasRequestedOnNode(node, field)
-          ) {
+          if (node.selectionSet && getFieldWasRequestedOnNode(node, field)) {
             return true;
           }
 
