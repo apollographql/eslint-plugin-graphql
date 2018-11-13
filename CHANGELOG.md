@@ -1,5 +1,6 @@
 # Change log
 ### vNEXT
+- Add `clearSchemaCache` by [Daniel Stříbrný](https://github.com/danoha)
 
 ### v3.0.0
 
