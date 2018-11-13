@@ -7,7 +7,7 @@
     - Here's a specific case which is _no longer valid_:
         - `query { greetings { hello ... on Greetings { id } } }`
         - This must now be written as `query { greetings { id hello ... on Greetings { id } } }`
-    - This is a more convervative approach than before, driven by the fact that it's quite hard to ensure that a combination of inline fragments actually covers all of the possible types of a selection set.
+    - This is a more conservative approach than before, driven by the fact that it's quite hard to ensure that a combination of inline fragments actually covers all of the possible types of a selection set.
 - Fix breaking change in `graphql@^14.0.0` that renamed `ProvidedNonNullArguments` to `ProvidedRequiredArguments` [#192](https://github.com/apollographql/eslint-plugin-graphql/pull/192)
 - Update dependencies to graphql-tools 4 and eslint 5.9 [#193](https://github.com/apollographql/eslint-plugin-graphql/pull/193)
 
