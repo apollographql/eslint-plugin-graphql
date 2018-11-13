@@ -30,6 +30,8 @@ type Query {
   sum(a: Int!, b: Int!): Int!
   greetings: Greetings
   stories: [Story!]!
+  greetingOrStory: GreetingOrStory
+  nodes: [Node]
 }
 
 type AllFilmsObj {
@@ -69,4 +71,20 @@ type Comment {
 
 type PublicUser {
   fullName: String
+}
+
+union GreetingOrStory = Greetings | Story
+
+interface Node {
+  id: ID!
+}
+
+type NodeA implements Node {
+  id: ID!
+  fieldA: String
+}
+
+type NodeB implements Node{
+  id: ID!
+  fieldB: String
 }

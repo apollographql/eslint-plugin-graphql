@@ -1,1 +1,1 @@
-query { greetings { id, hello, foo } }
+query { greetings { id, hello, hi } }
