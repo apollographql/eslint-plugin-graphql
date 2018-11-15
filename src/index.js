@@ -225,12 +225,9 @@ export const rules = {
 };
 
 const schemaCache = {};
+const projectCache = {};
 
 function parseOptions(optionGroup, context) {
-  const cacheHit = schemaCache[JSON.stringify(optionGroup)];
-  if (cacheHit) {
-    return cacheHit;
-  }
   const {
     schemaJson, // Schema via JSON object
     schemaJsonFilepath, // Or Schema via absolute filepath
@@ -240,6 +237,11 @@ function parseOptions(optionGroup, context) {
     tagName: tagNameOption,
     validators: validatorNamesOption,
   } = optionGroup;
+
+  const cacheHit = schemaCache[JSON.stringify(optionGroup)];
+  if (cacheHit && env !== 'literal') {
+    return cacheHit;
+  }
 
   // Validate and unpack schema
   let schema;
@@ -261,7 +263,17 @@ function parseOptions(optionGroup, context) {
       } else {
         projectConfig = config.getConfigForFile(context.getFilename());
       }
-      schema = projectConfig.getSchema();
+      if (projectConfig) {
+        const key = `${config.configPath}[${projectConfig.projectName}]`
+        schema = projectCache[key];
+        if (!schema) {
+          schema = projectConfig.getSchema();
+          projectCache[key] = schema;
+        }
+      }
+      if (cacheHit) {
+        return {...cacheHit, schema};
+      }
     } catch (e) {
       if (e instanceof ConfigNotFoundError) {
         throw new Error('Must provide .graphqlconfig file or pass in `schemaJson` option ' +
@@ -269,7 +281,6 @@ function parseOptions(optionGroup, context) {
       }
       throw e;
     }
-
   }
 
   // Validate env

@@ -1,5 +1,8 @@
 # Change log
+
 ### vNEXT
+
+- Fix support for multi-schema workspaces [#179](https://github.com/apollographql/eslint-plugin-graphql/pull/179) by [Pat Sissons](https://github.com/patsissons)
 
 ### v3.0.0
 
