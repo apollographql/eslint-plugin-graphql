@@ -8,6 +8,7 @@ const requiredFieldsTestCases = {
     "const x = gql`query { allFilms { films { title } } }`",
     "const x = gql`query { stories { id comments { text } } }`",
     "const x = gql`query { greetings { id, hello, hi } }`",
+    "const x = gql`query { greetings { id, hello, foo } }`",
     "const x = gql`query { greetings { id ... on Greetings { hello } } }`",
     "const x = gql`fragment Name on Greetings { id hello }`",
     "const x = gql`fragment Id on Node { id ... on NodeA { fieldA } }`",

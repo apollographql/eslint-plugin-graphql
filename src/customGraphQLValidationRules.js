@@ -108,20 +108,21 @@ export function RequiredFields(context, options) {
     // know if that fragment covers all of the possible type options.
     Field(node) {
       const def = context.getFieldDef();
-
-      requiredFields.forEach(field => {
-        if (fieldAvailableOnType(def.type, field)) {
-          const fieldWasRequested = getFieldWasRequestedOnNode(node, field);
-          if (!fieldWasRequested) {
-            context.reportError(
-              new GraphQLError(
-                `'${field}' field required on '${node.name.value}'`,
-                [node]
-              )
-            );
+      if (def) {
+        requiredFields.forEach(field => {
+          if (fieldAvailableOnType(def.type, field)) {
+            const fieldWasRequested = getFieldWasRequestedOnNode(node, field);
+            if (!fieldWasRequested) {
+              context.reportError(
+                new GraphQLError(
+                  `'${field}' field required on '${node.name.value}'`,
+                  [node]
+                )
+              );
+            }
           }
-        }
-      });
+        });
+      }
     }
   };
 }
