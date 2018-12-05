@@ -2,6 +2,8 @@
 
 ### vNEXT
 
+- Fix `graphql/required-fields` throwing on non-existent field reference
+
 ### v3.0.1
 
 - Fix support for multi-schema workspaces [#179](https://github.com/apollographql/eslint-plugin-graphql/pull/179) by [Pat Sissons](https://github.com/patsissons)
