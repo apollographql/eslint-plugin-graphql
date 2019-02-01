@@ -118,8 +118,8 @@ export function RequiredFields(context, options) {
           if (!fieldWasRequested) {
             context.reportError(
               new GraphQLError(
-          `'${field}' field required on '${node.name.value}'`,
-          [node]
+                `'${field}' field required on '${node.name.value}'`,
+                [node]
               )
             );
           }
