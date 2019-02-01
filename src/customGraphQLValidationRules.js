@@ -108,21 +108,23 @@ export function RequiredFields(context, options) {
     // know if that fragment covers all of the possible type options.
     Field(node) {
       const def = context.getFieldDef();
-      if (def) {
-        requiredFields.forEach(field => {
-          if (fieldAvailableOnType(def.type, field)) {
-            const fieldWasRequested = getFieldWasRequestedOnNode(node, field);
-            if (!fieldWasRequested) {
-              context.reportError(
-                new GraphQLError(
-                  `'${field}' field required on '${node.name.value}'`,
-                  [node]
-                )
-              );
-            }
-          }
-        });
+      if (!def) {
+        return;
       }
+
+      requiredFields.forEach(field => {
+        if (fieldAvailableOnType(def.type, field)) {
+          const fieldWasRequested = getFieldWasRequestedOnNode(node, field);
+          if (!fieldWasRequested) {
+            context.reportError(
+              new GraphQLError(
+          `'${field}' field required on '${node.name.value}'`,
+          [node]
+              )
+            );
+          }
+        }
+      });
     }
   };
 }
@@ -169,16 +171,18 @@ export function noDeprecatedFields(context) {
       const enumVal = context._typeInfo.getEnumValue();
       if (enumVal && enumVal.isDeprecated) {
         const type = getNamedType(context.getInputType());
-        if (type) {
-          const reason = enumVal.deprecationReason;
-          context.reportError(
-            new GraphQLError(
-              `The enum value ${type.name}.${enumVal.name} is deprecated.` +
-                (reason ? " " + reason : ""),
-              [node]
-            )
-          );
+        if (!type) {
+          return;
         }
+
+        const reason = enumVal.deprecationReason;
+        context.reportError(
+          new GraphQLError(
+            `The enum value ${type.name}.${enumVal.name} is deprecated.` +
+              (reason ? " " + reason : ""),
+            [node]
+          )
+        );
       }
     }
   };
