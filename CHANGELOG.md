@@ -1,5 +1,13 @@
 # Change log
 
+### vNEXT
+
+### v3.0.3
+
+- chore: Update dependency `graphql-tools` to `v4.0.4`. [PR #210](https://github.com/apollographql/eslint-plugin-graphql/pull/210)
+- chore: Update dependency `eslint` to `v5.12.1`. [PR #206](https://github.com/apollographql/eslint-plugin-graphql/pull/206)
+- chore: Update dependency `graphql` to `v14.1.1`. [PR #208](https://github.com/apollographql/eslint-plugin-graphql/pull/208)
+
 ### v3.0.2
 
 - Fix regression which caused `graphql/required-fields` to throw on non-existent field references. [PR #203](https://github.com/apollographql/eslint-plugin-graphql/pull/203) by [Matt Bretl](https://github.com/mattbretl)
