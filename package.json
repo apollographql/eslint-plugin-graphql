@@ -27,7 +27,7 @@
     "graphql": "14.1.1",
     "graphql-tools": "4.0.4",
     "mocha": "5.2.0",
-    "test-all-versions": "3.3.3"
+    "test-all-versions": "4.1.0"
   },
   "babel": {
     "presets": [
