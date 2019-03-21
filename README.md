@@ -294,11 +294,11 @@ module.exports = {
   rules: {
     "graphql/template-strings": ['error', {
       env: 'apollo',
-      tagName: 'FirstGQL',
+      tagName: 'apolloGQL',
       projectName: 'FirstGQLProject'
     }, {
       env: 'relay',
-      tagName: 'SecondGQL',
+      tagName: 'relayGQL',
       projectName: 'SecondGQLProject'
     }]
   },
@@ -307,6 +307,8 @@ module.exports = {
   ]
 }
 ```
+
+So then for example import and use your graphql-tag as `apolloGQL`: `import apolloGQL from 'graphql-tag';`
 
 ### Selecting Validation Rules
 
