@@ -21,7 +21,7 @@ function getFieldWasRequestedOnNode(node, field) {
 function fieldAvailableOnType(type, field) {
   return (
     (type && type._fields && type._fields[field]) ||
-    (type.ofType && fieldAvailableOnType(type.ofType, field))
+    (type && type.ofType && fieldAvailableOnType(type.ofType, field))
   );
 }
 
