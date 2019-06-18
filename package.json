@@ -5,6 +5,7 @@
   "author": "Sashko Stubailo",
   "main": "lib/index.js",
   "scripts": {
+    "format": "prettier src/**/*.js --write",
     "test": "tav --ci && mocha test/index.js",
     "prepublish": "babel ./src --ignore test --out-dir ./lib",
     "pretest": "node test/updateSchemaJson.js",
@@ -27,6 +28,7 @@
     "graphql": "14.1.1",
     "graphql-tools": "4.0.4",
     "mocha": "5.2.0",
+    "prettier": "^1.18.2",
     "test-all-versions": "4.1.0"
   },
   "babel": {

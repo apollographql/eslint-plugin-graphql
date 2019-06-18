@@ -1,13 +1,10 @@
+import { parse, validate } from "graphql";
 
-import {
-  parse, validate
-} from 'graphql';
-
-import {internalTag} from './constants';
+import { internalTag } from "./constants";
 
 function strWithLen(len) {
   // from http://stackoverflow.com/questions/14343844/create-a-string-of-variable-length-filled-with-a-repeated-character
-  return new Array(len + 1).join( 'x' );
+  return new Array(len + 1).join("x");
 }
 
 function replaceExpressions(node, context, env) {
@@ -19,16 +16,17 @@ function replaceExpressions(node, context, env) {
 
     chunks.push(chunk);
 
-    if (!env || env === 'apollo') {
+    if (!env || env === "apollo") {
       // In Apollo, interpolation is only valid outside top-level structures like `query` or `mutation`.
       // We'll check to make sure there's an equivalent set of opening and closing brackets, otherwise
       // we're attempting to do an invalid interpolation.
-      if ((chunk.split('{').length - 1) !== (chunk.split('}').length - 1)) {
+      if (chunk.split("{").length - 1 !== chunk.split("}").length - 1) {
         context.report({
           node: value,
-          message: 'Invalid interpolation - fragment interpolation must occur outside of the brackets.',
+          message:
+            "Invalid interpolation - fragment interpolation must occur outside of the brackets."
         });
-        throw new Error('Invalid interpolation');
+        throw new Error("Invalid interpolation");
       }
     }
 
@@ -36,42 +34,42 @@ function replaceExpressions(node, context, env) {
       // Preserve location of errors by replacing with exactly the same length
       const nameLength = value.end - value.start;
 
-      if (env === 'relay' && /:\s*$/.test(chunk)) {
+      if (env === "relay" && /:\s*$/.test(chunk)) {
         // The chunk before this one had a colon at the end, so this
         // is a variable
 
         // Add 2 for brackets in the interpolation
-        const placeholder = strWithLen(nameLength + 2)
-        chunks.push('$' + placeholder);
-      } else if (env === 'lokka' && /\.\.\.\s*$/.test(chunk)) {
+        const placeholder = strWithLen(nameLength + 2);
+        chunks.push("$" + placeholder);
+      } else if (env === "lokka" && /\.\.\.\s*$/.test(chunk)) {
         // This is Lokka-style fragment interpolation where you actually type the '...' yourself
         const placeholder = strWithLen(nameLength + 3);
         chunks.push(placeholder);
-      } else if (env === 'relay') {
+      } else if (env === "relay") {
         // This is Relay-style fragment interpolation where you don't type '...'
         // Ellipsis cancels out extra characters
         const placeholder = strWithLen(nameLength);
-        chunks.push('...' + placeholder);
-      } else if (!env || env === 'apollo') {
+        chunks.push("..." + placeholder);
+      } else if (!env || env === "apollo") {
         // In Apollo, fragment interpolation is only valid outside of brackets
         // Since we don't know what we'd interpolate here (that occurs at runtime),
         // we're not going to do anything with this interpolation.
-      } else if (env === 'fraql') {
-        if (chunk.lastIndexOf('{') > chunk.lastIndexOf('}')) {
-          chunks.push('__typename');
+      } else if (env === "fraql") {
+        if (chunk.lastIndexOf("{") > chunk.lastIndexOf("}")) {
+          chunks.push("__typename");
         }
       } else {
         // Invalid interpolation
         context.report({
           node: value,
-          message: 'Invalid interpolation - not a valid fragment or variable.',
+          message: "Invalid interpolation - not a valid fragment or variable."
         });
-        throw new Error('Invalid interpolation');
+        throw new Error("Invalid interpolation");
       }
     }
   });
 
-  return chunks.join('');
+  return chunks.join("");
 }
 
 function locFrom(node, error) {
@@ -92,7 +90,7 @@ function locFrom(node, error) {
 
   return {
     line,
-    column,
+    column
   };
 }
 
@@ -101,7 +99,7 @@ function handleTemplateTag(node, context, schema, env, validators) {
   try {
     text = replaceExpressions(node.quasi, context, env);
   } catch (e) {
-    if (e.message !== 'Invalid interpolation') {
+    if (e.message !== "Invalid interpolation") {
       console.log(e); // eslint-disable-line no-console
     }
     return;
@@ -109,8 +107,11 @@ function handleTemplateTag(node, context, schema, env, validators) {
 
   // Re-implement syntax sugar for fragment names, which is technically not valid
   // graphql
-  if ((env === 'lokka' || env === 'relay' || env === 'fraql') && /fragment\s+on/.test(text)) {
-    text = text.replace('fragment', `fragment _`);
+  if (
+    (env === "lokka" || env === "relay" || env === "fraql") &&
+    /fragment\s+on/.test(text)
+  ) {
+    text = text.replace("fragment", `fragment _`);
   }
 
   let ast;
@@ -120,8 +121,8 @@ function handleTemplateTag(node, context, schema, env, validators) {
   } catch (error) {
     context.report({
       node,
-      message: error.message.split('\n')[0],
-      loc: locFrom(node, error),
+      message: error.message.split("\n")[0],
+      loc: locFrom(node, error)
     });
     return;
   }
@@ -131,23 +132,25 @@ function handleTemplateTag(node, context, schema, env, validators) {
     context.report({
       node,
       message: validationErrors[0].message,
-      loc: locFrom(node, validationErrors[0]),
+      loc: locFrom(node, validationErrors[0])
     });
     return;
   }
 }
 
 function templateExpressionMatchesTag(tagName, node) {
-  const tagNameSegments = tagName.split('.').length;
+  const tagNameSegments = tagName.split(".").length;
   if (tagNameSegments === 1) {
     // Check for single identifier, like 'gql'
-    if (node.tag.type !== 'Identifier' || node.tag.name !== tagName) {
+    if (node.tag.type !== "Identifier" || node.tag.name !== tagName) {
       return false;
     }
   } else if (tagNameSegments === 2) {
     // Check for dotted identifier, like 'Relay.QL'
-    if (node.tag.type !== 'MemberExpression' ||
-        node.tag.object.name + '.' + node.tag.property.name !== tagName) {
+    if (
+      node.tag.type !== "MemberExpression" ||
+      node.tag.object.name + "." + node.tag.property.name !== tagName
+    ) {
       return false;
     }
   } else {
@@ -162,22 +165,22 @@ export function createRule(context, optionParser) {
   const tagRules = [];
   const options = context.options.length === 0 ? [{}] : context.options;
   for (const optionGroup of options) {
-    const {schema, env, tagName, validators} = optionParser(optionGroup);
-    const boundValidators = validators.map(v => (ctx) => v(ctx, optionGroup));
+    const { schema, env, tagName, validators } = optionParser(optionGroup);
+    const boundValidators = validators.map(v => ctx => v(ctx, optionGroup));
     if (tagNames.has(tagName)) {
-      throw new Error('Multiple options for GraphQL tag ' + tagName);
+      throw new Error("Multiple options for GraphQL tag " + tagName);
     }
     tagNames.add(tagName);
-    tagRules.push({schema, env, tagName, validators: boundValidators});
+    tagRules.push({ schema, env, tagName, validators: boundValidators });
   }
 
   return {
     TaggedTemplateExpression(node) {
-      for (const {schema, env, tagName, validators} of tagRules) {
+      for (const { schema, env, tagName, validators } of tagRules) {
         if (templateExpressionMatchesTag(tagName, node)) {
           return handleTemplateTag(node, context, schema, env, validators);
         }
       }
-    },
+    }
   };
 }
