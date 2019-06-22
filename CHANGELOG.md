@@ -2,6 +2,8 @@
 
 ### vNEXT
 
+- Fix an issue that caused `graphql/required-fields` to throw on non-existent field references. [PR #231](https://github.com/apollographql/eslint-plugin-graphql/pull/231) by [Vitor Balocco](https://github.com/vitorbal)
+
 ### v3.0.3
 
 - chore: Update dependency `graphql-tools` to `v4.0.4`. [PR #210](https://github.com/apollographql/eslint-plugin-graphql/pull/210)
