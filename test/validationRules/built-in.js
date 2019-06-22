@@ -72,7 +72,7 @@ const validatorCases = {
       "const x = gql`fragment FilmFragment on Floof { title } { allFilms { films { ...FilmFragment } } }`",
     errors: [
       {
-        message: 'Unknown type "Floof".',
+        message: /Unknown type "Floof"/,
         type: "TaggedTemplateExpression"
       }
     ]
@@ -162,7 +162,7 @@ const validatorCases = {
     errors: [
       {
         message:
-          'Field "sum" argument "b" of type "Int!" is required but not provided.',
+          /Field "sum" argument "b" of type "Int!" is required/,
         type: "TaggedTemplateExpression"
       }
     ]

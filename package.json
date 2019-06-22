@@ -5,7 +5,7 @@
   "author": "Sashko Stubailo",
   "main": "lib/index.js",
   "scripts": {
-    "test": "tav --ci && mocha test/index.js",
+    "test": "tav",
     "prepublish": "babel ./src --ignore test --out-dir ./lib",
     "pretest": "node test/updateSchemaJson.js",
     "tav": "tav",
