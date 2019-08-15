@@ -2,6 +2,8 @@
 
 ### vNEXT
 
+- Update the `required-fields` rule to handle inline fragments without field ancestors. [PR #240](https://github.com/apollographql/eslint-plugin-graphql/pull/240) by [Henry Q. Dineen](https://github.com/henryqdineen)
+
 ### v3.0.3
 
 - chore: Update dependency `graphql-tools` to `v4.0.4`. [PR #210](https://github.com/apollographql/eslint-plugin-graphql/pull/210)

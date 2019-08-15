@@ -81,6 +81,16 @@ const requiredFieldsTestCases = {
         }
       ]
     },
+    {
+      code:
+        "const x = gql`fragment GreetingOrStoryFragment on GreetingOrStory { ... on Greetings { hello } }`",
+      errors: [
+        {
+          message: `'id' field required on '... on Greetings'`,
+          type: "TaggedTemplateExpression"
+        }
+      ]
+    },
   ]
 };
 
