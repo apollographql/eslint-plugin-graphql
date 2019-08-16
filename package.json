@@ -5,7 +5,6 @@
   "author": "Sashko Stubailo",
   "main": "lib/index.js",
   "scripts": {
-    "format": "prettier src/**/*.js --write",
     "test": "tav --ci && mocha test/index.js",
     "prepublish": "babel ./src --ignore test --out-dir ./lib",
     "pretest": "node test/updateSchemaJson.js",
