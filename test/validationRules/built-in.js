@@ -72,7 +72,7 @@ const validatorCases = {
       "const x = gql`fragment FilmFragment on Floof { title } { allFilms { films { ...FilmFragment } } }`",
     errors: [
       {
-        message: 'Unknown type "Floof".',
+        message: new RegExp('Unknown type "Floof".'),
         type: "TaggedTemplateExpression"
       }
     ]
@@ -161,8 +161,9 @@ const validatorCases = {
     fail: "const x = gql`{ sum(a: 1) }`",
     errors: [
       {
-        message:
-          'Field "sum" argument "b" of type "Int!" is required but not provided.',
+        message: new RegExp(
+          'Field "sum" argument "b" of type "Int!" is required'
+        ),
         type: "TaggedTemplateExpression"
       }
     ]

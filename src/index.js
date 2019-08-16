@@ -1,227 +1,242 @@
-import fs from 'fs';
-import path from 'path';
+import fs from "fs";
+import path from "path";
 import {
   buildClientSchema,
   buildSchema,
   specifiedRules as allGraphQLValidators
-} from 'graphql';
+} from "graphql";
 
-import {
-  flatten,
-  keys,
-  reduce,
-  without,
-  includes,
-} from 'lodash';
+import { flatten, keys, reduce, without, includes } from "lodash";
 
-import { getGraphQLConfig, ConfigNotFoundError } from 'graphql-config';
+import { getGraphQLConfig, ConfigNotFoundError } from "graphql-config";
 
-import * as customRules from './customGraphQLValidationRules';
-import {internalTag} from './constants';
-import {createRule} from './createRule';
+import * as customRules from "./customGraphQLValidationRules";
+import { internalTag } from "./constants";
+import { createRule } from "./createRule";
 
 const allGraphQLValidatorNames = allGraphQLValidators.map(rule => rule.name);
 
 // Map of env name to list of rule names.
 const envGraphQLValidatorNames = {
-  apollo: without(allGraphQLValidatorNames,
-    'KnownFragmentNames',
-    'NoUnusedFragments',
+  apollo: without(
+    allGraphQLValidatorNames,
+    "KnownFragmentNames",
+    "NoUnusedFragments"
   ),
-  lokka: without(allGraphQLValidatorNames,
-    'KnownFragmentNames',
-    'NoUnusedFragments',
+  lokka: without(
+    allGraphQLValidatorNames,
+    "KnownFragmentNames",
+    "NoUnusedFragments"
   ),
-  fraql: without(allGraphQLValidatorNames,
-    'KnownFragmentNames',
-    'NoUnusedFragments',
+  fraql: without(
+    allGraphQLValidatorNames,
+    "KnownFragmentNames",
+    "NoUnusedFragments"
   ),
-  relay: without(allGraphQLValidatorNames,
-    'KnownDirectives',
-    'KnownFragmentNames',
-    'NoUndefinedVariables',
-    'NoUnusedFragments',
+  relay: without(
+    allGraphQLValidatorNames,
+    "KnownDirectives",
+    "KnownFragmentNames",
+    "NoUndefinedVariables",
+    "NoUnusedFragments",
     // `graphql` < 14
-    'ProvidedNonNullArguments',
+    "ProvidedNonNullArguments",
     // `graphql`@14
-    'ProvidedRequiredArguments',
-    'ScalarLeafs',
+    "ProvidedRequiredArguments",
+    "ScalarLeafs"
   ),
-  literal: without(allGraphQLValidatorNames,
-    'KnownFragmentNames',
-    'NoUnusedFragments',
-  ),
+  literal: without(
+    allGraphQLValidatorNames,
+    "KnownFragmentNames",
+    "NoUnusedFragments"
+  )
 };
 
-const gqlFiles = ['gql', 'graphql'];
+const gqlFiles = ["gql", "graphql"];
 
 const defaultRuleProperties = {
   env: {
-    enum: [
-      'lokka',
-      'fraql',
-      'relay',
-      'apollo',
-      'literal',
-    ],
+    enum: ["lokka", "fraql", "relay", "apollo", "literal"]
   },
   schemaJson: {
-    type: 'object',
+    type: "object"
   },
   schemaJsonFilepath: {
-    type: 'string',
+    type: "string"
   },
   schemaString: {
-    type: 'string',
+    type: "string"
   },
   tagName: {
-    type: 'string',
-    pattern: '^[$_a-zA-Z$_][a-zA-Z0-9$_]+(\\.[a-zA-Z0-9$_]+)?$',
+    type: "string",
+    pattern: "^[$_a-zA-Z$_][a-zA-Z0-9$_]+(\\.[a-zA-Z0-9$_]+)?$"
   },
   projectName: {
-    type: 'string'
+    type: "string"
   }
-}
+};
 
 // schemaJson, schemaJsonFilepath, schemaString and projectName are mutually exclusive:
 const schemaPropsExclusiveness = {
-  oneOf: [{
-    required: ['schemaJson'],
-    not: { required: ['schemaString', 'schemaJsonFilepath', 'projectName']}
-  }, {
-    required: ['schemaJsonFilepath'],
-    not: { required: ['schemaJson', 'schemaString', 'projectName']}
-  }, {
-    required: ['schemaString'],
-    not: { required: ['schemaJson', 'schemaJsonFilepath', 'projectName']}
-  }, {
-    not: {
-      anyOf: [
-        { required: ['schemaString'] },
-        { required: ['schemaJson'] },
-        { required: ['schemaJsonFilepath'] },
-      ]
+  oneOf: [
+    {
+      required: ["schemaJson"],
+      not: { required: ["schemaString", "schemaJsonFilepath", "projectName"] }
+    },
+    {
+      required: ["schemaJsonFilepath"],
+      not: { required: ["schemaJson", "schemaString", "projectName"] }
+    },
+    {
+      required: ["schemaString"],
+      not: { required: ["schemaJson", "schemaJsonFilepath", "projectName"] }
+    },
+    {
+      not: {
+        anyOf: [
+          { required: ["schemaString"] },
+          { required: ["schemaJson"] },
+          { required: ["schemaJsonFilepath"] }
+        ]
+      }
     }
-  }],
-}
+  ]
+};
 
 export const rules = {
-  'template-strings': {
+  "template-strings": {
     meta: {
       schema: {
-        type: 'array',
+        type: "array",
         items: {
           additionalProperties: false,
           properties: {
             ...defaultRuleProperties,
             validators: {
-              oneOf: [{
-                type: 'array',
-                uniqueItems: true,
-                items: {
-                  enum: allGraphQLValidatorNames,
+              oneOf: [
+                {
+                  type: "array",
+                  uniqueItems: true,
+                  items: {
+                    enum: allGraphQLValidatorNames
+                  }
                 },
-              }, {
-                enum: [
-                  'all',
-                ],
-              }],
-            },
+                {
+                  enum: ["all"]
+                }
+              ]
+            }
           },
-          ...schemaPropsExclusiveness,
+          ...schemaPropsExclusiveness
         }
-      },
+      }
     },
-    create: (context) => createRule(context, (optionGroup) => parseOptions(optionGroup, context))
+    create: context =>
+      createRule(context, optionGroup => parseOptions(optionGroup, context))
   },
-  'named-operations': {
+  "named-operations": {
     meta: {
       schema: {
-        type: 'array',
+        type: "array",
         items: {
           additionalProperties: false,
           properties: { ...defaultRuleProperties },
-          ...schemaPropsExclusiveness,
-        },
-      },
+          ...schemaPropsExclusiveness
+        }
+      }
     },
-    create: (context) => {
-      return createRule(context, (optionGroup) => parseOptions({
-        validators: ['OperationsMustHaveNames'],
-        ...optionGroup,
-      }, context));
-    },
+    create: context => {
+      return createRule(context, optionGroup =>
+        parseOptions(
+          {
+            validators: ["OperationsMustHaveNames"],
+            ...optionGroup
+          },
+          context
+        )
+      );
+    }
   },
-  'required-fields': {
+  "required-fields": {
     meta: {
       schema: {
-        type: 'array',
+        type: "array",
         minItems: 1,
         items: {
           additionalProperties: false,
           properties: {
             ...defaultRuleProperties,
             requiredFields: {
-              type: 'array',
+              type: "array",
               items: {
-                type: 'string',
-              },
-            },
+                type: "string"
+              }
+            }
           },
-          required: ['requiredFields'],
-          ...schemaPropsExclusiveness,
-        },
-      },
+          required: ["requiredFields"],
+          ...schemaPropsExclusiveness
+        }
+      }
     },
     create: context => {
       return createRule(context, optionGroup =>
         parseOptions(
           {
-            validators: ['RequiredFields'],
+            validators: ["RequiredFields"],
             options: { requiredFields: optionGroup.requiredFields },
-            ...optionGroup,
+            ...optionGroup
           },
           context
         )
       );
-    },
+    }
   },
-  'capitalized-type-name': {
+  "capitalized-type-name": {
     meta: {
       schema: {
-        type: 'array',
+        type: "array",
         items: {
           additionalProperties: false,
           properties: { ...defaultRuleProperties },
-          ...schemaPropsExclusiveness,
-        },
-      },
+          ...schemaPropsExclusiveness
+        }
+      }
     },
-    create: (context) => {
-      return createRule(context, (optionGroup) => parseOptions({
-        validators: ['typeNamesShouldBeCapitalized'],
-        ...optionGroup,
-      }, context));
-    },
+    create: context => {
+      return createRule(context, optionGroup =>
+        parseOptions(
+          {
+            validators: ["typeNamesShouldBeCapitalized"],
+            ...optionGroup
+          },
+          context
+        )
+      );
+    }
   },
-  'no-deprecated-fields': {
+  "no-deprecated-fields": {
     meta: {
       schema: {
-        type: 'array',
+        type: "array",
         items: {
           additionalProperties: false,
           properties: { ...defaultRuleProperties },
-          ...schemaPropsExclusiveness,
-        },
-      },
+          ...schemaPropsExclusiveness
+        }
+      }
     },
-    create: (context) => {
-      return createRule(context, (optionGroup) => parseOptions({
-        validators: ['noDeprecatedFields'],
-        ...optionGroup,
-      }, context));
-    },
-  },
+    create: context => {
+      return createRule(context, optionGroup =>
+        parseOptions(
+          {
+            validators: ["noDeprecatedFields"],
+            ...optionGroup
+          },
+          context
+        )
+      );
+    }
+  }
 };
 
 const schemaCache = {};
@@ -235,11 +250,11 @@ function parseOptions(optionGroup, context) {
     env,
     projectName,
     tagName: tagNameOption,
-    validators: validatorNamesOption,
+    validators: validatorNamesOption
   } = optionGroup;
 
   const cacheHit = schemaCache[JSON.stringify(optionGroup)];
-  if (cacheHit && env !== 'literal') {
+  if (cacheHit && env !== "literal") {
     return cacheHit;
   }
 
@@ -258,13 +273,15 @@ function parseOptions(optionGroup, context) {
       if (projectName) {
         projectConfig = config.getProjects()[projectName];
         if (!projectConfig) {
-          throw new Error(`Project with name "${projectName}" not found in ${config.configPath}.`);
+          throw new Error(
+            `Project with name "${projectName}" not found in ${config.configPath}.`
+          );
         }
       } else {
         projectConfig = config.getConfigForFile(context.getFilename());
       }
       if (projectConfig) {
-        const key = `${config.configPath}[${projectConfig.projectName}]`
+        const key = `${config.configPath}[${projectConfig.projectName}]`;
         schema = projectCache[key];
         if (!schema) {
           schema = projectConfig.getSchema();
@@ -272,32 +289,43 @@ function parseOptions(optionGroup, context) {
         }
       }
       if (cacheHit) {
-        return {...cacheHit, schema};
+        return { ...cacheHit, schema };
       }
     } catch (e) {
       if (e instanceof ConfigNotFoundError) {
-        throw new Error('Must provide .graphqlconfig file or pass in `schemaJson` option ' +
-          'with schema object or `schemaJsonFilepath` with absolute path to the json file.');
+        throw new Error(
+          "Must provide .graphqlconfig file or pass in `schemaJson` option " +
+            "with schema object or `schemaJsonFilepath` with absolute path to the json file."
+        );
       }
       throw e;
     }
   }
 
   // Validate env
-  if (env && env !== 'lokka' && env !== 'fraql' && env !== 'relay' && env !== 'apollo' && env !== 'literal') {
-    throw new Error('Invalid option for env, only `apollo`, `lokka`, `fraql`, `relay`, and `literal` supported.')
+  if (
+    env &&
+    env !== "lokka" &&
+    env !== "fraql" &&
+    env !== "relay" &&
+    env !== "apollo" &&
+    env !== "literal"
+  ) {
+    throw new Error(
+      "Invalid option for env, only `apollo`, `lokka`, `fraql`, `relay`, and `literal` supported."
+    );
   }
 
   // Validate tagName and set default
   let tagName;
   if (tagNameOption) {
     tagName = tagNameOption;
-  } else if (env === 'relay') {
-    tagName = 'Relay.QL';
-  } else if (env === 'literal') {
+  } else if (env === "relay") {
+    tagName = "Relay.QL";
+  } else if (env === "literal") {
     tagName = internalTag;
   } else {
-    tagName = 'gql';
+    tagName = "gql";
   }
 
   // The validator list may be:
@@ -305,7 +333,7 @@ function parseOptions(optionGroup, context) {
   //    An array of rule names.
   //    null/undefined to use the default rule set of the environment, or all rules.
   let validatorNames;
-  if (validatorNamesOption === 'all') {
+  if (validatorNamesOption === "all") {
     validatorNames = allGraphQLValidatorNames;
   } else if (validatorNamesOption) {
     validatorNames = validatorNamesOption;
@@ -320,7 +348,7 @@ function parseOptions(optionGroup, context) {
       return require(`graphql/validation/rules/${name}`)[name];
     }
   });
-  const results = {schema, env, tagName, validators};
+  const results = { schema, env, tagName, validators };
   schemaCache[JSON.stringify(optionGroup)] = results;
   return results;
 }
@@ -328,20 +356,18 @@ function parseOptions(optionGroup, context) {
 function initSchema(json) {
   const unpackedSchemaJson = json.data ? json.data : json;
   if (!unpackedSchemaJson.__schema) {
-    throw new Error('Please pass a valid GraphQL introspection query result.');
+    throw new Error("Please pass a valid GraphQL introspection query result.");
   }
   return buildClientSchema(unpackedSchemaJson);
 }
 
 function initSchemaFromFile(jsonFile) {
-  return initSchema(JSON.parse(fs.readFileSync(jsonFile, 'utf8')));
+  return initSchema(JSON.parse(fs.readFileSync(jsonFile, "utf8")));
 }
 
 function initSchemaFromString(source) {
-  return buildSchema(source)
+  return buildSchema(source);
 }
-
-
 
 const gqlProcessor = {
   preprocess: function(text) {
@@ -354,22 +380,26 @@ const gqlProcessor = {
     // - "`" would end the template literal.
     // - "\" would start an escape sequence.
     // - "${" would start an interpolation.
-    const escaped = text.replace(/[`\\]|\$\{/g, '\\$&');
+    const escaped = text.replace(/[`\\]|\$\{/g, "\\$&");
     return [`${internalTag}\`${escaped}\``];
   },
   postprocess: function(messages) {
     // only report graphql-errors
-    return flatten(messages).filter((message) => {
-      return includes(keys(rules).map((key) => `graphql/${key}`), message.ruleId);
-    })
+    return flatten(messages).filter(message => {
+      return includes(keys(rules).map(key => `graphql/${key}`), message.ruleId);
+    });
   }
-}
+};
 
-export const processors = reduce(gqlFiles, (result, value) => {
+export const processors = reduce(
+  gqlFiles,
+  (result, value) => {
     return { ...result, [`.${value}`]: gqlProcessor };
-}, {})
+  },
+  {}
+);
 
 export default {
   rules,
   processors
-}
+};

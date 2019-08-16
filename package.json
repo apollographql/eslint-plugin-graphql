@@ -24,9 +24,10 @@
     "babel-preset-es2015": "6.24.1",
     "babel-preset-stage-0": "6.24.1",
     "eslint": "5.15.1",
-    "graphql": "14.1.1",
+    "graphql": "^14.3.0",
     "graphql-tools": "4.0.4",
     "mocha": "5.2.0",
+    "pretty-quick": "^1.11.1",
     "test-all-versions": "4.1.0"
   },
   "babel": {
@@ -34,6 +35,11 @@
       "es2015",
       "stage-0"
     ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
   },
   "engines": {
     "node": ">=6.0"
