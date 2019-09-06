@@ -38,9 +38,7 @@ export function RequiredFields(context, options) {
           if (!fieldWasRequested) {
             context.reportError(
               new GraphQLError(
-                `'${field}' field required on 'fragment ${node.name.value} on ${
-                  node.typeCondition.name.value
-                }'`,
+                `'${field}' field required on 'fragment ${node.name.value} on ${node.typeCondition.name.value}'`,
                 [node]
               )
             );
@@ -97,9 +95,7 @@ export function RequiredFields(context, options) {
           // the intermediate selection sets.
           context.reportError(
             new GraphQLError(
-              `'${field}' field required on '... on ${
-                node.typeCondition.name.value
-              }'`,
+              `'${field}' field required on '... on ${node.typeCondition.name.value}'`,
               [node]
             )
           );

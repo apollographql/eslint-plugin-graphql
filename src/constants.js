@@ -1,1 +1,1 @@
-export const internalTag = 'ESLintPluginGraphQLFile';
+export const internalTag = "ESLintPluginGraphQLFile";
