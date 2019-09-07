@@ -264,7 +264,7 @@ module.exports = {
 }
 ```
 
-### Example config when using [.graphqlconfig](https://github.com/graphcool/graphql-config)
+### Example config when using [.graphqlconfig](https://github.com/graphcool/graphql-config) and tag names
 
 If you have `.graphqlconfig` file in the root of your repo you can omit schema-related
 properties (`schemaJson`, `schemaJsonFilepath` and `schemaString`) from rule config.
@@ -307,6 +307,102 @@ module.exports = {
   ]
 }
 ```
+
+### Example config when using [.graphqlconfig](https://github.com/graphcool/graphql-config) and graphql files
+
+If you have `.graphqlconfig` file in the root of your repo you can omit schema-related
+properties (`schemaJson`, `schemaJsonFilepath` and `schemaString`) from rule config.
+
+```js
+// In a file called .eslintrc.js
+module.exports = {
+  parser: "babel-eslint",
+  rules: {
+    "graphql/template-strings": ['error', { env: 'literal' }]
+  },
+  plugins: [
+    'graphql'
+  ]
+}
+```
+
+If you use `*.graphql` files to define your queries/mutations, instead of using template strings with `graphql-tag`, you can prefix your filename extensions with some sort of identifier for your schema (e.g. `*.api-one.graphql`, `*.api-two.graphql`).
+The important part is to tell eslint which schema should be associated with which file extension.
+
+In your `.graphqlconfig`, you can provide all your configuration there:
+
+```json
+{
+  "projects": {
+    "api-one": {
+      "schemaPath": "schema/api-one.json",
+      "includes": [
+        "**/*.api-one.graphql"
+      ],
+      "extensions": {
+        "endpoints": {
+          "production": {
+            "url": "https://api-one.com/graphql"
+          }
+        }
+      }
+    },
+    "api-two": {
+      "schemaPath": "schema/api-two.json",
+      "includes": [
+        "**/*.api-two.graphql"
+      ],
+      "extensions": {
+        "endpoints": {
+          "production": {
+            "url": "https://api-two.com/graphql"
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+### Example config when using graphql files
+
+If you don't use a `.graphqlconfig` file, you can configure your `.eslintrc.js` using the `overrides` feature:
+
+```js
+// In a file called .eslintrc.js
+module.exports = {
+  parser: "babel-eslint",
+  rules: {},
+  plugins: [
+    'graphql'
+  ],
+  overrides: [
+    {
+      files: ["**/*.api-one.graphql"],
+      rules: {
+        "graphql/template-strings": ['error',
+          {
+            env: 'literal',
+            schemaJson: require('./schema-one.json'),
+          }
+        ]
+      }
+    },
+    {
+      files: ["**/*.api-two.graphql"],
+      rules: {
+        "graphql/template-strings": ['error',
+          {
+            env: 'literal',
+            schemaJson: require('./schema-two.json'),
+          }
+        ]
+      }
+    },
+  ],
+}
+```
+
 
 ### Selecting Validation Rules
 
