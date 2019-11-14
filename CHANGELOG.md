@@ -2,6 +2,8 @@
 
 ### vNEXT
 
+- Improve identity template literal tag docs. [PR #254](https://github.com/apollographql/eslint-plugin-graphql/pull/254) by [Jayden Seric](https://github.com/jaydenseric).
+
 ### v3.1.0
 
 - Fix an issue that caused `graphql/required-fields` to throw on non-existent field references. [PR #231](https://github.com/apollographql/eslint-plugin-graphql/pull/231) by [Vitor Balocco](https://github.com/vitorbal)
