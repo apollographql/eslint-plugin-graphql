@@ -19,8 +19,12 @@ function getFieldWasRequestedOnNode(node, field) {
 }
 
 function fieldAvailableOnType(type, field) {
+  if (!type) {
+    return false;
+  }
+
   return (
-    (type && type._fields && type._fields[field]) ||
+    (type._fields && type._fields[field]) ||
     (type.ofType && fieldAvailableOnType(type.ofType, field))
   );
 }

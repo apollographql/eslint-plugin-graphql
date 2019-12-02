@@ -15,6 +15,7 @@ const requiredFieldsTestCases = {
     "const x = gql`fragment Name on GreetingOrStory { ... on Greetings { id hello } }`",
     "const x = gql`fragment Name on GreetingOrStory { id ... on Greetings { hello } }`",
     "const x = gql`fragment Name on Greetings { id hello }`",
+    "const x = gql`fragment Foo on FooBar { id, hello, foo }`",
     "const x = gql`fragment Id on Node { id ... on NodeA { fieldA } }`",
     "const x = gql`query { nodes { id ... on NodeA { fieldA } } }`",
   ],
