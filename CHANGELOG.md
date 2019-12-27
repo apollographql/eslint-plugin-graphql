@@ -2,6 +2,8 @@
 
 ### vNEXT
 
+### v3.1.1
+
 - Update the `required-fields` rule to handle inline fragments without field ancestors. [PR #240](https://github.com/apollographql/eslint-plugin-graphql/pull/240) by [Henry Q. Dineen](https://github.com/henryqdineen)
 
 ### v3.1.0
