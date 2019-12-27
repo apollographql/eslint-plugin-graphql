@@ -10,6 +10,10 @@ const requiredFieldsTestCases = {
     "const x = gql`query { greetings { id, hello, hi } }`",
     "const x = gql`query { greetings { id, hello, foo } }`",
     "const x = gql`query { greetings { id ... on Greetings { hello } } }`",
+    "const x = gql`query { greetingOrStory { ... on Greetings { id hello } } }`",
+    "const x = gql`query { greetingOrStory { id ... on Greetings { hello } } }`",
+    "const x = gql`fragment Name on GreetingOrStory { ... on Greetings { id hello } }`",
+    "const x = gql`fragment Name on GreetingOrStory { id ... on Greetings { hello } }`",
     "const x = gql`fragment Name on Greetings { id hello }`",
     "const x = gql`fragment Foo on FooBar { id, hello, foo }`",
     "const x = gql`fragment Id on Node { id ... on NodeA { fieldA } }`",
@@ -78,6 +82,16 @@ const requiredFieldsTestCases = {
       errors: [
         {
           message: `'id' field required on 'nodes'`,
+          type: "TaggedTemplateExpression"
+        }
+      ]
+    },
+    {
+      code:
+        "const x = gql`fragment Name on GreetingOrStory { ... on Greetings { hello } }`",
+      errors: [
+        {
+          message: `'id' field required on '... on Greetings'`,
           type: "TaggedTemplateExpression"
         }
       ]
