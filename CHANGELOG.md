@@ -2,6 +2,8 @@
 
 ### vNEXT
 
+- Improve identity template literal tag docs. [PR #254](https://github.com/apollographql/eslint-plugin-graphql/pull/254) by [Jayden Seric](https://github.com/jaydenseric).
+
 ### v3.1.1
 
 - Update the `required-fields` rule to handle inline fragments without field ancestors. [PR #240](https://github.com/apollographql/eslint-plugin-graphql/pull/240) by [Henry Q. Dineen](https://github.com/henryqdineen)
