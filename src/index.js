@@ -8,7 +8,7 @@ import {
 
 import { flatten, keys, reduce, without, includes } from "lodash";
 
-import { getGraphQLConfig, ConfigNotFoundError } from "graphql-config";
+import { loadConfigSync, ConfigNotFoundError, ProjectNotFoundError } from "graphql-config";
 
 import * as customRules from "./customGraphQLValidationRules";
 import { internalTag } from "./constants";
@@ -268,23 +268,34 @@ function parseOptions(optionGroup, context) {
     schema = initSchemaFromString(schemaString);
   } else {
     try {
-      const config = getGraphQLConfig(path.dirname(context.getFilename()));
+      const config = loadConfigSync({
+        rootDir: path.resolve(
+          process.cwd(),
+          path.dirname(context.getFilename())
+        )
+      });
       let projectConfig;
       if (projectName) {
-        projectConfig = config.getProjects()[projectName];
+        projectConfig = config.getProject(projectName);
         if (!projectConfig) {
           throw new Error(
-            `Project with name "${projectName}" not found in ${config.configPath}.`
+            `Project with name "${projectName}" not found in ${config.filepath}.`
           );
         }
       } else {
-        projectConfig = config.getConfigForFile(context.getFilename());
+        try {
+          projectConfig = config.getProjectForFile(context.getFilename());
+        } catch (e) {
+          if (!e instanceof ProjectNotFoundError) {
+            throw e;
+          }
+        }
       }
       if (projectConfig) {
-        const key = `${config.configPath}[${projectConfig.projectName}]`;
+        const key = `${config.filepath}[${projectConfig.name}]`;
         schema = projectCache[key];
         if (!schema) {
-          schema = projectConfig.getSchema();
+          schema = projectConfig.getSchemaSync();
           projectCache[key] = schema;
         }
       }
@@ -294,7 +305,7 @@ function parseOptions(optionGroup, context) {
     } catch (e) {
       if (e instanceof ConfigNotFoundError) {
         throw new Error(
-          "Must provide .graphqlconfig file or pass in `schemaJson` option " +
+          "Must provide GraphQL Config file or pass in `schemaJson` option " +
             "with schema object or `schemaJsonFilepath` with absolute path to the json file."
         );
       }
@@ -386,7 +397,10 @@ const gqlProcessor = {
   postprocess: function(messages) {
     // only report graphql-errors
     return flatten(messages).filter(message => {
-      return includes(keys(rules).map(key => `graphql/${key}`), message.ruleId);
+      return includes(
+        keys(rules).map(key => `graphql/${key}`),
+        message.ruleId
+      );
     });
   }
 };
