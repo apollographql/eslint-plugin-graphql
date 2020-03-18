@@ -286,7 +286,7 @@ function parseOptions(optionGroup, context) {
         try {
           projectConfig = config.getProjectForFile(context.getFilename());
         } catch (e) {
-          if (!e instanceof ProjectNotFoundError) {
+          if (!(e instanceof ProjectNotFoundError)) {
             throw e;
           }
         }
