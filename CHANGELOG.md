@@ -3,6 +3,7 @@
 ### vNEXT
 
 - Improve identity template literal tag docs. [PR #254](https://github.com/apollographql/eslint-plugin-graphql/pull/254) by [Jayden Seric](https://github.com/jaydenseric).
+- Add support for GraphQL 15. Update all `devDependencies` - upgrades the project to use Babel 7 and ESLint 6. [PR #271](https://github.com/apollographql/eslint-plugin-graphql/pull/271) by [Scott Taylor](https://github.com/staylor).
 
 ### v3.1.1
 
