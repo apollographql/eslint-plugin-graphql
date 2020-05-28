@@ -10,8 +10,15 @@ export const secondSchemaJsonFilepath = path.resolve(__dirname, './second-schema
 export const schemaString = printSchema(buildClientSchema(schemaJson.data))
 
 const allGraphQLValidatorNames = allGraphQLValidators.map(rule => rule.name);
-export const requiredArgumentRuleName = allGraphQLValidatorNames.includes('ProvidedRequiredArguments') ?
-  'ProvidedRequiredArguments':'ProvidedNonNullArguments';
+
+let requiredArgumentRule = 'ProvidedNonNullArguments';
+if (allGraphQLValidatorNames.includes('ProvidedRequiredArgumentsRule')) {
+  requiredArgumentRule = 'ProvidedRequiredArgumentsRule';
+} else if (allGraphQLValidatorNames.includes('ProvidedRequiredArguments')) {
+  requiredArgumentRule = 'ProvidedRequiredArguments';
+}
+
+export const requiredArgumentRuleName = requiredArgumentRule;
 
 // Init rule
 

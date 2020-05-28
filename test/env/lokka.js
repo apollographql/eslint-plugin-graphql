@@ -1,3 +1,4 @@
+import { versionInfo } from 'graphql';
 import schemaJson from '../schema.json';
 
 import {
@@ -111,7 +112,9 @@ ruleTester.run('lokka', rule, {
         \`);
       `,
       errors: [{
-        message: 'Unknown argument "wrongArg" on field "director" of type "Film".',
+        message: versionInfo.major >= 15 ?
+          'Unknown argument "wrongArg" on field "Film.director".' :
+          'Unknown argument "wrongArg" on field "director" of type "Film".',
         type: 'TaggedTemplateExpression',
         line: 5,
         column: 22

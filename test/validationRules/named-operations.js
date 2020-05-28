@@ -1,6 +1,5 @@
 import { rules } from "../../src";
 import schemaJson from "../schema.json";
-import { values } from "lodash";
 
 import { ruleTester, parserOptions } from "../helpers";
 
@@ -25,12 +24,12 @@ const options = [
   }
 ];
 ruleTester.run("testing named-operations rule", rules["named-operations"], {
-  valid: values(namedOperationsValidatorCases).map(({ pass: code }) => ({
+  valid: Object.values(namedOperationsValidatorCases).map(({ pass: code }) => ({
     options,
     parserOptions,
     code
   })),
-  invalid: values(namedOperationsValidatorCases).map(
+  invalid: Object.values(namedOperationsValidatorCases).map(
     ({ fail: code, errors }) => ({ options, parserOptions, code, errors })
   )
 });

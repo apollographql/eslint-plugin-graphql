@@ -1,3 +1,4 @@
+import { versionInfo } from 'graphql';
 import {
   schemaJsonFilepath,
   secondSchemaJsonFilepath,
@@ -47,7 +48,9 @@ import {
         parserOptions,
         code: 'const x = gql``',
         errors: [{
-          message: 'Syntax Error: Unexpected <EOF>',
+          message: versionInfo.major >= 15 ?
+            'Syntax Error: Unexpected <EOF>.' : 
+            'Syntax Error: Unexpected <EOF>',
           type: 'TaggedTemplateExpression'
         }]
       },
