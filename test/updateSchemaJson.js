@@ -2,7 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const graphql = require('graphql');
 const process = require('process');
-const { isGraphQL15 } = require('./helpers');
+
+const isGraphQL15 = graphql.versionInfo && graphql.versionInfo.major >= 15;
 
 Promise.all(['schema', 'second-schema'].map(schemaName => {
   const typeDefinition = fs.readFileSync(path.join(__dirname, schemaName + '.graphql'), 'utf8');
