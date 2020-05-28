@@ -1,4 +1,4 @@
-import { versionInfo } from 'graphql';
+import { isGraphQL15 } from '../helpers';
 import schemaJson from '../schema.json';
 
 import {
@@ -35,9 +35,7 @@ ruleTester.run('apollo', rule, {
       parserOptions,
       code: 'const x = gql`query }{ ${x}`',
       errors: [{
-        message: versionInfo.major >= 15 ?
-          'Syntax Error: Expected "{", found "}".' :
-          'Syntax Error: Expected {, found }',
+        message: isGraphQL15 ? 'Syntax Error: Expected "{", found "}".' : 'Syntax Error: Expected {, found }',
         type: 'TaggedTemplateExpression'
       }]
     }

@@ -1,7 +1,7 @@
-import { versionInfo } from "graphql";
 import schemaJson from "../schema.json";
 
 import {
+  isGraphQL15,
   requiredArgumentRuleName,
   rule,
   ruleTester,
@@ -12,7 +12,7 @@ const setRuleName = name => {
   if (name === requiredArgumentRuleName) {
     return name;
   }
-  return versionInfo.major >= 15 ? `${name}Rule` : name;
+  return isGraphQL15 ? `${name}Rule` : name;
 };
 
 const validatorCases = {
@@ -43,7 +43,7 @@ const validatorCases = {
     alsoBreaks: [requiredArgumentRuleName],
     errors: [
       {
-        message: versionInfo.major >= 15 ?
+        message: isGraphQL15 ?
           'Unknown argument "c" on field "Query.sum". Did you mean "a" or "b"?' :
           'Unknown argument "c" on field "sum" of type "Query". Did you mean "a" or "b"?',
         type: "TaggedTemplateExpression"
@@ -57,7 +57,7 @@ const validatorCases = {
       "const x = gql`{ number, allFilms @goofy(if: false) { films { title } } }`",
     errors: [
       {
-        message: versionInfo.major >= 15 ? 'Unknown directive "@goofy".' : 'Unknown directive "goofy".',
+        message: isGraphQL15 ? 'Unknown directive "@goofy".' : 'Unknown directive "goofy".',
         type: "TaggedTemplateExpression"
       }
     ]
@@ -239,7 +239,7 @@ const validatorCases = {
     fail: "const x = gql`query($a: Int!, $a: Int!) { sum(a: $a, b: $a) }`",
     errors: [
       {
-        message: versionInfo.major >= 15 ?
+        message: isGraphQL15 ?
           'There can be only one variable named "$a".' :
           'There can be only one variable named "a".',
         type: "TaggedTemplateExpression"
@@ -249,7 +249,7 @@ const validatorCases = {
   VariablesAreInputTypes: {
     pass: "const x = gql`query($a: Int!, $b: Int!) { sum(a: $a, b: $b) }`",
     fail: "const x = gql`query($a: Film!) { sum(a: 1, b: 1) }`",
-    alsoBreaks: [versionInfo.major >= 15 ? "NoUnusedVariablesRule" : "NoUnusedVariables"],
+    alsoBreaks: [isGraphQL15 ? "NoUnusedVariablesRule" : "NoUnusedVariables"],
     errors: [
       {
         message: 'Variable "$a" cannot be non-input type "Film!".',

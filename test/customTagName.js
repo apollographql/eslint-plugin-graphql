@@ -1,5 +1,5 @@
-import { versionInfo } from 'graphql';
 import schemaJson from './schema.json';
+import { isGraphQL15 } from './helpers';
 
 import {
   rule,
@@ -26,9 +26,7 @@ ruleTester.run('custom tag name', rule, {
       parserOptions,
       code: 'const x = myGraphQLTag``',
       errors: [{
-        message: versionInfo.major >= 15 ?
-          'Syntax Error: Unexpected <EOF>.' :
-          'Syntax Error: Unexpected <EOF>',
+        message: isGraphQL15 ? 'Syntax Error: Unexpected <EOF>.' : 'Syntax Error: Unexpected <EOF>',
         type: 'TaggedTemplateExpression'
       }]
     },

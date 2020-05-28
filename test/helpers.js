@@ -2,8 +2,9 @@ import { rules } from '../src';
 import { RuleTester } from 'eslint';
 import schemaJson from './schema.json';
 import path from 'path';
-import { printSchema, buildClientSchema, specifiedRules as allGraphQLValidators } from 'graphql';
+import graphql, { printSchema, buildClientSchema, specifiedRules as allGraphQLValidators } from 'graphql';
 
+export const isGraphQL15 = graphql.versionInfo && graphql.versionInfo.major >= 15;
 
 export const schemaJsonFilepath = path.resolve(__dirname, './schema.json');
 export const secondSchemaJsonFilepath = path.resolve(__dirname, './second-schema.json');
