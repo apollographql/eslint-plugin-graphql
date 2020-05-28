@@ -8,7 +8,11 @@ Promise.all(['schema', 'second-schema'].map(schemaName => {
   const schema = graphql.buildASTSchema(graphql.parse(typeDefinition));
   const outputPath = path.join(__dirname, schemaName + '.json');
 
-  return graphql.graphql(schema, graphql.getIntrospectionQuery())
+  const introspectionQuery = graphql.versionInfo.major >= 15 ?
+    graphql.getIntrospectionQuery() :
+    graphql.introspectionQuery;
+
+  return graphql.graphql(schema,introspectionQuery)
     .then(result => fs.writeFileSync(outputPath, JSON.stringify(result, null, 2)));
 }))
 .then(() => process.exit(0))

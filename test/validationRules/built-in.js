@@ -249,7 +249,7 @@ const validatorCases = {
   VariablesAreInputTypes: {
     pass: "const x = gql`query($a: Int!, $b: Int!) { sum(a: $a, b: $b) }`",
     fail: "const x = gql`query($a: Film!) { sum(a: 1, b: 1) }`",
-    alsoBreaks: ["NoUnusedVariablesRule"],
+    alsoBreaks: [versionInfo.major >= 15 ? "NoUnusedVariablesRule" : "NoUnusedVariables"],
     errors: [
       {
         message: 'Variable "$a" cannot be non-input type "Film!".',
