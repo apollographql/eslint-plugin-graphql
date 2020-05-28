@@ -2,7 +2,9 @@ import { rules } from '../src';
 import { RuleTester } from 'eslint';
 import schemaJson from './schema.json';
 import path from 'path';
-import graphql, { printSchema, buildClientSchema, specifiedRules as allGraphQLValidators } from 'graphql';
+import * as graphql from 'graphql';
+
+const { printSchema, buildClientSchema, specifiedRules: allGraphQLValidators } = graphql;
 
 export const isGraphQL15 = graphql.versionInfo && graphql.versionInfo.major >= 15;
 
