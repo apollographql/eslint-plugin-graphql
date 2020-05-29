@@ -1,4 +1,4 @@
-import { isGraphQL15 } from './helpers';
+import { isAtLeastGraphQL15 } from './helpers';
 import schemaJson from './schema.json';
 
 import {
@@ -46,7 +46,7 @@ ruleTester.run('default options', rule, {
       parserOptions,
       code: 'const x = gql``',
       errors: [{
-        message: isGraphQL15 ? 'Syntax Error: Unexpected <EOF>.' : 'Syntax Error: Unexpected <EOF>',
+        message: isAtLeastGraphQL15 ? 'Syntax Error: Unexpected <EOF>.' : 'Syntax Error: Unexpected <EOF>',
         type: 'TaggedTemplateExpression'
       }]
     },

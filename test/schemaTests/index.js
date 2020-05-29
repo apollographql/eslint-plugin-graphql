@@ -1,5 +1,5 @@
 import {
-  isGraphQL15,
+  isAtLeastGraphQL15,
   schemaJsonFilepath,
   secondSchemaJsonFilepath,
   schemaString,
@@ -48,7 +48,7 @@ import {
         parserOptions,
         code: 'const x = gql``',
         errors: [{
-          message: isGraphQL15 ? 'Syntax Error: Unexpected <EOF>.' :  'Syntax Error: Unexpected <EOF>',
+          message: isAtLeastGraphQL15 ? 'Syntax Error: Unexpected <EOF>.' :  'Syntax Error: Unexpected <EOF>',
           type: 'TaggedTemplateExpression'
         }]
       },

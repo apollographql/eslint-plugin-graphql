@@ -6,7 +6,7 @@ import * as graphql from 'graphql';
 
 const { printSchema, buildClientSchema, specifiedRules: allGraphQLValidators } = graphql;
 
-export const isGraphQL15 = graphql.versionInfo && graphql.versionInfo.major >= 15;
+export const isAtLeastGraphQL15 = graphql.versionInfo && graphql.versionInfo.major >= 15;
 
 export const schemaJsonFilepath = path.resolve(__dirname, './schema.json');
 export const secondSchemaJsonFilepath = path.resolve(__dirname, './second-schema.json');
