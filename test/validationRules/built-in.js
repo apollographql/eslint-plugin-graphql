@@ -1,12 +1,19 @@
 import schemaJson from "../schema.json";
-import { includes, values, entries } from "lodash";
 
 import {
+  isAtLeastGraphQL15,
   requiredArgumentRuleName,
   rule,
   ruleTester,
   parserOptions
 } from "../helpers";
+
+const setRuleName = name => {
+  if (name === requiredArgumentRuleName) {
+    return name;
+  }
+  return isAtLeastGraphQL15 ? `${name}Rule` : name;
+};
 
 const validatorCases = {
   FieldsOnCorrectType: {
@@ -36,7 +43,8 @@ const validatorCases = {
     alsoBreaks: [requiredArgumentRuleName],
     errors: [
       {
-        message:
+        message: isAtLeastGraphQL15 ?
+          'Unknown argument "c" on field "Query.sum". Did you mean "a" or "b"?' :
           'Unknown argument "c" on field "sum" of type "Query". Did you mean "a" or "b"?',
         type: "TaggedTemplateExpression"
       }
@@ -49,7 +57,7 @@ const validatorCases = {
       "const x = gql`{ number, allFilms @goofy(if: false) { films { title } } }`",
     errors: [
       {
-        message: 'Unknown directive "goofy".',
+        message: isAtLeastGraphQL15 ? 'Unknown directive "@goofy".' : 'Unknown directive "goofy".',
         type: "TaggedTemplateExpression"
       }
     ]
@@ -231,7 +239,9 @@ const validatorCases = {
     fail: "const x = gql`query($a: Int!, $a: Int!) { sum(a: $a, b: $a) }`",
     errors: [
       {
-        message: 'There can be only one variable named "a".',
+        message: isAtLeastGraphQL15 ?
+          'There can be only one variable named "$a".' :
+          'There can be only one variable named "a".',
         type: "TaggedTemplateExpression"
       }
     ]
@@ -239,7 +249,7 @@ const validatorCases = {
   VariablesAreInputTypes: {
     pass: "const x = gql`query($a: Int!, $b: Int!) { sum(a: $a, b: $b) }`",
     fail: "const x = gql`query($a: Film!) { sum(a: 1, b: 1) }`",
-    alsoBreaks: ["NoUnusedVariables"],
+    alsoBreaks: [isAtLeastGraphQL15 ? "NoUnusedVariablesRule" : "NoUnusedVariables"],
     errors: [
       {
         message: 'Variable "$a" cannot be non-input type "Film!".',
@@ -269,12 +279,12 @@ const validatorCases = {
     }
   ];
   ruleTester.run("enabled all validators", rule, {
-    valid: values(validatorCases).map(({ pass: code }) => ({
+    valid: Object.values(validatorCases).map(({ pass: code }) => ({
       options,
       parserOptions,
       code
     })),
-    invalid: values(validatorCases).map(({ fail: code, errors }) => ({
+    invalid: Object.values(validatorCases).map(({ fail: code, errors }) => ({
       options,
       parserOptions,
       code,
@@ -292,8 +302,8 @@ const validatorCases = {
   ruleTester.run("disabled all validators", rule, {
     valid: []
       .concat(
-        values(validatorCases).map(({ pass: code }) => code),
-        values(validatorCases).map(({ fail: code }) => code)
+        Object.values(validatorCases).map(({ pass: code }) => code),
+        Object.values(validatorCases).map(({ fail: code }) => code)
       )
       .map(code => ({ options, parserOptions, code })),
     invalid: []
@@ -303,7 +313,8 @@ const validatorCases = {
   // that can fail. (Excluding test cases that include this validation rule as
   // 'alsoBreaks'…sometimes it's hard to make a test that fails exactly one
   // validator).
-  for (const [validatorName, { fail, errors }] of entries(validatorCases)) {
+  for (const [graphqlValidatorName, { fail, errors }] of Object.entries(validatorCases)) {
+    const validatorName = setRuleName(graphqlValidatorName);
     options = [
       {
         schemaJson,
@@ -311,17 +322,19 @@ const validatorCases = {
         validators: [validatorName]
       }
     ];
-    const otherValidators = entries(validatorCases)
+    const otherValidators = Object.entries(validatorCases)
       .filter(
-        ([otherValidatorName, { alsoBreaks }]) =>
-          otherValidatorName !== validatorName &&
-          !includes(alsoBreaks || [], validatorName)
+        ([otherGraphQLValidatorName, { alsoBreaks }]) => {
+          const otherValidatorName = setRuleName(otherGraphQLValidatorName);
+          return otherValidatorName !== validatorName &&
+            !(alsoBreaks || []).includes(validatorName)
+        }
       )
       .map(kvPair => kvPair[1]);
     ruleTester.run(`enabled only ${validatorName} validator`, rule, {
       valid: []
         .concat(
-          values(validatorCases).map(({ pass: code }) => code),
+          Object.values(validatorCases).map(({ pass: code }) => code),
           otherValidators.map(({ fail: code }) => code)
         )
         .map(code => ({ options, parserOptions, code })),

@@ -1,11 +1,5 @@
-// This file cannot be written with ECMAScript 2015 because it has to load
-// the Babel require hook to enable ECMAScript 2015 features!
-require('babel-core/register');
-require('babel-core').transform('code', {
-  plugins: ['transform-runtime']
-});
+require('@babel/register');
 
-// The tests, however, can and should be written with ECMAScript 2015.
 require('./makeProcessors');
 require('./graphqlconfig/');
 require('./env');

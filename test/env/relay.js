@@ -13,7 +13,7 @@ const options = [
 ];
 
 // Need this to support statics
-const parser = 'babel-eslint';
+const parser = require.resolve('babel-eslint');
 
 ruleTester.run('relay', rule, {
   valid: [

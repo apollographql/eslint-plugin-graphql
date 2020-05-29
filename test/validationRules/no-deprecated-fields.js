@@ -3,6 +3,15 @@ import schemaJson from "../schema.json";
 
 import { ruleTester } from "../helpers";
 
+const parser = require.resolve('babel-eslint');
+
+const options = [
+  {
+    schemaJson,
+    env: "relay"
+  }
+];
+
 const noDeprecatedFieldsCases = {
   pass: [
     `
@@ -33,7 +42,7 @@ const noDeprecatedFieldsCases = {
   fail: [
     {
       options,
-      parser: "babel-eslint",
+      parser,
       code: `
         @relay({
           fragments: {
@@ -58,7 +67,7 @@ const noDeprecatedFieldsCases = {
     },
     {
       options,
-      parser: "babel-eslint",
+      parser,
       code: `
         @relay({
           fragments: {
@@ -84,24 +93,18 @@ const noDeprecatedFieldsCases = {
   ]
 };
 
-const options = [
-  {
-    schemaJson,
-    env: "relay"
-  }
-];
 ruleTester.run(
   "testing no-deprecated-fields rule",
   rules["no-deprecated-fields"],
   {
     valid: noDeprecatedFieldsCases.pass.map(code => ({
       options,
-      parser: "babel-eslint",
+      parser,
       code
     })),
     invalid: noDeprecatedFieldsCases.fail.map(({ code, errors }) => ({
       options,
-      parser: "babel-eslint",
+      parser,
       code,
       errors
     }))

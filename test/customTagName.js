@@ -1,4 +1,5 @@
 import schemaJson from './schema.json';
+import { isAtLeastGraphQL15 } from './helpers';
 
 import {
   rule,
@@ -25,7 +26,7 @@ ruleTester.run('custom tag name', rule, {
       parserOptions,
       code: 'const x = myGraphQLTag``',
       errors: [{
-        message: 'Syntax Error: Unexpected <EOF>',
+        message: isAtLeastGraphQL15 ? 'Syntax Error: Unexpected <EOF>.' : 'Syntax Error: Unexpected <EOF>',
         type: 'TaggedTemplateExpression'
       }]
     },
