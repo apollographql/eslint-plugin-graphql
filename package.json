@@ -6,7 +6,7 @@
   "main": "lib/index.js",
   "scripts": {
     "test": "tav --ci && mocha test/index.js",
-    "prepublish": "babel ./src --ignore test --out-dir ./lib",
+    "prepare": "babel ./src --ignore test --out-dir ./lib",
     "pretest": "babel-node test/updateSchemaJson.js",
     "tav": "tav",
     "lint": "eslint 'src/**/*.js' 'test/**/*.js'"
