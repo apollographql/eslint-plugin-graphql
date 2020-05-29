@@ -39,6 +39,7 @@
   "engines": {
     "node": ">=10.0"
   },
+  "browserslist": "node 10",
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.10.0",
