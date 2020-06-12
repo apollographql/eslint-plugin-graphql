@@ -1,5 +1,17 @@
 import { GraphQLError, getNamedType } from "graphql";
 
+export function OperationNamesMustBeCapitalized(context) {
+  return {
+    OperationDefinition(node) {
+      if (node.name && node.name.value && (node.name.value[0] == node.name.value[0].toLowerCase())) {
+        context.reportError(
+          new GraphQLError("All operations must be capitalized", [node])
+        );
+      }
+    }
+  };
+}
+
 export function OperationsMustHaveNames(context) {
   return {
     OperationDefinition(node) {
