@@ -402,6 +402,8 @@ module.exports = {
 
 ### Capitalization of a first letter of Named Operation rule
 
+The Capitalize Named Operation rule validates that all existing operation names are capitalized.
+
 **Pass**
 ```
 query FetchUsername {
