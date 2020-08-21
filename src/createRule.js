@@ -11,7 +11,7 @@ function replaceExpressions(node, context, env) {
   const chunks = [];
 
   node.quasis.forEach((element, i) => {
-    const chunk = element.value.cooked;
+    const chunk = element.value.raw;
     const value = node.expressions[i];
 
     chunks.push(chunk);
