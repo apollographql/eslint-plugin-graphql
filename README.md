@@ -22,7 +22,7 @@ If you want to lint your GraphQL schema, rather than queries, check out [cjoudre
 
 ### Importing schema JSON
 
-You'll need to import your [introspection query result](https://github.com/graphql/graphql-js/blob/master/src/utilities/introspectionQuery.js) or the schema as a string in the Schema Language format. This can be done if you define your ESLint config in a JS file.
+You'll need to import your [introspection query result](https://github.com/graphql/graphql-js/blob/master/src/utilities/getIntrospectionQuery.js) or the schema as a string in the Schema Language format. This can be done if you define your ESLint config in a JS file.
 
 ### Retrieving a remote GraphQL schema
 
