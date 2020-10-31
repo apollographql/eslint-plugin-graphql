@@ -354,7 +354,6 @@ The full list of available validators is:
   - `UniqueVariableNamesRule`
   - `ValuesOfCorrectTypeRule`
   - `VariablesAreInputTypesRule`
-  - `VariablesDefaultValueAllowedRule`
   - `VariablesInAllowedPositionRule`
   
   ##### Note
