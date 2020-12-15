@@ -30,6 +30,15 @@ const requiredFieldsTestCases = {
       ]
     },
     {
+      code: "const x = gql`query { stories } `",
+      errors: [
+        {
+          message: `'stories' field must have a selection since type '[Story!]!' is a Composite Type`,
+          type: "TaggedTemplateExpression"
+        }
+      ]
+    },
+    {
       code: "const x = gql`query { greetings { hello } }`",
       errors: [
         {
@@ -44,6 +53,15 @@ const requiredFieldsTestCases = {
       errors: [
         {
           message: `'id' field required on 'greetings'`,
+          type: "TaggedTemplateExpression"
+        }
+      ]
+    },
+    {
+      code: "const x = gql`query { stories { id ... on Story { comments } } }`",
+      errors: [
+        {
+          message: `'comments' field must have a selection since type '[Comment]' is a Composite Type`,
           type: "TaggedTemplateExpression"
         }
       ]

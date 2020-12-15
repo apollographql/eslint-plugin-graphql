@@ -1,4 +1,4 @@
-import { GraphQLError, getNamedType } from "graphql";
+import { GraphQLError, getNamedType, isCompositeType } from "graphql";
 
 export function OperationsMustHaveNames(context) {
   return {
@@ -12,7 +12,12 @@ export function OperationsMustHaveNames(context) {
   };
 }
 
-function getFieldWasRequestedOnNode(node, field) {
+function mustHaveSelection(type) {
+  if(!type) return false
+  return isCompositeType(type) || mustHaveSelection(type.ofType)
+}
+
+function fieldIsRequestedOnNode(node, field) {
   return node.selectionSet.selections.some(n => {
     return n.kind === "Field" && n.name.value === field;
   });
@@ -34,19 +39,16 @@ export function RequiredFields(context, options) {
 
   return {
     FragmentDefinition(node) {
-      requiredFields.forEach(field => {
-        const type = context.getType();
+      const type = context.getType();
 
-        if (fieldAvailableOnType(type, field)) {
-          const fieldWasRequested = getFieldWasRequestedOnNode(node, field);
-          if (!fieldWasRequested) {
-            context.reportError(
-              new GraphQLError(
-                `'${field}' field required on 'fragment ${node.name.value} on ${node.typeCondition.name.value}'`,
-                [node]
-              )
-            );
-          }
+      requiredFields.forEach(field => {
+        if (fieldAvailableOnType(type, field) && !fieldIsRequestedOnNode(node, field)) {
+          context.reportError(
+            new GraphQLError(
+              `'${field}' field required on 'fragment ${node.name.value} on ${node.typeCondition.name.value}'`,
+              [node]
+            )
+          );
         }
       });
     },
@@ -54,12 +56,12 @@ export function RequiredFields(context, options) {
     // Every inline fragment must have the required field specified inside
     // itself or in some parent selection set.
     InlineFragment(node, key, parent, path, ancestors) {
-      requiredFields.forEach(field => {
-        const type = context.getType();
+      const type = context.getType();
 
+      requiredFields.forEach(field => {
         if (fieldAvailableOnType(type, field)) {
           // First, check the selection set on this inline fragment
-          if (node.selectionSet && getFieldWasRequestedOnNode(node, field)) {
+          if (fieldIsRequestedOnNode(node, field)) {
             return true;
           }
 
@@ -74,7 +76,7 @@ export function RequiredFields(context, options) {
 
             if (
               nextAncestor.selectionSet &&
-              getFieldWasRequestedOnNode(nextAncestor, field)
+              fieldIsRequestedOnNode(nextAncestor, field)
             ) {
               return true;
             }
@@ -111,22 +113,26 @@ export function RequiredFields(context, options) {
     // enough to have some child fragment to include the field, since we don't
     // know if that fragment covers all of the possible type options.
     Field(node) {
-      const def = context.getFieldDef();
-      if (!def) {
+      const type = context.getType();
+
+      if(mustHaveSelection(type) && !node.selectionSet) {
+        context.reportError(
+          new GraphQLError(
+            `'${node.name.value}' field must have a selection since type '${type}' is a Composite Type`,
+            [node]
+          )
+        );
         return;
       }
 
       requiredFields.forEach(field => {
-        if (fieldAvailableOnType(def.type, field)) {
-          const fieldWasRequested = getFieldWasRequestedOnNode(node, field);
-          if (!fieldWasRequested) {
-            context.reportError(
-              new GraphQLError(
-                `'${field}' field required on '${node.name.value}'`,
-                [node]
-              )
-            );
-          }
+        if (fieldAvailableOnType(type, field) && !fieldIsRequestedOnNode(node, field)) {
+          context.reportError(
+            new GraphQLError(
+              `'${field}' field required on '${node.name.value}'`,
+              [node]
+            )
+          );
         }
       });
     }
