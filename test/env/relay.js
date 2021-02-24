@@ -97,6 +97,17 @@ ruleTester.run('relay', rule, {
           events
         }
       }\`
+    `,
+    `
+      Relay.QL\`
+        query StoresListQuery(
+          $count: Int
+          $cursor: String
+          $search: String
+        ) {
+          ...StoresList_stores
+        }
+      \`
     `
   ].map((code) => ({ options, parser, code })),
 

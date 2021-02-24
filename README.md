@@ -340,7 +340,7 @@ The full list of available validators is:
   - `NoFragmentCycles`
   - `NoUndefinedVariables` (*disabled by default in `relay`*)
   - `NoUnusedFragments` (*disabled by default in all envs*)
-  - `NoUnusedVariables`
+  - `NoUnusedVariables` (*disabled by default in `relay`*)
   - `OverlappingFieldsCanBeMerged`
   - `PossibleFragmentSpreads`
   - `ProvidedRequiredArguments` (*disabled by default in `relay`*)
