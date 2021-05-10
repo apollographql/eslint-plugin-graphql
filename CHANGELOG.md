@@ -2,7 +2,7 @@
 
 ### vNEXT
 
-- _Nothing yet!_
+- Handle spread fragments for the required fields. [PR #300](https://github.com/apollographql/eslint-plugin-graphql/pull/300) by [Arnav Mishra](https://github.com/arnmishra).
 
 ### v4.0.0
 
