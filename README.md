@@ -3,6 +3,12 @@
 [![Build Status](https://travis-ci.org/apollographql/eslint-plugin-graphql.svg?branch=master)](https://travis-ci.org/apollographql/eslint-plugin-graphql)
 [![Get on Slack](https://img.shields.io/badge/slack-join-orange.svg)](http://www.apollostack.com/#slack)
 
+---
+
+> **[2022-01-25] Note - Upcoming Deprecation Plans:** We (Apollo) are working towards fully deprecating this repository. We suggest migrating to the community-supported [graphql-eslint](https://github.com/dotansimha/graphql-eslint). We'll share detailed migration documentation when everything here is ready to be officially deprecated, but just a heads up in case you're planning on adopting anything here for a new project (which you still can of course if this project works for you - support for this project will be minimal however).
+
+---
+
 An ESLint plugin that checks tagged query strings inside JavaScript, or queries inside `.graphql` files, against a GraphQL schema.
 
 ```
