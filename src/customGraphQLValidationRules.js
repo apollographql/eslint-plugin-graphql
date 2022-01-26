@@ -18,6 +18,12 @@ function getFieldWasRequestedOnNode(node, field) {
   });
 }
 
+function getNodeHasSpreadFragment(node) {
+  return node.selectionSet.selections.some(n => {
+    return n.kind === "FragmentSpread"
+  });
+}
+
 function fieldAvailableOnType(type, field) {
   if (!type) {
     return false;
@@ -38,6 +44,12 @@ export function RequiredFields(context, options) {
         const type = context.getType();
 
         if (fieldAvailableOnType(type, field)) {
+          // If there is a spread fragment, that spread fragment will already be checked for every field.
+          const nodeHasSpreadFragment = getNodeHasSpreadFragment(node);
+          if (nodeHasSpreadFragment) {
+            return
+          }
+
           const fieldWasRequested = getFieldWasRequestedOnNode(node, field);
           if (!fieldWasRequested) {
             context.reportError(
@@ -58,6 +70,12 @@ export function RequiredFields(context, options) {
         const type = context.getType();
 
         if (fieldAvailableOnType(type, field)) {
+          // If there is a spread fragment, that spread fragment will already be checked for every field.
+          const nodeHasSpreadFragment = getNodeHasSpreadFragment(node);
+          if (nodeHasSpreadFragment) {
+            return
+          }
+
           // First, check the selection set on this inline fragment
           if (node.selectionSet && getFieldWasRequestedOnNode(node, field)) {
             return true;
@@ -118,6 +136,12 @@ export function RequiredFields(context, options) {
 
       requiredFields.forEach(field => {
         if (fieldAvailableOnType(def.type, field)) {
+          // If there is a spread fragment, that spread fragment will already be checked for every field.
+          const nodeHasSpreadFragment = getNodeHasSpreadFragment(node);
+          if (nodeHasSpreadFragment) {
+            return
+          }
+
           const fieldWasRequested = getFieldWasRequestedOnNode(node, field);
           if (!fieldWasRequested) {
             context.reportError(
