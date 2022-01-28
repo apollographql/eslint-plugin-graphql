@@ -2,7 +2,7 @@
 
 ### vNEXT
 
-- _Nothing yet!_
+- Update `graphql-config` to version `^4.0.2` [PR #3170](https://github.com/apollographql/eslint-plugin-graphql/pull/317)
 
 ### v4.0.0
 

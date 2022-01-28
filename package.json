@@ -42,7 +42,7 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.10.0",
-    "graphql-config": "^3.0.2",
+    "graphql-config": "^4.0.2",
     "lodash.flatten": "^4.4.0",
     "lodash.without": "^4.4.0"
   },
