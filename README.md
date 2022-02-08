@@ -323,7 +323,7 @@ module.exports = {
       tagName: 'FirstGQL',
       schemaJson: require('./schema-first.json')
     }, {
-      validators: ['FieldsOnCorrectType'],
+      validators: ['FieldsOnCorrectTypeRule'],
       tagName: 'SecondGQL',
       schemaJson: require('./schema-second.json')
     }]
@@ -335,33 +335,35 @@ module.exports = {
 ```
 
 The full list of available validators is:
-  - `ExecutableDefinitions`
-  - `FieldsOnCorrectType`
-  - `FragmentsOnCompositeTypes`
-  - `KnownArgumentNames`
-  - `KnownDirectives` (*disabled by default in `relay`*)
-  - `KnownFragmentNames` (*disabled by default in all envs*)
-  - `KnownTypeNames`
-  - `LoneAnonymousOperation`
-  - `NoFragmentCycles`
-  - `NoUndefinedVariables` (*disabled by default in `relay`*)
-  - `NoUnusedFragments` (*disabled by default in all envs*)
-  - `NoUnusedVariables`
-  - `OverlappingFieldsCanBeMerged`
-  - `PossibleFragmentSpreads`
-  - `ProvidedRequiredArguments` (*disabled by default in `relay`*)
-  - `ScalarLeafs` (*disabled by default in `relay`*)
-  - `SingleFieldSubscriptions`
-  - `UniqueArgumentNames`
-  - `UniqueDirectivesPerLocation`
-  - `UniqueFragmentNames`
-  - `UniqueInputFieldNames`
-  - `UniqueOperationNames`
-  - `UniqueVariableNames`
-  - `ValuesOfCorrectType`
-  - `VariablesAreInputTypes`
-  - `VariablesDefaultValueAllowed`
-  - `VariablesInAllowedPosition`
+  - `ExecutableDefinitionsRule`
+  - `FieldsOnCorrectTypeRule`
+  - `FragmentsOnCompositeTypesRule`
+  - `KnownArgumentNamesRule`
+  - `KnownDirectivesRule` (*disabled by default in `relay`*)
+  - `KnownFragmentNamesRule` (*disabled by default in all envs*)
+  - `KnownTypeNamesRule`
+  - `LoneAnonymousOperationRule`
+  - `NoFragmentCyclesRule`
+  - `NoUndefinedVariablesRule` (*disabled by default in `relay`*)
+  - `NoUnusedFragmentsRule` (*disabled by default in all envs*)
+  - `NoUnusedVariablesRule`
+  - `OverlappingFieldsCanBeMergedRule`
+  - `PossibleFragmentSpreadsRule`
+  - `ProvidedRequiredArgumentsRule` (*disabled by default in `relay`*)
+  - `ScalarLeafsRule` (*disabled by default in `relay`*)
+  - `SingleFieldSubscriptionsRule`
+  - `UniqueArgumentNamesRule`
+  - `UniqueDirectivesPerLocationRule`
+  - `UniqueFragmentNamesRule`
+  - `UniqueInputFieldNamesRule`
+  - `UniqueOperationNamesRule`
+  - `UniqueVariableNamesRule`
+  - `ValuesOfCorrectTypeRule`
+  - `VariablesAreInputTypesRule`
+  - `VariablesInAllowedPositionRule`
+  
+  ##### Note
+  If you're using a version of graphql less than v15, you should remove the validators `Rule` suffix
 
 ### Named Operations Validation Rule
 
