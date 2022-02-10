@@ -2,7 +2,7 @@
 
 ### vNEXT
 
-- _Nothing yet!_
+- Fix broken README for introspection link : fixed issue #292
 
 ### v4.0.0
 
