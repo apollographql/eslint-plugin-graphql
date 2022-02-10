@@ -49,11 +49,13 @@ const envGraphQLValidatorNames = {
     "KnownFragmentNames",
     "NoUndefinedVariables",
     "NoUnusedFragments",
+    "NoUnusedVariables",
     // `graphql`@15
     "KnownDirectivesRule",
     "KnownFragmentNamesRule",
     "NoUndefinedVariablesRule",
     "NoUnusedFragmentsRule",
+    "NoUnusedVariablesRule",
     // `graphql` < 14
     "ProvidedNonNullArguments",
     // `graphql`@14

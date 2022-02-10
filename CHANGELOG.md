@@ -2,7 +2,7 @@
 
 ### vNEXT
 
-- _Nothing yet!_
+- Disable `NoUnusedVariables` by default for `relay`. [PR #298](https://github.com/apollographql/eslint-plugin-graphql/pull/298) by [gtkatakura](https://github.com/gtkatakura)
 
 ### v4.0.0
 
