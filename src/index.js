@@ -178,6 +178,29 @@ export const rules = {
       );
     }
   },
+  "capitalized-named-operations": {
+    meta: {
+      schema: {
+        type: "array",
+        items: {
+          additionalProperties: false,
+          properties: { ...defaultRuleProperties },
+          ...schemaPropsExclusiveness
+        }
+      }
+    },
+    create: context => {
+      return createRule(context, optionGroup =>
+        parseOptions(
+          {
+            validators: ["OperationNamesMustBeCapitalized"],
+            ...optionGroup
+          },
+          context
+        )
+      );
+    }
+  },
   "required-fields": {
     meta: {
       schema: {

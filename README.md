@@ -405,6 +405,50 @@ module.exports = {
   ]
 }
 ```
+
+### Capitalization of a first letter of Named Operation rule
+
+The Capitalize Named Operation rule validates that all existing operation names are capitalized.
+
+**Pass**
+```
+query FetchUsername {
+  viewer {
+    name
+  }
+}
+```
+
+**Fail**
+```
+query fetchUsername {
+  viewer {
+    name
+  }
+}
+```
+
+The rule is defined as `graphql/capitalized-named-operations`.
+
+```js
+// In a file called .eslintrc.js
+module.exports = {
+  parser: "babel-eslint",
+  rules: {
+    "graphql/template-strings": ['error', {
+      env: 'apollo',
+      schemaJson: require('./schema.json'),
+    }],
+    "graphql/capitalized-named-operations": ['warn', {
+      schemaJson: require('./schema.json'),
+    }],
+  },
+  plugins: [
+    'graphql'
+  ]
+}
+```
+
 ### Required Fields Validation Rule
 
 The Required Fields rule validates that any specified required field is part of the query, but only if that field is available in schema. This is useful to ensure that query results are cached properly in the client.
