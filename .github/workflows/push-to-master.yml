@@ -21,10 +21,10 @@ jobs:
 
     - name: install
       run: | 
-        "npm ci"
-        "npm run prepare"
+        npm ci
+        npm run prepare
 
     - name: Publish
-      run: "npm publish"
+      run: npm publish
       env:
         NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
