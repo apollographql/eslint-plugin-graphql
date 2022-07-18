@@ -1,0 +1,30 @@
+name: Push to Master
+
+on: 
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Use Node.js 16
+      uses: actions/setup-node@v1
+      with:
+        node-version: 16.15.0
+        registry-url: https://npm.pkg.github.com
+        scope: "@osgmarketplace"
+
+    - name: install
+      run: | 
+        "npm ci"
+        "npm run prepare"
+
+    - name: Publish
+      run: "npm publish"
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

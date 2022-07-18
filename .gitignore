@@ -1,5 +1,6 @@
 node_modules
 lib
+dist
 test/schema.json
 test/second-schema.json
 .vscode/

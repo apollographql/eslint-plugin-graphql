@@ -1,14 +1,13 @@
 {
-  "name": "eslint-plugin-graphql",
-  "version": "4.0.0",
+  "name": "@osgmarketplace/eslint-plugin-graphql",
+  "version": "4.0.1",
   "description": "GraphQL ESLint plugin.",
   "author": "Sashko Stubailo",
-  "main": "lib/index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "test": "tav --ci && mocha test/index.js",
-    "prepare": "babel ./src --ignore test --out-dir ./lib",
+    "test": "mocha test/index.js",
+    "prepare": "babel ./src --ignore test --out-dir ./dist",
     "pretest": "babel-node test/updateSchemaJson.js",
-    "tav": "tav",
     "lint": "eslint 'src/**/*.js' 'test/**/*.js'"
   },
   "homepage": "https://github.com/apollostack/eslint-plugin-graphql",
@@ -25,15 +24,10 @@
     "@babel/register": "7.10.1",
     "babel-eslint": "10.1.0",
     "eslint": "6.8.0",
-    "graphql": "15.0.0",
+    "graphql": "^16.0.0",
     "mocha": "7.2.0",
     "pretty-quick": "2.0.1",
     "test-all-versions": "4.1.1"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged"
-    }
   },
   "engines": {
     "node": ">=10.0"
@@ -47,6 +41,6 @@
     "lodash.without": "^4.4.0"
   },
   "peerDependencies": {
-    "graphql": "^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0"
+    "graphql": ">=12"
   }
 }
