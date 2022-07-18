@@ -25,4 +25,3 @@ jobs:
         npm ci
         npm run lint
         npm run prepare
-        npm test
