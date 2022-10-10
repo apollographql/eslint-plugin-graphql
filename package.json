@@ -1,6 +1,6 @@
 {
-  "name": "@osgmarketplace/eslint-plugin-graphql",
-  "version": "4.0.2",
+  "name": "@buildresonance/eslint-plugin-graphql",
+  "version": "4.0.3",
   "description": "GraphQL ESLint plugin.",
   "author": "Sashko Stubailo",
   "main": "dist/index.js",
@@ -10,10 +10,10 @@
     "pretest": "babel-node test/updateSchemaJson.js",
     "lint": "eslint 'src/**/*.js' 'test/**/*.js'"
   },
-  "homepage": "https://github.com/osgmarketplace/eslint-plugin-graphql",
+  "homepage": "https://github.com/buildresonance/eslint-plugin-graphql",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/osgmarketplace/eslint-plugin-graphql.git"
+    "url": "git+https://github.com/buildresonance/eslint-plugin-graphql.git"
   },
   "devDependencies": {
     "@babel/cli": "7.10.1",
