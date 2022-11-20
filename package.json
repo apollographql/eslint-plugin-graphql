@@ -26,7 +26,7 @@
     "babel-eslint": "10.1.0",
     "eslint": "6.8.0",
     "graphql": "15.0.0",
-    "mocha": "7.2.0",
+    "mocha": "9.2.2",
     "pretty-quick": "2.0.1",
     "test-all-versions": "4.1.1"
   },
@@ -42,7 +42,7 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.10.0",
-    "graphql-config": "^3.0.2",
+    "graphql-config": "^4.0.0",
     "lodash.flatten": "^4.4.0",
     "lodash.without": "^4.4.0"
   },
