@@ -28,7 +28,7 @@
     "graphql": "15.0.0",
     "mocha": "7.2.0",
     "pretty-quick": "2.0.1",
-    "test-all-versions": "4.1.1"
+    "test-all-versions": "5.0.1"
   },
   "husky": {
     "hooks": {
