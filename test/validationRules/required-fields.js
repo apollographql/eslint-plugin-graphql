@@ -17,9 +17,29 @@ const requiredFieldsTestCases = {
     "const x = gql`fragment Name on Greetings { id hello }`",
     "const x = gql`fragment Foo on FooBar { id, hello, foo }`",
     "const x = gql`fragment Id on Node { id ... on NodeA { fieldA } }`",
+    "const x = gql`fragment Id on Packs { id }`",
     "const x = gql`query { nodes { id ... on NodeA { fieldA } } }`",
+    "const x = gql`query { packs { id } }`"
   ],
   fail: [
+    {
+      code: "const x = gql`query { packs { slug } }`",
+      errors: [
+        {
+          message: `'id' field required on 'packs'`,
+          type: "TaggedTemplateExpression"
+        }
+      ]
+    },
+    {
+      code: 'const x = gql`fragment SelectedPack on Pack { slug }`',
+      errors: [
+        {
+          message: `'id' field required on 'fragment SelectedPack on Pack'`,
+          type: 'TaggedTemplateExpression',
+        },
+      ],
+    },
     {
       code: "const x = gql`query { stories { comments { text } } }`",
       errors: [
@@ -132,6 +152,29 @@ options = [
   }
 ];
 ruleTester.run("testing required-fields rule without env", rules["required-fields"], {
+  valid: requiredFieldsTestCases.pass.map(code => ({
+    options,
+    parserOptions,
+    code
+  })),
+  invalid: requiredFieldsTestCases.fail.map(({ code, errors }) => ({
+    options,
+    parserOptions,
+    code,
+    errors
+  }))
+});
+
+// Validate required-fields with
+options = [
+  {
+    schemaJson,
+    tagName: "gql",
+    requiredFields: ["id", "slug"],
+    ignoreIfDeprecated: true
+  }
+];
+ruleTester.run("testing required-fields rule with ignoreIfDeprecated true", rules["required-fields"], {
   valid: requiredFieldsTestCases.pass.map(code => ({
     options,
     parserOptions,

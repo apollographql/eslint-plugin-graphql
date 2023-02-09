@@ -18,26 +18,41 @@ function getFieldWasRequestedOnNode(node, field) {
   });
 }
 
-function fieldAvailableOnType(type, field) {
+function fieldOnType(type, field) {
+  if (type._fields) {
+    const result = type._fields[field];
+    if (result) {
+      return result;
+    }
+  }
+  if (type.ofType) {
+    return fieldOnType(type.ofType, field);
+  }
+  return undefined;
+}
+
+function fieldAvailableOnType(type, field, includeDeprecated = true) {
   if (!type) {
     return false;
   }
-
-  return (
-    (type._fields && type._fields[field]) ||
-    (type.ofType && fieldAvailableOnType(type.ofType, field))
-  );
+  const resolvedField = fieldOnType(type, field);
+  if (!resolvedField) {
+    return false;
+  }
+  return includeDeprecated || !resolvedField.isDeprecated;
 }
 
 export function RequiredFields(context, options) {
-  const { requiredFields } = options;
+  const { requiredFields, ignoreIfDeprecated = false } = options;
+
+  const includeDeprecated = !ignoreIfDeprecated;
 
   return {
     FragmentDefinition(node) {
       requiredFields.forEach(field => {
         const type = context.getType();
 
-        if (fieldAvailableOnType(type, field)) {
+        if (fieldAvailableOnType(type, field, includeDeprecated)) {
           const fieldWasRequested = getFieldWasRequestedOnNode(node, field);
           if (!fieldWasRequested) {
             context.reportError(
@@ -57,7 +72,7 @@ export function RequiredFields(context, options) {
       requiredFields.forEach(field => {
         const type = context.getType();
 
-        if (fieldAvailableOnType(type, field)) {
+        if (fieldAvailableOnType(type, field, includeDeprecated)) {
           // First, check the selection set on this inline fragment
           if (node.selectionSet && getFieldWasRequestedOnNode(node, field)) {
             return true;
@@ -117,7 +132,7 @@ export function RequiredFields(context, options) {
       }
 
       requiredFields.forEach(field => {
-        if (fieldAvailableOnType(def.type, field)) {
+        if (fieldAvailableOnType(def.type, field, includeDeprecated)) {
           const fieldWasRequested = getFieldWasRequestedOnNode(node, field);
           if (!fieldWasRequested) {
             context.reportError(

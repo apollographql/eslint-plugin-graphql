@@ -32,6 +32,7 @@ type Query {
   stories: [Story!]!
   greetingOrStory: GreetingOrStory
   nodes: [Node]
+  packs: [Pack]
 }
 
 type AllFilmsObj {
@@ -87,4 +88,9 @@ type NodeA implements Node {
 type NodeB implements Node{
   id: ID!
   fieldB: String
+}
+
+type Pack {
+  id: ID!
+  slug: String @deprecated(reason: "Please use synonym id")
 }

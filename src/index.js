@@ -192,6 +192,10 @@ export const rules = {
               items: {
                 type: "string"
               }
+            },
+            ignoreIfDeprecated: {
+              type: "boolean",
+              default: false
             }
           },
           required: ["requiredFields"],
