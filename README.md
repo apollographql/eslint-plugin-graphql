@@ -1,18 +1,13 @@
-# eslint-plugin-graphql
-[![npm version](https://badge.fury.io/js/eslint-plugin-graphql.svg)](https://badge.fury.io/js/eslint-plugin-graphql)
-[![Build Status](https://travis-ci.org/apollographql/eslint-plugin-graphql.svg?branch=master)](https://travis-ci.org/apollographql/eslint-plugin-graphql)
-[![Get on Slack](https://img.shields.io/badge/slack-join-orange.svg)](http://www.apollostack.com/#slack)
+# graphql-eslint-plugin
 
----
-
-> **[2022-01-25] Note - Upcoming Deprecation Plans:** We (Apollo) are working towards fully deprecating this repository. We suggest migrating to the community-supported [graphql-eslint](https://github.com/dotansimha/graphql-eslint). We'll share detailed migration documentation when everything here is ready to be officially deprecated, but just a heads up in case you're planning on adopting anything here for a new project (which you still can of course if this project works for you - support for this project will be minimal however).
+> **Note - This project is a fork of [eslint-plugin-graphql](https://github.com/apollographql/eslint-plugin-graphql). Please use [@graphql-eslint/eslint-plugin](https://the-guild.dev/graphql/eslint/docs) as advised by the apollo team. This fork will likely only manage dependency updates to support existing users of [eslint-plugin-graphql](https://github.com/apollographql/eslint-plugin-graphql).**
 
 ---
 
 An ESLint plugin that checks tagged query strings inside JavaScript, or queries inside `.graphql` files, against a GraphQL schema.
 
 ```
-npm install eslint-plugin-graphql
+npm install graphql-eslint-plugin
 ```
 
 ![Screenshot from Atom](https://github.com/apollostack/eslint-plugin-graphql/raw/master/screenshot.png)
@@ -94,27 +89,28 @@ eslint . --ext .js --ext .gql --ext .graphql
 module.exports = {
   parser: "babel-eslint",
   rules: {
-    "graphql/template-strings": ['error', {
-      // Import default settings for your GraphQL client. Supported values:
-      // 'apollo', 'relay', 'lokka', 'fraql', 'literal'
-      env: 'apollo',
+    "graphql/template-strings": [
+      "error",
+      {
+        // Import default settings for your GraphQL client. Supported values:
+        // 'apollo', 'relay', 'lokka', 'fraql', 'literal'
+        env: "apollo",
 
-      // Import your schema JSON here
-      schemaJson: require('./schema.json'),
+        // Import your schema JSON here
+        schemaJson: require("./schema.json"),
 
-      // OR provide absolute path to your schema JSON (but not if using `eslint --cache`!)
-      // schemaJsonFilepath: path.resolve(__dirname, './schema.json'),
+        // OR provide absolute path to your schema JSON (but not if using `eslint --cache`!)
+        // schemaJsonFilepath: path.resolve(__dirname, './schema.json'),
 
-      // OR provide the schema in the Schema Language format
-      // schemaString: printSchema(schema),
+        // OR provide the schema in the Schema Language format
+        // schemaString: printSchema(schema),
 
-      // tagName is gql by default
-    }]
+        // tagName is gql by default
+      },
+    ],
   },
-  plugins: [
-    'graphql'
-  ]
-}
+  plugins: ["graphql"],
+};
 ```
 
 ### Example config for Relay
@@ -124,27 +120,28 @@ module.exports = {
 module.exports = {
   parser: "babel-eslint",
   rules: {
-    "graphql/template-strings": ['error', {
-      // Import default settings for your GraphQL client. Supported values:
-      // 'apollo', 'relay', 'lokka', 'fraql', 'literal'
-      env: 'relay',
+    "graphql/template-strings": [
+      "error",
+      {
+        // Import default settings for your GraphQL client. Supported values:
+        // 'apollo', 'relay', 'lokka', 'fraql', 'literal'
+        env: "relay",
 
-      // Import your schema JSON here
-      schemaJson: require('./schema.json'),
+        // Import your schema JSON here
+        schemaJson: require("./schema.json"),
 
-      // OR provide absolute path to your schema JSON (but not if using `eslint --cache`!)
-      // schemaJsonFilepath: path.resolve(__dirname, './schema.json'),
+        // OR provide absolute path to your schema JSON (but not if using `eslint --cache`!)
+        // schemaJsonFilepath: path.resolve(__dirname, './schema.json'),
 
-      // OR provide the schema in the Schema Language format
-      // schemaString: printSchema(schema),
+        // OR provide the schema in the Schema Language format
+        // schemaString: printSchema(schema),
 
-      // tagName is set for you to Relay.QL
-    }]
+        // tagName is set for you to Relay.QL
+      },
+    ],
   },
-  plugins: [
-    'graphql'
-  ]
-}
+  plugins: ["graphql"],
+};
 ```
 
 ### Example config for Lokka
@@ -154,28 +151,29 @@ module.exports = {
 module.exports = {
   parser: "babel-eslint",
   rules: {
-    "graphql/template-strings": ['error', {
-      // Import default settings for your GraphQL client. Supported values:
-      // 'apollo', 'relay', 'lokka', 'fraql', 'literal'
-      env: 'lokka',
+    "graphql/template-strings": [
+      "error",
+      {
+        // Import default settings for your GraphQL client. Supported values:
+        // 'apollo', 'relay', 'lokka', 'fraql', 'literal'
+        env: "lokka",
 
-      // Import your schema JSON here
-      schemaJson: require('./schema.json'),
+        // Import your schema JSON here
+        schemaJson: require("./schema.json"),
 
-      // OR provide absolute path to your schema JSON (but not if using `eslint --cache`!)
-      // schemaJsonFilepath: path.resolve(__dirname, './schema.json'),
+        // OR provide absolute path to your schema JSON (but not if using `eslint --cache`!)
+        // schemaJsonFilepath: path.resolve(__dirname, './schema.json'),
 
-      // OR provide the schema in the Schema Language format
-      // schemaString: printSchema(schema),
+        // OR provide the schema in the Schema Language format
+        // schemaString: printSchema(schema),
 
-      // Optional, the name of the template tag, defaults to 'gql'
-      tagName: 'gql'
-    }]
+        // Optional, the name of the template tag, defaults to 'gql'
+        tagName: "gql",
+      },
+    ],
   },
-  plugins: [
-    'graphql'
-  ]
-}
+  plugins: ["graphql"],
+};
 ```
 
 ### Example config for FraQL
@@ -185,28 +183,29 @@ module.exports = {
 module.exports = {
   parser: "babel-eslint",
   rules: {
-    "graphql/template-strings": ['error', {
-      // Import default settings for your GraphQL client. Supported values:
-      // 'apollo', 'relay', 'lokka', 'fraql', 'literal'
-      env: 'fraql',
+    "graphql/template-strings": [
+      "error",
+      {
+        // Import default settings for your GraphQL client. Supported values:
+        // 'apollo', 'relay', 'lokka', 'fraql', 'literal'
+        env: "fraql",
 
-      // Import your schema JSON here
-      schemaJson: require('./schema.json'),
+        // Import your schema JSON here
+        schemaJson: require("./schema.json"),
 
-      // OR provide absolute path to your schema JSON
-      // schemaJsonFilepath: path.resolve(__dirname, './schema.json'),
+        // OR provide absolute path to your schema JSON
+        // schemaJsonFilepath: path.resolve(__dirname, './schema.json'),
 
-      // OR provide the schema in the Schema Language format
-      // schemaString: printSchema(schema),
+        // OR provide the schema in the Schema Language format
+        // schemaString: printSchema(schema),
 
-      // Optional, the name of the template tag, defaults to 'gql'
-      tagName: 'gql'
-    }]
+        // Optional, the name of the template tag, defaults to 'gql'
+        tagName: "gql",
+      },
+    ],
   },
-  plugins: [
-    'graphql'
-  ]
-}
+  plugins: ["graphql"],
+};
 ```
 
 ### Example config for literal graphql files
@@ -216,27 +215,28 @@ module.exports = {
 module.exports = {
   parser: "babel-eslint",
   rules: {
-    "graphql/template-strings": ['error', {
-      // Import default settings for your GraphQL client. Supported values:
-      // 'apollo', 'relay', 'lokka', 'fraql', 'literal'
-      env: 'literal',
+    "graphql/template-strings": [
+      "error",
+      {
+        // Import default settings for your GraphQL client. Supported values:
+        // 'apollo', 'relay', 'lokka', 'fraql', 'literal'
+        env: "literal",
 
-      // Import your schema JSON here
-      schemaJson: require('./schema.json'),
+        // Import your schema JSON here
+        schemaJson: require("./schema.json"),
 
-      // OR provide absolute path to your schema JSON (but not if using `eslint --cache`!)
-      // schemaJsonFilepath: path.resolve(__dirname, './schema.json'),
+        // OR provide absolute path to your schema JSON (but not if using `eslint --cache`!)
+        // schemaJsonFilepath: path.resolve(__dirname, './schema.json'),
 
-      // OR provide the schema in the Schema Language format
-      // schemaString: printSchema(schema),
+        // OR provide the schema in the Schema Language format
+        // schemaString: printSchema(schema),
 
-      // tagName is set automatically
-    }]
+        // tagName is set automatically
+      },
+    ],
   },
-  plugins: [
-    'graphql'
-  ]
-}
+  plugins: ["graphql"],
+};
 ```
 
 ### Additional Schemas or Tags
@@ -247,20 +247,22 @@ This plugin can be used to validate against multiple schemas by identifying them
 module.exports = {
   parser: "babel-eslint",
   rules: {
-    "graphql/template-strings": ['error', {
-      env: 'apollo',
-      tagName: 'FirstGQL',
-      schemaJson: require('./schema-first.json')
-    }, {
-      env: 'relay',
-      tagName: 'SecondGQL',
-      schemaJson: require('./schema-second.json')
-    }]
+    "graphql/template-strings": [
+      "error",
+      {
+        env: "apollo",
+        tagName: "FirstGQL",
+        schemaJson: require("./schema-first.json"),
+      },
+      {
+        env: "relay",
+        tagName: "SecondGQL",
+        schemaJson: require("./schema-second.json"),
+      },
+    ],
   },
-  plugins: [
-    'graphql'
-  ]
-}
+  plugins: ["graphql"],
+};
 ```
 
 ### Example config when using [.graphqlconfig](https://github.com/graphcool/graphql-config)
@@ -273,38 +275,42 @@ properties (`schemaJson`, `schemaJsonFilepath` and `schemaString`) from rule con
 module.exports = {
   parser: "babel-eslint",
   rules: {
-    "graphql/template-strings": ['error', {
-      // Import default settings for your GraphQL client. Supported values:
-      // 'apollo', 'relay', 'lokka', 'fraql', 'literal'
-      env: 'literal'
-      // no need to specify schema here, it will be automatically determined using .graphqlconfig
-    }]
+    "graphql/template-strings": [
+      "error",
+      {
+        // Import default settings for your GraphQL client. Supported values:
+        // 'apollo', 'relay', 'lokka', 'fraql', 'literal'
+        env: "literal",
+        // no need to specify schema here, it will be automatically determined using .graphqlconfig
+      },
+    ],
   },
-  plugins: [
-    'graphql'
-  ]
-}
+  plugins: ["graphql"],
+};
 ```
 
 In case you use additional schemas, specify `projectName` from `.graphqlconfig` for each `tagName`:
+
 ```js
 module.exports = {
   parser: "babel-eslint",
   rules: {
-    "graphql/template-strings": ['error', {
-      env: 'apollo',
-      tagName: 'FirstGQL',
-      projectName: 'FirstGQLProject'
-    }, {
-      env: 'relay',
-      tagName: 'SecondGQL',
-      projectName: 'SecondGQLProject'
-    }]
+    "graphql/template-strings": [
+      "error",
+      {
+        env: "apollo",
+        tagName: "FirstGQL",
+        projectName: "FirstGQLProject",
+      },
+      {
+        env: "relay",
+        tagName: "SecondGQL",
+        projectName: "SecondGQLProject",
+      },
+    ],
   },
-  plugins: [
-    'graphql'
-  ]
-}
+  plugins: ["graphql"],
+};
 ```
 
 ### Selecting Validation Rules
@@ -317,57 +323,61 @@ The `validators` setting can be set either to a list of specific validator names
 module.exports = {
   parser: "babel-eslint",
   rules: {
-    "graphql/template-strings": ['error', {
-      env: 'apollo',
-      validators: 'all',
-      tagName: 'FirstGQL',
-      schemaJson: require('./schema-first.json')
-    }, {
-      validators: ['FieldsOnCorrectType'],
-      tagName: 'SecondGQL',
-      schemaJson: require('./schema-second.json')
-    }]
+    "graphql/template-strings": [
+      "error",
+      {
+        env: "apollo",
+        validators: "all",
+        tagName: "FirstGQL",
+        schemaJson: require("./schema-first.json"),
+      },
+      {
+        validators: ["FieldsOnCorrectType"],
+        tagName: "SecondGQL",
+        schemaJson: require("./schema-second.json"),
+      },
+    ],
   },
-  plugins: [
-    'graphql'
-  ]
-}
+  plugins: ["graphql"],
+};
 ```
 
 The full list of available validators is:
-  - `ExecutableDefinitions`
-  - `FieldsOnCorrectType`
-  - `FragmentsOnCompositeTypes`
-  - `KnownArgumentNames`
-  - `KnownDirectives` (*disabled by default in `relay`*)
-  - `KnownFragmentNames` (*disabled by default in all envs*)
-  - `KnownTypeNames`
-  - `LoneAnonymousOperation`
-  - `NoFragmentCycles`
-  - `NoUndefinedVariables` (*disabled by default in `relay`*)
-  - `NoUnusedFragments` (*disabled by default in all envs*)
-  - `NoUnusedVariables`
-  - `OverlappingFieldsCanBeMerged`
-  - `PossibleFragmentSpreads`
-  - `ProvidedRequiredArguments` (*disabled by default in `relay`*)
-  - `ScalarLeafs` (*disabled by default in `relay`*)
-  - `SingleFieldSubscriptions`
-  - `UniqueArgumentNames`
-  - `UniqueDirectivesPerLocation`
-  - `UniqueFragmentNames`
-  - `UniqueInputFieldNames`
-  - `UniqueOperationNames`
-  - `UniqueVariableNames`
-  - `ValuesOfCorrectType`
-  - `VariablesAreInputTypes`
-  - `VariablesDefaultValueAllowed`
-  - `VariablesInAllowedPosition`
+
+- `ExecutableDefinitions`
+- `FieldsOnCorrectType`
+- `FragmentsOnCompositeTypes`
+- `KnownArgumentNames`
+- `KnownDirectives` (_disabled by default in `relay`_)
+- `KnownFragmentNames` (_disabled by default in all envs_)
+- `KnownTypeNames`
+- `LoneAnonymousOperation`
+- `NoFragmentCycles`
+- `NoUndefinedVariables` (_disabled by default in `relay`_)
+- `NoUnusedFragments` (_disabled by default in all envs_)
+- `NoUnusedVariables`
+- `OverlappingFieldsCanBeMerged`
+- `PossibleFragmentSpreads`
+- `ProvidedRequiredArguments` (_disabled by default in `relay`_)
+- `ScalarLeafs` (_disabled by default in `relay`_)
+- `SingleFieldSubscriptions`
+- `UniqueArgumentNames`
+- `UniqueDirectivesPerLocation`
+- `UniqueFragmentNames`
+- `UniqueInputFieldNames`
+- `UniqueOperationNames`
+- `UniqueVariableNames`
+- `ValuesOfCorrectType`
+- `VariablesAreInputTypes`
+- `VariablesDefaultValueAllowed`
+- `VariablesInAllowedPosition`
 
 ### Named Operations Validation Rule
 
 The Named Operation rule validates that all operations are named. Naming operations is valuable for including in server-side logs and debugging.
 
 **Pass**
+
 ```
 query FetchUsername {
   viewer {
@@ -377,6 +387,7 @@ query FetchUsername {
 ```
 
 **Fail**
+
 ```
 query {
   viewer {
@@ -392,24 +403,30 @@ The rule is defined as `graphql/named-operations`.
 module.exports = {
   parser: "babel-eslint",
   rules: {
-    "graphql/template-strings": ['error', {
-      env: 'apollo',
-      schemaJson: require('./schema.json'),
-    }],
-    "graphql/named-operations": ['warn', {
-      schemaJson: require('./schema.json'),
-    }],
+    "graphql/template-strings": [
+      "error",
+      {
+        env: "apollo",
+        schemaJson: require("./schema.json"),
+      },
+    ],
+    "graphql/named-operations": [
+      "warn",
+      {
+        schemaJson: require("./schema.json"),
+      },
+    ],
   },
-  plugins: [
-    'graphql'
-  ]
-}
+  plugins: ["graphql"],
+};
 ```
+
 ### Required Fields Validation Rule
 
 The Required Fields rule validates that any specified required field is part of the query, but only if that field is available in schema. This is useful to ensure that query results are cached properly in the client.
 
 **Pass**
+
 ```
 // 'uuid' required and present in the schema
 
@@ -431,6 +448,7 @@ query ViewerName {
 ```
 
 **Pass**
+
 ```
 // 'uuid' usually required but not present in the schema here
 
@@ -450,6 +468,7 @@ query ViewerName {
 ```
 
 **Fail**
+
 ```
 // 'uuid' required and present in the schema
 
@@ -475,19 +494,17 @@ The rule is defined as `graphql/required-fields` and requires the `requiredField
 // In a file called .eslintrc.js
 module.exports = {
   rules: {
-    'graphql/required-fields': [
-      'error',
+    "graphql/required-fields": [
+      "error",
       {
-        env: 'apollo',
-        schemaJsonFilepath: path.resolve(__dirname, './schema.json'),
-        requiredFields: ['uuid'],
+        env: "apollo",
+        schemaJsonFilepath: path.resolve(__dirname, "./schema.json"),
+        requiredFields: ["uuid"],
       },
     ],
   },
-  plugins: [
-    'graphql'
-  ]
-}
+  plugins: ["graphql"],
+};
 ```
 
 ### Capitalization of a first letter of a Type name
@@ -495,6 +512,7 @@ module.exports = {
 This rule enforces that first letter of types is capitalized
 
 **Pass**
+
 ```
 query {
   someUnion {
@@ -506,6 +524,7 @@ query {
 ```
 
 **Fail**
+
 ```
 query {
   someUnion {
@@ -523,18 +542,22 @@ The rule is defined as `graphql/capitalized-type-name`.
 module.exports = {
   parser: "babel-eslint",
   rules: {
-    "graphql/template-strings": ['error', {
-      env: 'apollo',
-      schemaJson: require('./schema.json'),
-    }],
-    "graphql/capitalized-type-name": ['warn', {
-      schemaJson: require('./schema.json'),
-    }],
+    "graphql/template-strings": [
+      "error",
+      {
+        env: "apollo",
+        schemaJson: require("./schema.json"),
+      },
+    ],
+    "graphql/capitalized-type-name": [
+      "warn",
+      {
+        schemaJson: require("./schema.json"),
+      },
+    ],
   },
-  plugins: [
-    'graphql'
-  ]
-}
+  plugins: ["graphql"],
+};
 ```
 
 ### No Deprecated Fields Validation Rule
@@ -542,6 +565,7 @@ module.exports = {
 The No Deprecated Fields rule validates that no deprecated fields are part of the query. This is useful to discover fields that have been marked as deprecated and shouldn't be used.
 
 **Fail**
+
 ```
 // 'id' requested and marked as deprecated in the schema
 
@@ -567,16 +591,14 @@ The rule is defined as `graphql/no-deprecated-fields`.
 // In a file called .eslintrc.js
 module.exports = {
   rules: {
-    'graphql/no-deprecated-fields': [
-      'error',
+    "graphql/no-deprecated-fields": [
+      "error",
       {
-        env: 'relay',
-        schemaJson: require('./schema.json')
+        env: "relay",
+        schemaJson: require("./schema.json"),
       },
     ],
   },
-  plugins: [
-    'graphql'
-  ]
-}
+  plugins: ["graphql"],
+};
 ```
