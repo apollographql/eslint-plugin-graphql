@@ -3,13 +3,13 @@ import schemaJson from "../schema.json";
 
 import { ruleTester } from "../helpers";
 
-const parser = require.resolve('babel-eslint');
+const parser = require.resolve("@babel/eslint-parser");
 
 const options = [
   {
     schemaJson,
-    env: "relay"
-  }
+    env: "relay",
+  },
 ];
 
 const noDeprecatedFieldsCases = {
@@ -37,7 +37,7 @@ const noDeprecatedFieldsCases = {
         }
       })
       class HelloApp extends React.Component {}
-    `
+    `,
   ],
   fail: [
     {
@@ -61,9 +61,9 @@ const noDeprecatedFieldsCases = {
             "The field Greetings.hi is deprecated. Please use the more formal greeting 'hello'",
           type: "TaggedTemplateExpression",
           line: 6,
-          column: 17
-        }
-      ]
+          column: 17,
+        },
+      ],
     },
     {
       options,
@@ -86,27 +86,27 @@ const noDeprecatedFieldsCases = {
             "The enum value ImageSize.SMALL is deprecated. Use 'LARGE' instead",
           type: "TaggedTemplateExpression",
           line: 6,
-          column: 29
-        }
-      ]
-    }
-  ]
+          column: 29,
+        },
+      ],
+    },
+  ],
 };
 
 ruleTester.run(
   "testing no-deprecated-fields rule",
   rules["no-deprecated-fields"],
   {
-    valid: noDeprecatedFieldsCases.pass.map(code => ({
+    valid: noDeprecatedFieldsCases.pass.map((code) => ({
       options,
       parser,
-      code
+      code,
     })),
     invalid: noDeprecatedFieldsCases.fail.map(({ code, errors }) => ({
       options,
       parser,
       code,
-      errors
-    }))
+      errors,
+    })),
   }
 );

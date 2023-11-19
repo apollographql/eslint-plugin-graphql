@@ -1,4 +1,4 @@
-import './apollo';
-import './lokka';
-import './fraql';
-import './relay';
+import "./apollo";
+import "./lokka";
+import "./fraql";
+import "./relay";

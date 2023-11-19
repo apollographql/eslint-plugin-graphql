@@ -1,21 +1,15 @@
-import schemaJson from '../schema.json';
+import schemaJson from "../schema.json";
 
-import {
-  rule,
-  ruleTester,
-} from '../helpers';
+import { rule, ruleTester, parserOptions } from "../helpers";
 
 const options = [
   {
     schemaJson,
-    env: 'relay',
+    env: "relay",
   },
 ];
 
-// Need this to support statics
-const parser = require.resolve('babel-eslint');
-
-ruleTester.run('relay', rule, {
+ruleTester.run("relay", rule, {
   valid: [
     `
       @relay({
@@ -97,13 +91,19 @@ ruleTester.run('relay', rule, {
           events
         }
       }\`
-    `
-  ].map((code) => ({ options, parser, code })),
+    `,
+  ].map((code) => ({
+    options,
+    parser: require.resolve("@babel/eslint-parser"),
+    parserOptions,
+    code,
+  })),
 
   invalid: [
     {
       options,
-      parser,
+      parser: require.resolve("@babel/eslint-parser"),
+      parserOptions,
       code: `
         @relay({
           fragments: {
@@ -116,18 +116,22 @@ ruleTester.run('relay', rule, {
         })
         class HelloApp extends React.Component {}
       `,
-      errors: [{
-        message: 'Cannot query field "hellox" on type "Greetings". Did you mean "hello"?',
-        type: 'TaggedTemplateExpression',
-        line: 6,
-        column: 17
-      }]
+      errors: [
+        {
+          message:
+            'Cannot query field "hellox" on type "Greetings". Did you mean "hello"?',
+          type: "TaggedTemplateExpression",
+          line: 6,
+          column: 17,
+        },
+      ],
     },
     // Example from issue report:
     // https://github.com/apollostack/eslint-plugin-graphql/issues/12#issuecomment-215445880
     {
       options,
-      parser,
+      parser: require.resolve("@babel/eslint-parser"),
+      parserOptions,
       code: `
         import React, { Component, View } from 'react-native';
         import Relay from 'react-relay';
@@ -170,12 +174,14 @@ ruleTester.run('relay', rule, {
       `,
       errors: [
         {
-          message: 'Cannot query field "nonExistentField" on type "PublicUser".',
+          message:
+            'Cannot query field "nonExistentField" on type "PublicUser".',
           line: 10,
           column: 17,
         },
         {
-          message: 'Cannot query field "nonExistentField" on type "PublicUser".',
+          message:
+            'Cannot query field "nonExistentField" on type "PublicUser".',
           line: 34,
           column: 19,
         },

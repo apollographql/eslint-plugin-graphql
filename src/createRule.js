@@ -24,7 +24,7 @@ function replaceExpressions(node, context, env) {
         context.report({
           node: value,
           message:
-            "Invalid interpolation - fragment interpolation must occur outside of the brackets."
+            "Invalid interpolation - fragment interpolation must occur outside of the brackets.",
         });
         throw new Error("Invalid interpolation");
       }
@@ -32,7 +32,7 @@ function replaceExpressions(node, context, env) {
 
     if (!element.tail) {
       // Preserve location of errors by replacing with exactly the same length
-      const nameLength = value.end - value.start;
+      const nameLength = value.range[1] - value.range[0];
 
       if (env === "relay" && /:\s*$/.test(chunk)) {
         // The chunk before this one had a colon at the end, so this
@@ -62,7 +62,7 @@ function replaceExpressions(node, context, env) {
         // Invalid interpolation
         context.report({
           node: value,
-          message: "Invalid interpolation - not a valid fragment or variable."
+          message: "Invalid interpolation - not a valid fragment or variable.",
         });
         throw new Error("Invalid interpolation");
       }
@@ -90,7 +90,7 @@ function locFrom(node, error) {
 
   return {
     line,
-    column
+    column,
   };
 }
 
@@ -122,7 +122,7 @@ function handleTemplateTag(node, context, schema, env, validators) {
     context.report({
       node,
       message: error.message.split("\n")[0],
-      loc: locFrom(node, error)
+      loc: locFrom(node, error),
     });
     return;
   }
@@ -132,7 +132,7 @@ function handleTemplateTag(node, context, schema, env, validators) {
     context.report({
       node,
       message: validationErrors[0].message,
-      loc: locFrom(node, validationErrors[0])
+      loc: locFrom(node, validationErrors[0]),
     });
     return;
   }
@@ -166,7 +166,7 @@ export function createRule(context, optionParser) {
   const options = context.options.length === 0 ? [{}] : context.options;
   for (const optionGroup of options) {
     const { schema, env, tagName, validators } = optionParser(optionGroup);
-    const boundValidators = validators.map(v => ctx => v(ctx, optionGroup));
+    const boundValidators = validators.map((v) => (ctx) => v(ctx, optionGroup));
     if (tagNames.has(tagName)) {
       throw new Error("Multiple options for GraphQL tag " + tagName);
     }
@@ -181,6 +181,6 @@ export function createRule(context, optionParser) {
           return handleTemplateTag(node, context, schema, env, validators);
         }
       }
-    }
+    },
   };
 }

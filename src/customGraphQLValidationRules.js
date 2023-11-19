@@ -8,12 +8,12 @@ export function OperationsMustHaveNames(context) {
           new GraphQLError("All operations must be named", [node])
         );
       }
-    }
+    },
   };
 }
 
 function getFieldWasRequestedOnNode(node, field) {
-  return node.selectionSet.selections.some(n => {
+  return node.selectionSet.selections.some((n) => {
     return n.kind === "Field" && n.name.value === field;
   });
 }
@@ -34,7 +34,7 @@ export function RequiredFields(context, options) {
 
   return {
     FragmentDefinition(node) {
-      requiredFields.forEach(field => {
+      requiredFields.forEach((field) => {
         const type = context.getType();
 
         if (fieldAvailableOnType(type, field)) {
@@ -54,7 +54,7 @@ export function RequiredFields(context, options) {
     // Every inline fragment must have the required field specified inside
     // itself or in some parent selection set.
     InlineFragment(node, key, parent, path, ancestors) {
-      requiredFields.forEach(field => {
+      requiredFields.forEach((field) => {
         const type = context.getType();
 
         if (fieldAvailableOnType(type, field)) {
@@ -116,7 +116,7 @@ export function RequiredFields(context, options) {
         return;
       }
 
-      requiredFields.forEach(field => {
+      requiredFields.forEach((field) => {
         if (fieldAvailableOnType(def.type, field)) {
           const fieldWasRequested = getFieldWasRequestedOnNode(node, field);
           if (!fieldWasRequested) {
@@ -129,7 +129,7 @@ export function RequiredFields(context, options) {
           }
         }
       });
-    }
+    },
   };
 }
 
@@ -145,7 +145,7 @@ export function typeNamesShouldBeCapitalized(context) {
           )
         );
       }
-    }
+    },
   };
 }
 
@@ -155,7 +155,8 @@ export function noDeprecatedFields(context) {
   return {
     Field(node) {
       const fieldDef = context.getFieldDef();
-      if (fieldDef && fieldDef.isDeprecated) {
+      console.warn("fieldDef", fieldDef);
+      if (fieldDef && fieldDef.deprecationReason) {
         const parentType = context.getParentType();
         if (parentType) {
           const reason = fieldDef.deprecationReason;
@@ -173,7 +174,7 @@ export function noDeprecatedFields(context) {
       // context is of type ValidationContext which doesn't export getEnumValue.
       // Bypass the public API to grab that information directly from _typeInfo.
       const enumVal = context._typeInfo.getEnumValue();
-      if (enumVal && enumVal.isDeprecated) {
+      if (enumVal && enumVal.deprecationReason) {
         const type = getNamedType(context.getInputType());
         if (!type) {
           return;
@@ -188,6 +189,6 @@ export function noDeprecatedFields(context) {
           )
         );
       }
-    }
+    },
   };
 }
