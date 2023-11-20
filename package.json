@@ -1,5 +1,5 @@
 {
-  "name": "graphql-eslint-plugin",
+  "name": "eslint-plugin-graphql-lint",
   "version": "0.0.1",
   "description": "GraphQL ESLint plugin.",
   "author": "Nimesh Gurung",
@@ -25,7 +25,6 @@
     "@babel/preset-env": "7.10.1",
     "@babel/preset-react": "^7.23.3",
     "@babel/register": "7.10.1",
-    "babel-eslint": "10.1.0",
     "eslint": "8.54.0",
     "graphql": "16.0.0",
     "mocha": "7.2.0",

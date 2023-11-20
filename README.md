@@ -7,12 +7,12 @@
 An ESLint plugin that checks tagged query strings inside JavaScript, or queries inside `.graphql` files, against a GraphQL schema.
 
 ```
-npm install graphql-eslint-plugin
+npm install eslint-plugin-graphql-lint
 ```
 
 ![Screenshot from Atom](https://github.com/apollostack/eslint-plugin-graphql/raw/master/screenshot.png)
 
-`eslint-plugin-graphql` has built-in settings for four GraphQL clients out of the box:
+`eslint-plugin-graphql-lint` has built-in settings for four GraphQL clients out of the box:
 
 1. [Apollo client](http://docs.apollostack.com/apollo-client/index.html)
 2. [Relay](https://facebook.github.io/relay/)
@@ -87,7 +87,7 @@ eslint . --ext .js --ext .gql --ext .graphql
 ```js
 // In a file called .eslintrc.js
 module.exports = {
-  parser: "babel-eslint",
+  parser: "@babel/eslint-parser",
   rules: {
     "graphql/template-strings": [
       "error",
@@ -109,7 +109,7 @@ module.exports = {
       },
     ],
   },
-  plugins: ["graphql"],
+  plugins: ["graphql-lint"],
 };
 ```
 
@@ -118,7 +118,7 @@ module.exports = {
 ```js
 // In a file called .eslintrc.js
 module.exports = {
-  parser: "babel-eslint",
+  parser: "@babel/eslint-parser",
   rules: {
     "graphql/template-strings": [
       "error",
@@ -140,7 +140,7 @@ module.exports = {
       },
     ],
   },
-  plugins: ["graphql"],
+  plugins: ["graphql-lint"],
 };
 ```
 
@@ -149,7 +149,7 @@ module.exports = {
 ```js
 // In a file called .eslintrc.js
 module.exports = {
-  parser: "babel-eslint",
+  parser: "@babel/eslint-parser",
   rules: {
     "graphql/template-strings": [
       "error",
@@ -172,7 +172,7 @@ module.exports = {
       },
     ],
   },
-  plugins: ["graphql"],
+  plugins: ["graphql-lint"],
 };
 ```
 
@@ -181,7 +181,7 @@ module.exports = {
 ```js
 // In a file called .eslintrc.js
 module.exports = {
-  parser: "babel-eslint",
+  parser: "@babel/eslint-parser",
   rules: {
     "graphql/template-strings": [
       "error",
@@ -204,7 +204,7 @@ module.exports = {
       },
     ],
   },
-  plugins: ["graphql"],
+  plugins: ["graphql-lint"],
 };
 ```
 
@@ -213,7 +213,7 @@ module.exports = {
 ```js
 // In a file called .eslintrc.js
 module.exports = {
-  parser: "babel-eslint",
+  parser: "@babel/eslint-parser",
   rules: {
     "graphql/template-strings": [
       "error",
@@ -235,7 +235,7 @@ module.exports = {
       },
     ],
   },
-  plugins: ["graphql"],
+  plugins: ["graphql-lint"],
 };
 ```
 
@@ -245,7 +245,7 @@ This plugin can be used to validate against multiple schemas by identifying them
 
 ```js
 module.exports = {
-  parser: "babel-eslint",
+  parser: "@babel/eslint-parser",
   rules: {
     "graphql/template-strings": [
       "error",
@@ -261,7 +261,7 @@ module.exports = {
       },
     ],
   },
-  plugins: ["graphql"],
+  plugins: ["graphql-lint"],
 };
 ```
 
@@ -273,7 +273,7 @@ properties (`schemaJson`, `schemaJsonFilepath` and `schemaString`) from rule con
 ```js
 // In a file called .eslintrc.js
 module.exports = {
-  parser: "babel-eslint",
+  parser: "@babel/eslint-parser",
   rules: {
     "graphql/template-strings": [
       "error",
@@ -285,7 +285,7 @@ module.exports = {
       },
     ],
   },
-  plugins: ["graphql"],
+  plugins: ["graphql-lint"],
 };
 ```
 
@@ -293,7 +293,7 @@ In case you use additional schemas, specify `projectName` from `.graphqlconfig` 
 
 ```js
 module.exports = {
-  parser: "babel-eslint",
+  parser: "@babel/eslint-parser",
   rules: {
     "graphql/template-strings": [
       "error",
@@ -309,7 +309,7 @@ module.exports = {
       },
     ],
   },
-  plugins: ["graphql"],
+  plugins: ["graphql-lint"],
 };
 ```
 
@@ -321,7 +321,7 @@ The `validators` setting can be set either to a list of specific validator names
 
 ```js
 module.exports = {
-  parser: "babel-eslint",
+  parser: "@babel/eslint-parser",
   rules: {
     "graphql/template-strings": [
       "error",
@@ -338,7 +338,7 @@ module.exports = {
       },
     ],
   },
-  plugins: ["graphql"],
+  plugins: ["graphql-lint"],
 };
 ```
 
@@ -401,7 +401,7 @@ The rule is defined as `graphql/named-operations`.
 ```js
 // In a file called .eslintrc.js
 module.exports = {
-  parser: "babel-eslint",
+  parser: "@babel/eslint-parser",
   rules: {
     "graphql/template-strings": [
       "error",
@@ -417,7 +417,7 @@ module.exports = {
       },
     ],
   },
-  plugins: ["graphql"],
+  plugins: ["graphql-lint"],
 };
 ```
 
@@ -503,7 +503,7 @@ module.exports = {
       },
     ],
   },
-  plugins: ["graphql"],
+  plugins: ["graphql-lint"],
 };
 ```
 
@@ -540,7 +540,7 @@ The rule is defined as `graphql/capitalized-type-name`.
 ```js
 // In a file called .eslintrc.js
 module.exports = {
-  parser: "babel-eslint",
+  parser: "@babel/eslint-parser",
   rules: {
     "graphql/template-strings": [
       "error",
@@ -556,7 +556,7 @@ module.exports = {
       },
     ],
   },
-  plugins: ["graphql"],
+  plugins: ["graphql-lint"],
 };
 ```
 
@@ -599,6 +599,6 @@ module.exports = {
       },
     ],
   },
-  plugins: ["graphql"],
+  plugins: ["graphql-lint"],
 };
 ```
