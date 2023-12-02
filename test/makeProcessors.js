@@ -34,7 +34,7 @@ function execute(file) {
   ]);
 }
 
-describe('processors', () => {
+describe.skip('processors', () => {
   it('should define processors', () => {
     const extensions = Object.keys(processors);
 

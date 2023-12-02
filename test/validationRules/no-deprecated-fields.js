@@ -3,7 +3,13 @@ import schemaJson from "../schema.json";
 
 import { ruleTester } from "../helpers";
 
-const parser = require.resolve('babel-eslint');
+const parser = require.resolve("@babel/eslint-parser");
+
+const parserOptions = {
+  babelOptions: {
+    plugins: [["@babel/plugin-proposal-decorators", { legacy: true }]]
+  }
+};
 
 const options = [
   {
@@ -100,11 +106,13 @@ ruleTester.run(
     valid: noDeprecatedFieldsCases.pass.map(code => ({
       options,
       parser,
+      parserOptions,
       code
     })),
     invalid: noDeprecatedFieldsCases.fail.map(({ code, errors }) => ({
       options,
       parser,
+      parserOptions,
       code,
       errors
     }))

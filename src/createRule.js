@@ -32,7 +32,7 @@ function replaceExpressions(node, context, env) {
 
     if (!element.tail) {
       // Preserve location of errors by replacing with exactly the same length
-      const nameLength = value.end - value.start;
+      const nameLength = value.range[1] - value.range[0];
 
       if (env === "relay" && /:\s*$/.test(chunk)) {
         // The chunk before this one had a colon at the end, so this

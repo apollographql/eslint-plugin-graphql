@@ -13,7 +13,16 @@ const options = [
 ];
 
 // Need this to support statics
-const parser = require.resolve('babel-eslint');
+const parser = require.resolve('@babel/eslint-parser');
+
+const parserOptions = {
+  babelOptions: {
+    plugins: [
+      '@babel/plugin-transform-react-jsx',
+      ['@babel/plugin-proposal-decorators', { legacy: true }],
+    ],
+  },
+};
 
 ruleTester.run('relay', rule, {
   valid: [
@@ -97,13 +106,14 @@ ruleTester.run('relay', rule, {
           events
         }
       }\`
-    `
-  ].map((code) => ({ options, parser, code })),
+    `,
+  ].map(code => ({ options, parser, parserOptions, code })),
 
   invalid: [
     {
       options,
       parser,
+      parserOptions,
       code: `
         @relay({
           fragments: {
@@ -128,6 +138,7 @@ ruleTester.run('relay', rule, {
     {
       options,
       parser,
+      parserOptions,
       code: `
         import React, { Component, View } from 'react-native';
         import Relay from 'react-relay';
