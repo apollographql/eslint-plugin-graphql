@@ -15,6 +15,8 @@ function execute(file) {
         ecmaVersion: 6,
         sourceType: 'module'
       },
+      // The following is the new recommended way in eslint
+      // https://eslint.org/docs/latest/extend/custom-processors
       overrides: [
         {
           files: ['**/*.graphql'],
@@ -44,6 +46,12 @@ describe('processors', () => {
   it('should define processors', () => {
     const extensions = Object.keys(processors);
 
+    // Deprecated
+    // assert(extensions.includes('.gql'));
+    // assert(extensions.includes('.graphql'));
+
+    // The following is the new recommended way in eslint
+    // https://eslint.org/docs/latest/extend/custom-processors
     assert(extensions.includes('gql'));
   });
 

@@ -424,6 +424,12 @@ const gqlProcessor = {
 };
 
 export const processors = {
+  // Deprecated
+  // '.gql': gqlProcessor,
+  // '.graphql': gqlProcessor
+
+  // The following is the new recommended way in eslint
+  // https://eslint.org/docs/latest/extend/custom-processors
   gql: gqlProcessor
 };
 
