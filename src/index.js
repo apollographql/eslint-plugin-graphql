@@ -423,12 +423,9 @@ const gqlProcessor = {
   }
 };
 
-export const processors = gqlFiles.reduce(
-  (result, value) => {
-    return { ...result, [`.${value}`]: gqlProcessor };
-  },
-  {}
-);
+export const processors = {
+  gql: gqlProcessor
+};
 
 export default {
   rules,
