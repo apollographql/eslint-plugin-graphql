@@ -1,3 +1,5 @@
+import path from 'path';
+
 import schemaJson from '../schema.json';
 
 import {
@@ -17,10 +19,7 @@ const parser = require.resolve('@babel/eslint-parser');
 
 const parserOptions = {
   babelOptions: {
-    plugins: [
-      '@babel/plugin-transform-react-jsx',
-      ['@babel/plugin-proposal-decorators', { legacy: true }],
-    ],
+    "configFile": path.resolve(__dirname, "../../.babelrc.js")
   },
 };
 

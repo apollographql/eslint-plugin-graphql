@@ -73,8 +73,6 @@ const envGraphQLValidatorNames = {
   )
 };
 
-const gqlFiles = ["gql", "graphql"];
-
 const defaultRuleProperties = {
   env: {
     enum: ["lokka", "fraql", "relay", "apollo", "literal"]
