@@ -4,6 +4,12 @@
 
 - _Nothing yet!_
 
+### v5.0.0
+- Upgrade all dependencies and compatibility with latest Eslint and GraphQL. [PR #342](https://github.com/apollographql/eslint-plugin-graphql/pull/342) by [François Hodierne](https://github.com/znarf).
+**BREAKING**: Minimum supported Node.js version is now Node.js 16; Dropped support for Node.js 10, 11, 12, 13, 14 and 15.
+**BREAKING**: Minimum supported Eslint version is now Eslint 7.0.0;
+**BREAKING**: Minimum supported GraphQL version is now GraphQL 14.2.0;
+
 ### v4.0.0
 
 - Improve identity template literal tag docs. [PR #254](https://github.com/apollographql/eslint-plugin-graphql/pull/254) by [Jayden Seric](https://github.com/jaydenseric).

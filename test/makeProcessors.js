@@ -1,15 +1,20 @@
 import assert from 'assert';
-import { CLIEngine } from 'eslint';
+import { ESLint } from 'eslint';
 import path from 'path';
 
 import schemaJson from './schema.json';
 import plugin, { processors } from '../src';
 
 function execute(file) {
-  const cli = new CLIEngine({
+  const cli = new ESLint({
     extensions: ['.gql', '.graphql'],
-    baseConfig: {
+    plugins: { ['eslint-plugin-graphql']: plugin },
+    overrideConfig: {
       plugins: ['graphql'],
+      parserOptions: {
+        ecmaVersion: 6,
+        sourceType: 'module',
+      },
       rules: {
         'graphql/required-fields': [
           'error',
@@ -23,13 +28,8 @@ function execute(file) {
     },
     ignore: false,
     useEslintrc: false,
-    parserOptions: {
-      ecmaVersion: 6,
-      sourceType: 'module'
-    }
   });
-  cli.addPlugin('eslint-plugin-graphql', plugin);
-  return cli.executeOnFiles([
+  return cli.lintFiles([
     path.join(__dirname, '__fixtures__', `${file}.graphql`)
   ]);
 }
@@ -73,9 +73,9 @@ describe('processors', () => {
         'required-fields-valid-id',
         'required-fields-valid-array'
       ].forEach(filename => {
-        it(`does not warn on file ${filename}`, () => {
-          const results = execute(filename);
-          assert.equal(results.errorCount, 0);
+        it(`does not warn on file ${filename}`, async () => {
+          const results = await execute(filename);
+          assert.equal(results[0].errorCount, 0);
         });
       });
     });
@@ -85,20 +85,20 @@ describe('processors', () => {
         'required-fields-invalid-no-id',
         'required-fields-invalid-array'
       ].forEach(filename => {
-        it(`warns on file ${filename}`, () => {
-          const results = execute(filename);
-          assert.equal(results.errorCount, 1);
-          const message = results.results[0].messages[0].message;
+        it(`warns on file ${filename}`, async () => {
+          const results = await execute(filename);
+          assert.equal(results[0].errorCount, 1);
+          const message = results[0].messages[0].message;
           assert.ok(new RegExp("'id' field required").test(message));
         });
       });
     });
 
     describe('error line/column locations', () => {
-      it('populates correctly for a single-line document', () => {
-        const results = execute('required-fields-invalid-array');
-        assert.equal(results.errorCount, 1);
-        assert.deepEqual(results.results[0].messages[0], {
+      it('populates correctly for a single-line document', async () => {
+        const results = await execute('required-fields-invalid-array');
+        assert.equal(results[0].errorCount, 1);
+        assert.deepEqual(results[0].messages[0], {
           column: 9,
           line: 1,
           message: "'id' field required on 'stories'",
@@ -108,10 +108,10 @@ describe('processors', () => {
         });
       });
 
-      it('populates correctly for a multi-line document', () => {
-        const results = execute('required-fields-invalid-no-id');
-        assert.equal(results.errorCount, 1);
-        assert.deepEqual(results.results[0].messages[0], {
+      it('populates correctly for a multi-line document', async () => {
+        const results = await execute('required-fields-invalid-no-id');
+        assert.equal(results[0].errorCount, 1);
+        assert.deepEqual(results[0].messages[0], {
           column: 3,
           line: 2,
           message: "'id' field required on 'greetings'",
