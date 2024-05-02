@@ -490,6 +490,52 @@ module.exports = {
 }
 ```
 
+#### Ignoring deprecated fields
+
+If needed you can also use the `ignoreIfDeprecated` option (defaulted to `false`) to ignore fields flagged as deprecated.
+
+```js
+// In a file called .eslintrc.js
+module.exports = {
+  rules: {
+    'graphql/required-fields': [
+      'error',
+      {
+        env: 'apollo',
+        schemaJsonFilepath: path.resolve(__dirname, './schema.json'),
+        requiredFields: ['uuid'],
+        ignoreIfDeprecated: true,
+      },
+    ],
+  },
+  plugins: [
+    'graphql'
+  ]
+}
+```
+
+This would mean that required fields would be ignored if flagged as deprecated. So for example the below would now pass:
+
+```
+// 'uuid' required and present in the schema
+
+schema {
+  query {
+    viewer {
+      uuid @deprecated(reason: "use name instead")
+      name
+    }
+  }
+}
+
+query ViewerName {
+  viewer {
+    name
+  }
+}
+```
+
+
 ### Capitalization of a first letter of a Type name
 
 This rule enforces that first letter of types is capitalized
