@@ -2,7 +2,7 @@
 
 ### vNEXT
 
-- Add a `ignoreIfDeprecated` option to the `required-fields` rule [PR #271](https://github.com/apollographql/eslint-plugin-graphql/pull/347) by [Antoine Malliarakis](https://github.com/antoine-malliarakis)
+- Add a `ignoreIfDeprecated` option to the `required-fields` rule [PR #347](https://github.com/apollographql/eslint-plugin-graphql/pull/347) by [Antoine Malliarakis](https://github.com/antoine-malliarakis)
 
 ### v4.0.0
 
