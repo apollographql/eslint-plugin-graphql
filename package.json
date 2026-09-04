@@ -17,12 +17,12 @@
     "url": "git+https://github.com/apollostack/eslint-plugin-graphql.git"
   },
   "devDependencies": {
-    "@babel/cli": "7.10.1",
+    "@babel/cli": "8.0.4",
     "@babel/core": "7.10.1",
-    "@babel/node": "7.10.1",
-    "@babel/plugin-transform-runtime": "7.10.1",
-    "@babel/preset-env": "7.10.1",
-    "@babel/register": "7.10.1",
+    "@babel/node": "8.0.1",
+    "@babel/plugin-transform-runtime": "8.0.1",
+    "@babel/preset-env": "8.0.2",
+    "@babel/register": "8.0.1",
     "babel-eslint": "10.1.0",
     "eslint": "6.8.0",
     "graphql": "15.0.0",
@@ -41,7 +41,7 @@
   "browserslist": "node 10",
   "license": "MIT",
   "dependencies": {
-    "@babel/runtime": "^7.10.0",
+    "@babel/runtime": "^8.0.0",
     "graphql-config": "^3.0.2",
     "lodash.flatten": "^4.4.0",
     "lodash.without": "^4.4.0"
