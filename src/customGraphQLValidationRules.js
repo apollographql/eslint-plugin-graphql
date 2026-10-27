@@ -82,7 +82,7 @@ export function RequiredFields(context, options) {
             if (
               nextAncestor.kind === "Field" ||
               nextAncestor.kind === "FragmentDefinition" ||
-              nextAncestor.kind === "OperationDefiniton"
+              nextAncestor.kind === "OperationDefinition"
             ) {
               nearestFieldOrExecutableDefinition = nextAncestor;
             }
