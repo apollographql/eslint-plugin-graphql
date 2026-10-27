@@ -2,7 +2,7 @@
 
 ### vNEXT
 
-- _Nothing yet!_
+- Fix `required-fields` crashing when an inline fragment is directly under an operation.
 
 ### v4.0.0
 

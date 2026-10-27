@@ -144,3 +144,14 @@ ruleTester.run("testing required-fields rule without env", rules["required-field
     errors
   }))
 });
+
+options = [{ schemaJson, tagName: "gql", requiredFields: ["number"] }];
+ruleTester.run("required-fields with operation-level inline fragment", rules["required-fields"], {
+  valid: [],
+  invalid: [{
+    options,
+    parserOptions,
+    code: "const x = gql`query { ... on Query { greetings { hello } } }`",
+    errors: [{ message: "'number' field required on '... on Query'", type: "TaggedTemplateExpression" }]
+  }]
+});
